@@ -1,0 +1,26 @@
+@mixin border-top-radius($radius: 0.375rem) {
+      border-top-left-radius: $radius;
+      border-top-right-radius: $radius;
+  }
+  
+@mixin border-end-radius($radius: 0.375rem) {
+      border-top-right-radius: $radius;
+      border-bottom-right-radius: $radius;
+}
+  
+@mixin border-bottom-radius($radius: 0.375rem) {
+      border-bottom-right-radius: $radius;
+      border-bottom-left-radius: $radius;
+}
+  
+@mixin border-start-radius($radius: 0.375rem) {
+      border-top-left-radius: $radius;
+      border-bottom-left-radius: $radius;
+}
+
+@mixin sg-focus-visible($text-color: white, $color:#0d6efd) {
+      box-shadow: 0 0 0 3px $text-color;
+      //border: 1px solid $text-color;
+      outline: 2px solid $color;
+      z-index: 5;
+  }

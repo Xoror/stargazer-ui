@@ -1,0 +1,28 @@
+.sg-tabs {
+    width: 100%;
+}
+
+.sg-tabs-controls {
+    display: flex;
+    flex-direction: row;
+}
+
+.sg-tabs-button {
+    display: block;
+    &.sg-active {
+        background-color: #202020;
+        color: white;
+    }
+}
+
+.sg-tabs-content {
+    width: 100%;
+}
+
+.sg-tabs-page {
+    display: none;
+    &.sg-active {
+        display: flex;
+        flex-direction: row;
+    }
+}

@@ -1,0 +1,70 @@
+.moveable-popout {
+    --popout-index: 1010;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.375em;
+
+    border: 1px solid white;
+    width: 15rem;
+    min-width: min(18rem, 100%);
+    min-height: min(9rem, 100%);
+
+    box-shadow: 0 0 0.5rem #ffffff60;
+
+    overflow: hidden;
+
+    z-index: var(--popout-index);
+    & .sg-popout-header {
+        user-select: inherit;
+        margin-bottom: 0;
+        padding: 0.25em 0.5em;
+
+        background-color: $card-header-bg-color;
+        border-bottom: 1px solid $card-border-color;
+        > *{
+            margin:0;
+        }
+
+        &:first-child {
+            border-radius: 0.375em 0.375em 0 0;
+        }
+    }
+    &[data-move="true"] {
+        & .sg-popout-header {
+            cursor: move;
+        }
+    }
+    & .sg-popout-body {
+        flex: 1 1 auto;
+        padding: 0.5em;
+        user-select: inherit;
+        background-color: color-mix(in srgb, white 4%, $card-header-bg-color);
+    }
+    & .sg-popout-footer {
+        user-select: inherit;
+        padding: 0.25em 0.5em;
+
+        background-color: $card-header-bg-color;
+        border-top: 1px solid $card-border-color;
+        &:last-child {
+            border-radius: 0 0 0.375em 0.375em;
+        }
+    }
+    & .sg-popout-text:last-child {
+        margin-bottom: 0;
+    }
+    &[data-resize="true"] {
+        resize: both;
+        &::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            z-index: calc( var(--popout-index) + 1 );
+            width: 1em;
+            height: 1em;
+            background-image: url('data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" fill="none"/><line x1="208" y1="128" x2="128" y2="208" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><line x1="192" y1="40" x2="40" y2="192" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>');
+        }
+    }
+}
