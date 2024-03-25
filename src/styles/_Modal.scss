@@ -9,7 +9,36 @@ $sg-modal-transition: transform .3s ease-out;
 
 .sg-modal-tag::backdrop {
     z-index: calc($zindex-modal);
-    background: hsl(0 0% 0% / 50%);
+    background: hsla(0, 0%, 0%);
+    opacity: 0.5;
+    animation-name: fadeInBackdrop;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    &.close {
+      background: transparent;
+      opacity: 0;
+      animation-name: fadeInBackdrop;
+      animation-duration: 0.3s;
+      animation-timing-function: ease-in-out;
+      animation-fill-mode: backwards;
+    }
+}
+@keyframes fadeInBackdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+@keyframes fadeOutBackdrop {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .sg-modal-tag { //shell to position modal with bottom-padding
@@ -17,7 +46,6 @@ $sg-modal-transition: transform .3s ease-out;
 
   padding: 0;
   margin: calc(4 * $sg-modal-margin);
-  // allow clicks to pass through for custom click handling to close modal
 
   width: 100%; // Ensure `.modal-content` extends the full width of the parent `.modal-dialog`
   height: fit-content;
@@ -30,13 +58,27 @@ $sg-modal-transition: transform .3s ease-out;
   border-radius: $sg-modal-radius;
   // Remove focus outline from opened modal
   outline: 0;
+  //animation-fill-mode: forwards;
 
-  // make modal flash onBlur if static backdrop
-  .sg-modal.sg-modal-static & {
-    transition: $sg-modal-transition;
-    transform: scale(1.02);
+  &[open=""] {
+    animation-name: slide-in-up;
+    animation-duration: .3s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+  }
+
+  &.close {
+    animation: scale-down 0.3s ease-in-out;
   }
 }
+@keyframes scale-down {
+  to { transform: translateY(10%); opacity: 0;}
+}
+@keyframes slide-in-up {
+  from {transform: translateY(-10%); opacity: 0.5;}
+}
+
+
 .sg-modal-dialog-centered {
   display: flex;
   justify-content: center;
@@ -55,13 +97,15 @@ $sg-modal-transition: transform .3s ease-out;
   border-bottom: 1px solid $sg-modal-text-color;
   @include border-top-radius($sg-modal-radius);
 
+  margin: 0;
+
   .sg-button-close {
     padding: 0.5rem 0.5rem;
     margin: calc(-.5 * $sg-modal-margin) calc(-.5 * $sg-modal-margin) calc(-.5 * $sg-modal-margin) auto;
   }
 }
 .sg-modal-title {
-  margin-bottom: 0;
+  margin: 0;
 }
 .sg-modal-body {
   position: relative;

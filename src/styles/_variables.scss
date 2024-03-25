@@ -1,12 +1,38 @@
 @use "sass:color";
 
+:root {
+	--sg-body-bg: #212529;
+  	--sg-body-color: white;
+}
+
+body {
+	background-color: var(--sg-body-bg);
+	color: var(--sg-body-color);
+	font-size: 18px;
+}
+
 $body-line-height: 1.4em !default;
+$sg-body-bg: #212529;
+$sg-body-color: white;
+
+$sg-font-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+$sg-highlight-bg: #fff3cd;
+
+$primary: #4995d5;
+$secondary: #6c757d;
+$success: #1fad61; //hsl(148, 50%, 46%)
+$info: #9184bd;
+$warning: #E1BC29;
+$danger: #fc5f5f;
+$light: #f8f9fa;
+$dark: #212529;
 
 /* Grid variables */
 $grid-breakpoints: (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px, xxl: 1400px ) !default;
 $container-max-widths: ( sm: 540px, md: 720px, lg: 960px, xl: 1140px, xxl: 1320px ) !default;
 
 /* z indices */
+$zindex-navbar:						990 !default;
 $zindex-dropdown:                   1000 !default;
 $zindex-popover:                    1010 !default;
 $zindex-sticky:                     1020 !default;
@@ -22,6 +48,7 @@ $zindex-toast:                      1090 !default;
 //$colors: ("red": #E15554, "green": #3BB273, "yellow": #E1BC29, "blue": #4D9DE0, "purple": #7768AE);
 $colors: ("primary": #0d6efd, "secondary": #6c757d, "success": #198754, "info": #0dcaf0, "warning": #ffc107, "danger": #dc3545, "light": #f8f9fa, "dark": #212529);
 $colors: ("primary": #4D9DE0, "secondary": #6c757d, "success": #3BB273, "info": #7768AE, "warning": #E1BC29, "danger": #E15554, "light": #f8f9fa, "dark": #212529);
+$colors: ("primary": $danger, "secondary": $secondary, "success": $success, "info": $info, "warning": $warning, "danger": $primary, "light": $light, "dark": $dark);
 
 /* Input and forms */
 $input-text-color: #212529;
@@ -47,12 +74,10 @@ $input-height: calc($input-line-height + $input-padding-x * 2 + 2*$input-border-
 
 /* Card */
 
-$card-bg-color: #2e3236 !default;
+$card-bg-color: color-mix(in hsl, #212529, white 5%) !default;
+$card-header-bg-color: color-mix(in hsl, white 3%, #212529) !default;
 $card-text-color: white !default;
 $card-border-color: white !default;
-
-$card-header-bg-color: #212529 !default;
-
 
 .popover-header {
 	background-color: var(--nav-color);
@@ -71,4 +96,24 @@ $card-header-bg-color: #212529 !default;
 $sg-table-padding: 0.5rem;
 $sg-table-padding-sm: 0.25rem;
 
+/* Tabs */
+$sg-tab-controls-bg: #212529;
+
+$sg-tab-button-color: #fc5f5f;
+$sg-tab-button-hover: color-mix(in srgb, black 15%, $sg-tab-controls-bg);
+$sg-tab-button-active: color-mix(in srgb, black 20%, $sg-tab-controls-bg);
+
 /* Dropdown */
+
+$sg-dropdown-list-bg: #343a40;
+
+$sg-dropdown-item-hover-bg: color.mix(black, $sg-dropdown-list-bg, 15%);
+$sg-dropdown-item-action-bg: color.mix(black, $sg-dropdown-list-bg, 20%);
+$sg-dropdown-item-disabled-bg: color.mix(white, $sg-dropdown-list-bg, 15%);
+
+/* Nav */
+$sg-nav-color: #1a1b1d;
+
+$sg-link-color: $danger;// #4D9DE0;// #0d6efd;
+$sg-link-hover-color: white;//color.mix(black, #E15554, 15%);// #62a4da;// #0a58ca;
+$sg-link-disable-color: rgb(180, 180, 180),

@@ -1,9 +1,12 @@
-.moveable-popout {
-    --popout-index: 1010;
+.sg-moveable-popout {
+    --popout-index: #{$zindex-popover};
     position: absolute;
     display: flex;
     flex-direction: column;
     border-radius: 0.375em;
+
+    padding: 0;
+    margin: 0;
 
     border: 1px solid white;
     width: 15rem;
@@ -11,6 +14,7 @@
     min-height: min(9rem, 100%);
 
     box-shadow: 0 0 0.5rem #ffffff60;
+    color: white;
 
     overflow: hidden;
 
@@ -31,6 +35,7 @@
         }
     }
     &[data-move="true"] {
+        touch-action: none;
         & .sg-popout-header {
             cursor: move;
         }

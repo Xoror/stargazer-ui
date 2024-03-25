@@ -1,10 +1,28 @@
 .sg-card {
+    --card-border-radius: 0rem;
+    --border-width: -2px;
+
+    --border-gradient-color: color-mix(in srgb, #{$card-header-bg-color}, white 3%);
+    --border-gradient-mix-color: color-mix(in srgb, #{$card-header-bg-color}, white 3%);
+
+    --background-gradient-color: #{$sg-nav-color};
+    --background-gradient-mix-color: color-mix(in srgb, #{$card-header-bg-color}, white 3%);
+
+    --divider-color: #{$card-border-color};
+
     display: flex;
     flex-direction: column;
-    border-radius: 0.375em;
-
+    border: calc(var(--border-width) * -1) solid transparent;// $card-border-color;
+    position: relative;
+    
+    border-radius: var(--card-border-radius);
+    background: linear-gradient(71deg, 
+            var(--background-gradient-color), 
+            var(--background-gradient-mix-color), 
+            var(--background-gradient-color)
+        );
+    background-clip: padding-box;
     &.sg-card-overlay {
-        background-color: $card-bg-color;
         color: $card-text-color;
         border: 1px solid $card-border-color;
     }
@@ -13,27 +31,136 @@
         flex: 1 1 auto;
         padding: 1em;
     }
+    
     .sg-card-header {
         margin-bottom: 0;
         padding: 0.5em 1em;
+        border-bottom: 1px solid var(--divider-color);
 
-        background-color: $card-header-bg-color;
-        border-bottom: 1px solid $card-border-color;
+
+        &:first-child {
+            border-top-left-radius: var(--card-border-radius);
+            border-top-right-radius: var(--card-border-radius);
+        }
     }
-    .sg-card-header:first-child {
-        border-radius: 0.375em 0.375em 0 0;
+    .sg-card-title {
+        margin: 0;
     }
+
     .sg-card-footer {
         padding: 0.5em 1em;
-
-        background-color: $card-header-bg-color;
-        border-top: 1px solid $card-border-color;
-    }
-    .sg-card-footer:last-child {
-        border-radius: 0 0 0.375em 0.375em;
+        border-top: 1px solid var(--divider-color);
+        &:last-child {
+            border-bottom-left-radius: var(--card-border-radius);
+            border-bottom-right-radius: var(--card-border-radius);
+        }
     }
     
     .sg-card-text:last-child {
         margin-bottom: 0;
+    }
+}
+
+.sg-card::after {
+    position: absolute;
+    content: "";
+    top: var(--border-width);
+    bottom: var(--border-width);
+    right: var(--border-width);
+    left: var(--border-width);
+    z-index: -1;
+    border-radius: var(--card-border-radius);
+    background: linear-gradient(71deg, 
+            var(--border-gradient-color), 
+            var(--border-gradient-mix-color),
+            var(--border-gradient-color)
+        );
+}
+
+@mixin invertedColor($color) {
+    --border-gradient-color: color-mix(in srgb, #{$color}, black 30%);
+    --border-gradient-mix-color: #{$color};
+
+    --background-gradient-color:  color-mix(in srgb, #{$color}, black 0%);
+    --background-gradient-mix-color: #{$color};
+
+    --divider-color: color-mix(in srgb, #{$color}, black 15%);
+    //text-shadow: 2px -2px $color, 2px 2px $color, -2px 2px $color, -2px -2px $color;
+    /*
+    > h1, h2, h3, h4, h5, h6, span, p, small {
+        background-color: $color;
+        box-shadow: 1px -1px 10px $color, 1px 1px 10px $color, -1px 1px 10px $color, -1px -1px 10px $color;
+    }
+    */
+}
+
+.primary {
+    --border-gradient-mix-color: #{$danger};
+    grid-column:  2 / 3;
+    grid-row: 1;
+    &.inverted {
+        @include invertedColor($danger);
+        color: black;
+    }
+}
+.secondary {
+    --border-gradient-mix-color: #{$secondary};
+    grid-column:  4 / 5;
+    grid-row: 1;
+    &.inverted {
+        @include invertedColor($secondary);
+    }
+}
+.success {
+    --border-gradient-mix-color: #{$success};
+    grid-column:  6 / 7;
+    grid-row: 1;
+    &.inverted {
+        @include invertedColor($success);
+        color: black;
+    }
+}
+.info {
+    --border-gradient-mix-color: #{$info};
+    grid-column:  8 / 9;
+    grid-row: 1;
+    &.inverted {
+        @include invertedColor($info);
+        color: black;
+    }
+}
+.warning {
+    --border-gradient-mix-color: #{$warning};
+    grid-column:  2 / 3;
+    grid-row: 2;
+    &.inverted {
+        @include invertedColor($warning);
+        color: black;
+    }
+}
+.danger {
+    --border-gradient-mix-color: #{$primary};
+    grid-column:  4 / 5;
+    grid-row: 2;
+    &.inverted {
+        @include invertedColor($primary);
+        color: black;
+    }
+}
+.light {
+    --border-gradient-mix-color: #{$light};
+    grid-column:  6 / 7;
+    grid-row: 2;
+    &.inverted {
+        @include invertedColor($light);
+        color: black;
+    }
+}
+.dark {
+    --border-gradient-mix-color: #{$dark};
+    grid-column: 8 / 9;
+    grid-row: 2;
+    &.inverted {
+        @include invertedColor($dark);
     }
 }

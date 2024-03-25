@@ -1,39 +1,57 @@
 .sg-navbar {
-    // scss-docs-start sg-navbar-css-vars
-    --sg-navbar-bg: #212529;
-    --sg-navbar-color: rgba(white, .55);
-    --sg-navbar-hover-color: rgba(white, .75);
-    --sg-navbar-disabled-color: rgba(white, .25);
-    --sg-navbar-active-color: white;
-    --sg-navbar-brand-color: white;
-    --sg-navbar-brand-hover-color: white;
-    // scss-docs-end sg-navbar-css-vars
-    background-color: --sg-navbar-bg;
-  
-    position: relative;
+  // scss-docs-start sg-navbar-css-vars
+  --sg-navbar-bg: #{$sg-nav-color};
+  --sg-navbar-text-color: #{$sg-link-hover-color};
+  --sg-navbar-link-color: #{$sg-link-color};
+  --sg-navbar-hover-color: #{$sg-link-hover-color};
+  --sg-navbar-disabled-color: #{$sg-link-disable-color};
+  --sg-navbar-active-color: #{$sg-link-hover-color};
+
+  --sg-navbar-zindex: $zindex-navbar;
+  // scss-docs-end sg-navbar-css-vars
+  background-color: var(--sg-navbar-bg);
+  background: linear-gradient(71deg, 
+            var(--sg-navbar-bg), 
+            color-mix(in srgb, var(--sg-navbar-bg), white 5%),
+            var(--sg-navbar-bg),
+            color-mix(in srgb, var(--sg-navbar-bg), white 5%),
+            var(--sg-navbar-bg)
+        );
+
+  width: 100%;
+  min-height: 3rem;
+  z-index: $zindex-navbar;
+  box-sizing: border-box;
+  border: 2px outset color-mix(in srgb, white 5%, var(--sg-navbar-bg));
+  border-bottom: 2px solid var(--sg-navbar-link-color);
+
+  display: flex;
+  flex-wrap: wrap; // allow us to do the line break for collapsing content
+  align-items: center;
+  padding: 0.5rem 0rem;
+
+  position: sticky;
+  top: 0;
+  left: 0;
+
+  // Because flex properties aren't inherited
+  %container-flex-properties {
     display: flex;
-    flex-wrap: wrap; // allow us to do the line break for collapsing content
+    flex-wrap: inherit;
     align-items: center;
-    padding: 0.5rem 0rem;
-  
-    // Because flex properties aren't inherited
-    %container-flex-properties {
-      display: flex;
-      flex-wrap: inherit;
-      align-items: center;
-      justify-content: space-between;
-    }
-  
-    > .sg-container,
-    > .sg-container-fluid {
+    justify-content: space-between;
+  }
+
+  > .sg-container,
+  > .sg-container-fluid {
+    @extend %container-flex-properties;
+  }
+
+  @each $breakpoint, $container-max-width in $container-max-widths {
+    > .container-#{$breakpoint} {
       @extend %container-flex-properties;
     }
-  
-    @each $breakpoint, $container-max-width in $container-max-widths {
-      > .container-#{$breakpoint} {
-        @extend %container-flex-properties;
-      }
-    }
+  }
 }
 
 .sg-navbar-brand {
@@ -41,52 +59,52 @@
     padding-bottom: 0.25rem;
     margin-inline: 1rem;
     margin-block: auto;
-    color: var(--sg-navbar-brand-color);
+    color: var(--sg-navbar-link-color);
     text-decoration: none;
     white-space: nowrap;
   
     &:hover,
     &:focus {
-      color: var(--sg-navbar-brand-hover-color);
+      color: var(--sg-navbar-hover-color);
       text-decoration: none;
     }
 }
 
 .sg-navbar-nav {
-    // scss-docs-start sg-navbar-nav-css-vars
-    --nav-link-padding-x: 0;
-    --nav-link-padding-y: 0.5rem;
-    --nav-link-color: var(--sg-navbar-color);
-    --nav-link-hover-color: var(--sg-navbar-hover-color);
-    --nav-link-disabled-color: var(--sg-navbar-disabled-color);
-    // scss-docs-end sg-navbar-nav-css-vars
-  
-    display: flex;
-    flex-direction: row; // cannot use `inherit` to get the `.sg-navbar`s value
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
-  
-    .show > .nav-link,
-    .nav-link.active {
-      color: var(--sg-navbar-active-color);
-    }
-  
-    .dropdown-menu {
-      position: static;
-    }
+  // scss-docs-start sg-navbar-nav-css-vars
+  --nav-link-padding-x: 0;
+  --nav-link-padding-y: 0.5rem;
+  --nav-link-color: $sg-link-color;
+  --nav-link-hover-color: $sg-link-hover-color;
+  --nav-link-disabled-color: $sg-link-disable-color;
+  // scss-docs-end sg-navbar-nav-css-vars
+  margin: 0;
+  display: flex;
+  flex-direction: row; // cannot use `inherit` to get the `.sg-navbar`s value
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+
+  .show > .nav-link,
+  .nav-link.active {
+    color: var(--sg-navbar-active-color);
+  }
+
+  .dropdown-menu {
+    position: static;
+  }
 }
   
 .sg-navbar-text {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    color: var(--sg-navbar-color);
-  
-    a,
-    a:hover,
-    a:focus  {
-      color: var(--sg-navbar-active-color);
-    }
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  color: var(--sg-navbar-active-color);
+
+  a,
+  a:hover,
+  a:focus  {
+    color: var(--sg-navbar-active-color);
+  }
 }
 
 .nav-item {
