@@ -1,69 +1,109 @@
-import React, { forwardRef, createContext, useContext, useReducer, useRef, useEffect } from "react"
+import React, { forwardRef, createContext, useContext, useRef, cloneElement, ReactElement, useMemo } from "react"
 
-import { ListType, ListItem, FormContextType } from "./List.types"
-import useDraggable from "../hooks/useDraggable"
+import { ListType, ListSublistType, ListItemType, ListLabelType, FormContextType } from "./List.types"
+import useDraggable, { insertPhantomElement } from "../hooks/useDraggable"
+import useClassname from "../hooks/useClassname"
+import mergeRefs from "../utils/MergeRefs"
 
 export const ListContext = createContext<FormContextType | null>(null)
-export const FormContextProvider = ({children, value} : {children: React.ReactNode, value:FormContextType}) => {
+export const ListContextProvider = ({children, value} : {children: React.ReactNode, value:FormContextType}) => {
     return (
         <ListContext.Provider value={value}>
             {children}
         </ListContext.Provider>
     )
 }
-export const useFormContext = () => {
+export const useListContext = () => {
     const context = useContext(ListContext)
+    
     return context
 }
 
-const List = forwardRef<HTMLUListElement, ListType>( ({children, depth, tree=false}, ref) => {
-    /*
-    const inheritedContext = useContext(ListContext)
+/*
+const handlePhantomInsert = (event: React.PointerEvent, item: HTMLElement | null) => {
+    event.stopPropagation()
+    document.querySelectorAll(".phantom").forEach(phantom => phantom.remove())
+    if(item) { insertPhantomElement(item)}
+}
+*/
 
-    const context = {
-        depth: inheritedContext ? inheritedContext.depth : depth,
-        tree: inheritedContext ? inheritedContext.tree : tree,
-    }
-    */
-
-
+const List = forwardRef<HTMLUListElement, ListType>( ({children, className, depth, tree=false, dragdrop=false, ...restProps}, ref) => {
+    
+    const context = useListContext()
+    const initialContext = useMemo(() => ({
+        tree: tree,
+        draggable: dragdrop
+    }), [])
 
     return (
-            <ul id="test-list" className="sg-list" style={{"--depth":depth} as React.CSSProperties}>
-                {children}
+            <ul ref={ref} id="test-list" data-context={context ? "true":"false" } className={useClassname("sg-list", className)} style={{"--depth":depth} as React.CSSProperties} {...restProps}>
+                { !context ? 
+                    <ListContextProvider value={initialContext}>
+                        {children}
+                    </ListContextProvider> 
+                    :
+                    children
+                }
             </ul>
     )
 })
 
-const Item = forwardRef<HTMLLIElement, ListItem>( ({children, ...restProps}, ref) => {
+const Sublist = forwardRef<HTMLLIElement, ListSublistType>( ({children, className, depth, ...restProps}, ref) => {
+    const { draggable } = useListContext()!
     const itemRef = useRef<HTMLLIElement>(null)
 
-    const coordinates = useDraggable(itemRef)
-    
-    /*
-    useEffect(() => {
-        if(itemRef.current) {
-            let listItem = itemRef.current!
+    const { coordinates, isMouseDown} = useDraggable(itemRef, {draggable})
 
-            const handleMouseIn = (event: PointerEvent) => {
-                console.log(event.target)
-            }
-
-            listItem.addEventListener("pointerover", handleMouseIn, false)
-            return function cleanup() {
-                listItem.removeEventListener("pointerover", handleMouseIn, false)
-            }
-        }
-    },[])
-    */
-    
     return (
-        <li ref={itemRef} className="sg-list-item" style={{ top: coordinates.top, left: coordinates.left }} {...restProps} >
+        <li ref={mergeRefs([ref,itemRef])} data-phantom="none" className={useClassname("sg-sublist", className)} style={{ "--depth":depth, top: coordinates.top, left: coordinates.left, width: coordinates.width } as React.CSSProperties} {...restProps}>
             {children}
         </li>
     )
 })
 
+const Item = forwardRef<HTMLLIElement, ListItemType>( ({children, className, ...restProps}, ref) => {
+    const { draggable } = useListContext()!
+    const itemRef = useRef<HTMLLIElement>(null)
+
+    const { coordinates, isMouseDown} = useDraggable(itemRef, {draggable})
+
+    return (
+        <li ref={itemRef} data-phantom="none" className={useClassname("sg-list-item", className)} style={{ top: coordinates.top, left: coordinates.left, width: coordinates.width } as React.CSSProperties} {...restProps} >
+            {children}
+        </li>
+    )
+})
+
+const Label = forwardRef<HTMLSpanElement, ListLabelType>( ({children, className, style, ...restProps}, ref) => {
+    const labelRef = useRef<HTMLElement>(null)
+    const computedClass = useClassname("sg-list-label", className)
+
+    //const coordinates = useDraggable(labelRef)
+    return (
+        (typeof children === "string") ?
+            <span ref={mergeRefs([ref, labelRef])} className={computedClass} style={{ ...style}} {...restProps}>
+                {children}
+            </span>
+            :
+            cloneElement(children as any,
+                {
+                    ref: mergeRefs([ref, labelRef]),
+                    className: computedClass,
+                    style: { ...(children as ReactElement).props.style}
+                }
+            )
+            
+    )
+})
+/*
+List.Sublist = Sublist
+List.Item = Item
+List.Label = Label
+
+export default List
+*/
 export default  Object.assign(List, {
-    Item: Item
+    Sublist: Sublist,
+    Item: Item,
+    Label: Label
 })

@@ -5,6 +5,7 @@ import { ModalBodyType, ModalContextType, ModalFooterType, ModalHeaderType, Moda
 
 import CloseButton from "../CloseButton/CloseButton"
 import Button from "../Button/Button"
+import mergeRefs from "../utils/MergeRefs"
 
 const ModalContext = createContext<ModalContextType>(null)
 const ModalContextProvider = ({children, value}:{children:React.ReactNode, value:ModalContextType}) => {
@@ -24,8 +25,8 @@ const useModalContext = () => {
     return context
 }
 
-const Modal = ({ children,  centered=false, size = "md",  show,  backdrop = "static",  onHide, className, id, ...restProps 
-    }: ModalType) => {
+const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children,  centered=false, size = "md",  show,  backdrop = "static",  onHide, className, id, ...restProps 
+    }, ref) => {
     const [showModal, setShowModal] = useState<boolean>(show)
     useEffect(() => {
         setShowModal(show)
@@ -43,23 +44,33 @@ const Modal = ({ children,  centered=false, size = "md",  show,  backdrop = "sta
     }
 
     const closeModal = () => {
-        if(onHide) {
-            onHide()
-        }
-        setShowModal(false);
+        const modal = modalRef.current!
+        modal.classList.add("close")
+        modal.addEventListener('animationend', (event) => {
+            console.log(event)
+            if(event.animationName === "scale-down") {
+                if(onHide) {
+                    onHide()
+                }
+                setShowModal(false)
+            }
+          }, {once : true});
     }
 
     useEffect(() => {
         const modal = modalRef.current
         
         if(!modal) return
+        
         if(showModal) {
             modal.classList.remove('close')
             modal.showModal()
         }
         else {
+           // modal.classList.add('close')
             modal.close()
         }
+        
     }, [showModal])
 
     let classNameComputed: string = `sg-modal-tag sg-modal-${size}`
@@ -75,17 +86,13 @@ const Modal = ({ children,  centered=false, size = "md",  show,  backdrop = "sta
         if(key != "Escape") {return}
             
         event.preventDefault()
-        const modal = modalRef.current!
-        modal.classList.add("close")
-        modal.addEventListener('animationend', () => {
-            closeModal(); // then run the default close method
-          }, {once : true});
+        closeModal()
     }
 
     return (
             createPortal(
-                <dialog ref={modalRef} className={classNameComputed} onKeyDown={(event) => handleKeyDown(event)} {...restProps }>
-                    <ModalContextProvider value={onHide}>
+                <dialog ref={mergeRefs([ref, modalRef])} className={classNameComputed} onKeyDown={(event) => handleKeyDown(event)} {...restProps }>
+                    <ModalContextProvider value={closeModal}>
                         {!typeCheck ?
                             children :
                             <ErrorModal typeCheck={typeCheck} closeModal={closeModal}/>
@@ -94,17 +101,17 @@ const Modal = ({ children,  centered=false, size = "md",  show,  backdrop = "sta
                 </dialog>
             , document.body)
     )
-}
+})
 
 const Header = forwardRef<HTMLDivElement | HTMLSpanElement | HTMLHeadingElement, ModalHeaderType>(({children, as="", className = "", closeButton = false, onClick, ...restProps}, ref) => {
     let validAs = ["div", "span", "h1", "h2", "h3", "h4", "h5", "h6"]
     let Component = validAs.find(valid => valid === as) ? as : "div"
-    const onHide = useModalContext()
+    const closeModal = useModalContext()
     const onCloseButtonClick = (event: React.MouseEvent) => {
         if(onClick) {
             onClick(event)
         }
-        onHide()
+        closeModal()
     }
 
     return (

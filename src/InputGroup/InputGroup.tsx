@@ -10,11 +10,11 @@ const InputGroup = forwardRef<HTMLDivElement, InputGroupType>(({children, classN
     )
 })
 
-const Text = forwardRef<HTMLSpanElement, InputGroupText>( ({children, className, ...restProps}, ref) => {
+const Text = forwardRef<HTMLLabelElement, InputGroupText>( ({children, className, ...restProps}, ref) => {
     return (
-        <span ref={ref} className={`sg-input-group-text${className ? " "+className : ""}`} {...restProps}>
+        <label ref={ref} className={`sg-input-group-text${className ? " "+className : ""}`} {...restProps}>
             {children}
-        </span>
+        </label>
     )
 })
 

@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState, cloneElement, forwardRef, ReactNode
 import { createPortal } from "react-dom";
 import { OverlayType, PositionObject } from "./Overlay.types";
 
+import mergeRefs from "../utils/MergeRefs";
+
 const setPosition = (referenceElement:any, overlayElement:any, position:string, arrowElement: any, isArrow: boolean=false, boundaryCorrection: PositionObject = {top:0, left:0, bottom: 0, right: 0}) => {
     const refCurrent = referenceElement.current as HTMLElement 
     const overlayCurrent = overlayElement.current as HTMLElement 
@@ -129,14 +131,18 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, sh
         setArrowPosition( setPosition(positionRef, arrowRef, autoPositionRef.current, arrowRef, true) )
     }
     const handleScroll = () => {
+        if(internalShowRef.current) {
+            positionSetter(positionRef, overlayRef, arrowRef)
+        }
         if(internalShowRef.current && position === "auto") {
             let updatedPosition = updateAutoPosition(autoPositionRef, positionRef, overlayRef, arrowRef)
             setAutoPositionRef(updatedPosition)
         }
-        positionSetter(positionRef, overlayRef, arrowRef)
     }
     const resizeHandler = () => {
-        positionSetter(positionRef, overlayRef, arrowRef)
+        if(internalShowRef.current) {
+            positionSetter(positionRef, overlayRef, arrowRef)
+        }
         if(!internalShowRef.current && position === "auto") {
             //setAutoPosition(detectAutoPostition(overlayRef, autoPositionRef))
         }
@@ -231,7 +237,7 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, sh
             {show ? createPortal(
                 <>
                     <div
-                        ref={overlayRef}
+                        ref={mergeRefs([ref,overlayRef])}
                         style={{ 
                             maxWidth:"100%", 
                             maxHeight:"100%", 

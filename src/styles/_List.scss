@@ -1,24 +1,62 @@
 .sg-list {
-    --depth: 0;
+    --padding: 0rem;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    padding-left: var(--padding);
+
+    span {
+        display: list-item;
+    }
+
+    .sg-list {
+        --padding: 0.5rem;
+    }
+}
+
+
+.sg-sublist {
     list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
+.sg-list-label {
+    background-color: black;
+}
+
 .sg-list-item {
-    padding: 0.5rem 1rem;
     margin: 0;
-    border: 1px solid white;
-    margin-left: calc( (var(--depth) - 1) * 0.5rem );
+    background-color: black;
 
     > * {
         user-select: inherit;
     }
+}
 
-    &.moving {
-        position:absolute;
-        top: 0;
-        left: 0;
-        z-index: $zindex-popover;
+.moving {
+    position:absolute;
+    top: 0;
+    left: 0;
+    z-index: $zindex-popover;
+}
+
+.phantom {
+    position: relative;
+    display: list-item;
+
+    border: 1px solid transparent;
+
+    margin-left: calc( (var(--depth) - 1) * 0.5rem );
+
+    transition: all 0.2s ease-in-out;
+    outline: 2px solid red;
+
+    animation: size 0.3s ease-in-out
+}
+
+@keyframes size {
+    from {
+        height: 10px;
     }
 }

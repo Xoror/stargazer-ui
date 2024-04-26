@@ -1,6 +1,8 @@
 import { createPortal } from "react-dom";
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 
+import mergeRefs from "../utils/MergeRefs";
+
 import { PopoutType, PopoutBodyType, PopoutFooterType, PopoutHeaderType, PopoutTextType, PopoutTitleType } from "./Popout.types";
 /*
 export const useEventListener = (eventType: keyof HTMLElementEventMap, callback: EventListenerOrEventListenerObject, options: boolean | AddEventListenerOptions | undefined, customOptions: {element: HTMLElement}) => {
@@ -80,7 +82,7 @@ const Popout = forwardRef<HTMLDialogElement, PopoutType>(({children, initialPosi
     return (
         createPortal(
             <dialog data-resize={resizeComputed} data-move={moveComputed} data-passedref={passedRef}
-                ref={popupRef} id={id} className={`sg-moveable-popout${className ? " "+className : ""}`}
+                ref={mergeRefs([ref,popupRef])} id={id} className={`sg-moveable-popout${className ? " "+className : ""}`}
                 style={{...style, top:coordinates.top, left:coordinates.left, bottom:coordinates.bottom, right:coordinates.right}}
                 onPointerDown={onMouseDown} onPointerMove={(event) => onMouseMove(event)} {...restProps}
             >

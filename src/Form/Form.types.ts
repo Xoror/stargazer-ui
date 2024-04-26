@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode, Dispatch, Children } from "react";
 
-import { BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseSelectType, BaseSmallType } from "../utils/BaseTypes";
+import { BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSmallType, BaseUListType } from "../utils/BaseTypes";
 
 export type FormContextType = {
     controlId: string
@@ -19,11 +19,44 @@ export type FormControlType = {
     autoFocus?: boolean
 } & BaseInputType
 
+// Form Select types
+export type SelectContextType = {
+    showList: boolean,
+    setShowList: Dispatch<React.SetStateAction<boolean>>,
+    activeDescendant: string,
+    setActiveDescendant: Dispatch<React.SetStateAction<string>>,
+    inputValue: string, 
+    setInputValue: Dispatch<React.SetStateAction<string>>
+}
 export type FormSelectType = {
     children: ReactNode,
     className?: string,
     id?: string,
-} & BaseSelectType
+} & BaseDivType // BaseSelectType
+export type FormSelectControlType = {
+    children?: ReactNode,
+    className?: string,
+    placeholder?: string,
+    searchable?: boolean,
+    inputRef?: React.Ref<HTMLInputElement>,
+    inputOptions?: FormSelectInputType
+} & BaseDivType
+export type FormSelectInputType = {
+    className?: string,
+    id?: string
+} & BaseInputType
+export type FormSelectListType = {
+    children: ReactNode,
+    className?: string,
+    id?: string
+} & BaseUListType
+export type FormSelectListItemType = {
+    children: ReactNode,
+    className?: string,
+    id?: string,
+    value?: string
+} & BaseLItemType
+
 
 export type FormGroupType = {
     children: ReactNode,
