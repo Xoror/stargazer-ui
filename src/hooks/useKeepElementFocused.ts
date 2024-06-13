@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 
-export const useKeepElementFocused = (elementRef) => {
+const useKeepElementFocused = (elementRef:any) => {
     useEffect(() => {
-        const onKeyDown  = (event) => {
+        const onKeyDown  = (event: React.KeyboardEvent | KeyboardEvent) => {
             const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-            const modal = elementRef.current
+            const modal = elementRef.current as HTMLElement
             if(modal) {
-                const firstFocusableElement = modal.querySelectorAll(focusableElements)[0]
-                const focusableContent = modal.querySelectorAll(focusableElements)
+                const firstFocusableElement = modal.querySelectorAll<HTMLElement>(focusableElements)[0]
+                const focusableContent = modal.querySelectorAll<HTMLElement>(focusableElements)
                 const lastFocusableElement = focusableContent[focusableContent.length - 1]
                 let isTabPressed = event.key === 'Tab' || event.keyCode === 9;
         
@@ -33,3 +33,5 @@ export const useKeepElementFocused = (elementRef) => {
         }
     }, [elementRef])
 }
+
+export default useKeepElementFocused

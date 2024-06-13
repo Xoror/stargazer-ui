@@ -1,3 +1,5 @@
+import { useLocation  } from "react-router-dom"
+
 import Tabs from '../src/Tabs'
 import Popout from '../src/Popout'
 
@@ -8,6 +10,7 @@ import OverlayPage from './pages/OverlayPage'
 import FormPage from './pages/FormPage'
 import ModalPage from './pages/ModalPage'
 import ListPage from './pages/ListPage'
+import { useState } from "react"
 
 const tabs = [
     {
@@ -48,6 +51,8 @@ const tabs = [
 ]
 
 export const Component = () => {
+
+
     return (
         <div style={{height:"200vh"}}>
             {false ? 

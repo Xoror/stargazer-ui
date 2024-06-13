@@ -25,7 +25,7 @@
   }
 }
 [data-navdropdown="true"] .sg-nav-link {
-  color: white;
+  color: var(--sg-navbar-hover-color);
   font-size: 0.85rem;
   text-decoration: none;
 }

@@ -2,13 +2,6 @@
 @use "sass:color";
 @use "sass:list";
 
-//$colors: ("red": #FD8A8A, "yellow": #F1F7B5, "green": #A8D1D1, "blue": #9EA1D4);
-//$colors: ("red": #eb3333, "yellow": #f8d613, "green": #0c860c, "blue": #145ec0);
-//$colors: ("red": #E15554, "green": #3BB273, "yellow": #E1BC29, "blue": #4D9DE0, "purple": #7768AE);
-//$hover-colors: (color.mix(#000000, #eb3333, 15%), color.mix(#000000, #f8d613, 15%), color.mix(#000000, #0c860c, 15%) ,color.mix(#000000, #145ec0, 15%));
-//$active-colors: (color.mix(#000000, #eb3333, 20%), color.mix(#000000, #f8d613, 20%), color.mix(#000000, #0c860c, 20%) ,color.mix(#000000, #145ec0, 20%));
-
-//$colors: ("primary": #0d6efd, "secondary": #6c757d, "success": #198754, "info": #0dcaf0, "warning": #ffc107, "danger": #dc3545, "light": #f8f9fa, "dark": #212529);
 
 .sg-button {
     --text-color: white;
@@ -22,7 +15,7 @@
     --focus-visible-outline-color: #0d6efd;
     --focus-visible-boxshadow-color: white;
 
-    border-radius: 0.375rem;
+    //border-radius: 0.375rem;
     min-width: fit-content;
     display: inline-block;
     text-align: center;
@@ -30,7 +23,7 @@
     padding: 0.375rem 0.75rem;
 
     background-color: var(--bg-color);
-    border: 1px solid /*inset*/ var(--border-color);
+    border: 2px outset color-mix(in oklab, var(--bg-color), var(--text-color) 20%);// 1px solid /*inset*/ var(--border-color);
     color: var(--text-color);
     &:hover, &:focus {
         background-color: var(--bg-hover-color);
@@ -39,13 +32,16 @@
     &:active{
         background-color: var(--bg-active-color);
         border-color: var(--border-active-color);
+        border-style: inset;
     }
+    /*
     &:focus-visible {
         box-shadow: 0 0 0 3px var(--focus-visible-boxshadow-color);
         border: 1px solid var(--focus-visible-border-color);
         outline: 2px solid var(--focus-visible-outline-color);
         z-index: 5;
     }
+    */
 }
 
 @each $name, $color in $colors {

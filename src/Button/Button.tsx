@@ -12,4 +12,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonType>( ({children, variant="p
     )
 } )
 
+Button.displayName = "Button"
+
 export default Button

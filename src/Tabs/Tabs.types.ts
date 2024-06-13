@@ -4,7 +4,8 @@ export type TabsContextType = {
     activeTab: string,
     setActiveTab: React.Dispatch<React.SetStateAction<string>>,
     controlId: string,
-    activeClass: string
+    activeClass: string,
+    onTabChange: Function | undefined
 }
 
 export type TabsType = {
@@ -13,6 +14,8 @@ export type TabsType = {
     controlId: string,
     activeClassName?: string,
     defaultActive: string,
+    active?: string,
+    onTabChange?: Function
 } & BaseDivType
 
 export type TabsControlsType = {

@@ -25,7 +25,7 @@ const useModalContext = () => {
     return context
 }
 
-const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children,  centered=false, size = "md",  show,  backdrop = "static",  onHide, className, id, ...restProps 
+const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children, size = "md",  show,  backdrop = "static", fill=false,  onHide, className, id, ...restProps 
     }, ref) => {
     const [showModal, setShowModal] = useState<boolean>(show)
     useEffect(() => {
@@ -73,13 +73,15 @@ const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children,  centered=f
         
     }, [showModal])
 
-    let classNameComputed: string = `sg-modal-tag sg-modal-${size}`
+    let classNameComputed: string = `sg-modal-tag`
     if(className) {
         classNameComputed += " "+className
     }
     if(backdrop === "static" || backdrop === "true") {
         classNameComputed += " sg-modal-static"
     }
+    if(fill) classNameComputed += " sg-modal-fill"
+    if(size && !fill)  classNameComputed += ` sg-modal-${size}`
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDialogElement>) => {
         const key: string = event.key
@@ -102,6 +104,7 @@ const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children,  centered=f
             , document.body)
     )
 })
+Modal.displayName = "Modal"
 
 const Header = forwardRef<HTMLDivElement | HTMLSpanElement | HTMLHeadingElement, ModalHeaderType>(({children, as="", className = "", closeButton = false, onClick, ...restProps}, ref) => {
     let validAs = ["div", "span", "h1", "h2", "h3", "h4", "h5", "h6"]
@@ -121,6 +124,7 @@ const Header = forwardRef<HTMLDivElement | HTMLSpanElement | HTMLHeadingElement,
         </Component>
     )
 })
+Header.displayName = "ModalHeader"
 
 const Title = forwardRef<HTMLDivElement | HTMLSpanElement | HTMLHeadingElement, ModalTitleType>( ({children, as="h4", className, ...restProps}, ref) => {
     let validAs = ["div", "span", "h1", "h2", "h3", "h4", "h5", "h6"]
@@ -131,6 +135,7 @@ const Title = forwardRef<HTMLDivElement | HTMLSpanElement | HTMLHeadingElement, 
         </Component>
     )
 })
+Title.displayName = "ModalTitle"
 
 const Body = forwardRef<HTMLDivElement, ModalBodyType>( ({children, className, ...restProps}, ref) => {
     return (
@@ -139,6 +144,7 @@ const Body = forwardRef<HTMLDivElement, ModalBodyType>( ({children, className, .
         </div>
     )
 })
+Body.displayName = "ModalBody"
 
 const Footer = forwardRef<HTMLDivElement, ModalBodyType>( ({children, className, ...restProps}, ref) => {
     return (
@@ -147,6 +153,7 @@ const Footer = forwardRef<HTMLDivElement, ModalBodyType>( ({children, className,
         </div>
     )
 })
+Footer.displayName = "ModalFooter"
 
 export default Object.assign(Modal, {
     Header: Header,

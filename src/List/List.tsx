@@ -28,7 +28,6 @@ const handlePhantomInsert = (event: React.PointerEvent, item: HTMLElement | null
 */
 
 const List = forwardRef<HTMLUListElement, ListType>( ({children, className, depth, tree=false, dragdrop=false, ...restProps}, ref) => {
-    
     const context = useListContext()
     const initialContext = useMemo(() => ({
         tree: tree,
@@ -47,6 +46,7 @@ const List = forwardRef<HTMLUListElement, ListType>( ({children, className, dept
             </ul>
     )
 })
+List.displayName = "List"
 
 const Sublist = forwardRef<HTMLLIElement, ListSublistType>( ({children, className, depth, ...restProps}, ref) => {
     const { draggable } = useListContext()!
@@ -60,6 +60,7 @@ const Sublist = forwardRef<HTMLLIElement, ListSublistType>( ({children, classNam
         </li>
     )
 })
+Sublist.displayName = "ListSubList"
 
 const Item = forwardRef<HTMLLIElement, ListItemType>( ({children, className, ...restProps}, ref) => {
     const { draggable } = useListContext()!
@@ -73,6 +74,7 @@ const Item = forwardRef<HTMLLIElement, ListItemType>( ({children, className, ...
         </li>
     )
 })
+Item.displayName = "ListItem"
 
 const Label = forwardRef<HTMLSpanElement, ListLabelType>( ({children, className, style, ...restProps}, ref) => {
     const labelRef = useRef<HTMLElement>(null)
@@ -95,6 +97,7 @@ const Label = forwardRef<HTMLSpanElement, ListLabelType>( ({children, className,
             
     )
 })
+Label.displayName = "ListLabel"
 /*
 List.Sublist = Sublist
 List.Item = Item

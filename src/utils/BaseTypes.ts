@@ -10,9 +10,12 @@ type BaseInputType = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInput
 type BaseHrType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLHRElement>, HTMLHRElement>;
 type BaseLabelType = React.DetailedHTMLProps<React.LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>;
 type BaseLItemType = React.DetailedHTMLProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>;
+type BaseMeterType = React.DetailedHTMLProps<React.MeterHTMLAttributes<HTMLMeterElement>, HTMLMeterElement>;
 type BaseNavType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
 type BaseParagraphType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>;
+type BaseProgressBarType = React.DetailedHTMLProps<React.ProgressHTMLAttributes<HTMLProgressElement>, HTMLProgressElement>;
 type BaseSelectType = React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>;
+type BaseSliderType = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 type BaseSmallType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
 type BaseSpanType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>;
 type BaseTableType = React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>;
@@ -22,6 +25,6 @@ type BaseElementType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>
 
 export { 
     BaseAnchorType, BaseButtonType, BaseDialogType, BaseDivType, BaseElementType, BaseFormType, BaseHeadingType, BaseHrType,
-    BaseInputType, BaseLItemType, BaseLabelType, BaseNavType, BaseParagraphType, BaseSelectType, BaseSmallType, BaseSpanType,
+    BaseInputType, BaseLItemType, BaseLabelType, BaseSliderType, BaseMeterType, BaseNavType, BaseParagraphType, BaseProgressBarType, BaseSelectType, BaseSmallType, BaseSpanType,
     BaseTableType, BaseUListType
 }

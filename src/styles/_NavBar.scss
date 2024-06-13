@@ -12,9 +12,9 @@
   background-color: var(--sg-navbar-bg);
   background: linear-gradient(71deg, 
             var(--sg-navbar-bg), 
-            color-mix(in srgb, var(--sg-navbar-bg), white 5%),
+            color-mix(in srgb, var(--sg-navbar-bg), var(--sg-navbar-hover-color) 5%),
             var(--sg-navbar-bg),
-            color-mix(in srgb, var(--sg-navbar-bg), white 5%),
+            color-mix(in srgb, var(--sg-navbar-bg), var(--sg-navbar-hover-color) 5%),
             var(--sg-navbar-bg)
         );
 

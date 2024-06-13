@@ -1,13 +1,21 @@
 import { ReactNode } from "react";
 
-import { BaseDivType } from "../utils/BaseTypes";
+import { BaseDivType, BaseLabelType } from "../utils/BaseTypes";
 
 export type InputGroupType = {
     children: ReactNode,
-    className?: string
+    className?: string,
+    controlId: string
 } & BaseDivType
 
 export type InputGroupText = {
     children: ReactNode,
-    className?: string
-}
+    className?: string,
+    htmlFor?: string
+} & BaseLabelType
+
+export type InputGroupGridType = {
+    children: ReactNode,
+    className?:string,
+
+} & BaseDivType

@@ -10,5 +10,6 @@ const Spinner = forwardRef<HTMLDivElement, SpinnerType>( ({size="1em", color="wh
         </>
     )
 })
+Spinner.displayName = "Spinner"
 
 export default Spinner

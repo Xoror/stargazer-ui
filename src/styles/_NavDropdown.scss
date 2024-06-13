@@ -22,7 +22,7 @@
         border: 1px solid transparent;
     }
     &[aria-expanded="true"] {
-        color:white;
+        color:var(--sg-navbar-hover-color);
     }
   
     // Disabled state lightens text

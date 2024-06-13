@@ -26,7 +26,7 @@
     }
 
     &.sg-active {
-        border: 2px solid white;
+        border: 2px solid $sg-tab-button-color;
         border-bottom: 2px solid var(--sg-body-bg);
         //color: white;
     }

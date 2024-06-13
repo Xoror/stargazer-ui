@@ -2,7 +2,7 @@
 @use "mixins";
 
 $sg-modal-margin: 0.5rem;
-$sg-modal-background-color: #2e3236;
+$sg-modal-background-color: $sg-body-bg;// #2e3236;
 $sg-modal-text-color: white;
 $sg-modal-radius: 0.5rem;
 $sg-modal-transition: transform .3s ease-out;
@@ -10,7 +10,7 @@ $sg-modal-transition: transform .3s ease-out;
 .sg-modal-tag::backdrop {
     z-index: calc($zindex-modal);
     background: hsla(0, 0%, 0%);
-    opacity: 0.5;
+    opacity: 0.75;
     animation-name: fadeInBackdrop;
     animation-duration: 0.3s;
     animation-timing-function: ease-in-out;
@@ -45,7 +45,11 @@ $sg-modal-transition: transform .3s ease-out;
   z-index: calc($zindex-modal + 1);
 
   padding: 0;
-  margin: calc(4 * $sg-modal-margin);
+  top: 10%;
+  height: 80%;
+  //min-height: 40ch;
+  margin-right: auto;
+  margin-left: auto;
 
   //width: 100%; // Ensure `.modal-content` extends the full width of the parent `.modal-dialog`
   
@@ -54,15 +58,17 @@ $sg-modal-transition: transform .3s ease-out;
   color: $sg-modal-text-color;
   background-color: $sg-modal-background-color;
   background-clip: padding-box;
-  border: 1px solid $sg-modal-text-color;
-  border-radius: $sg-modal-radius;
+  border: 2px outset color-mix(in oklab, $sg-modal-background-color, currentColor 60%);// 1px solid $sg-modal-text-color;
+  //border-radius: $sg-modal-radius;
   // Remove focus outline from opened modal
   flex-direction: column;
   overflow: auto;
   //animation-fill-mode: forwards;
 
   &[open=""] {
-    display: flex;
+    display: grid;
+    width: 100%;
+    grid-template-rows: [header-start] auto [header-end body-start] 1fr [body-end footer-start] auto [footer-end] ;// auto 1fr auto;
     animation-name: slide-in-up;
     animation-duration: .3s;
     animation-timing-function: ease-in-out;
@@ -73,6 +79,18 @@ $sg-modal-transition: transform .3s ease-out;
     animation: scale-down 0.3s ease-in-out;
     animation-fill-mode: forwards;
   }
+
+  > form {
+    grid: body;
+    display: grid;
+    grid-template-rows: [body-start] 1fr [body-end footer-start] auto [footer-end];
+    .sg-modal-body {
+      grid-row: body;
+    }
+    .sg-moda-footer {
+      grid-row: footer;
+    }
+  }
 }
 @keyframes scale-down {
   to { transform: translateY(10%); opacity: 0;}
@@ -82,23 +100,21 @@ $sg-modal-transition: transform .3s ease-out;
 }
 
 
-.sg-modal-dialog-centered {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100dvh;
-  max-width: 100dvw;
-  margin:0;
+.sg-modal-fill {
+  margin: auto;
+  top: 0;
+  height: 100%;
+  width: 100%;
 }
 
 .sg-modal-header {
+  grid-row: header;// 1 / span 1;
   display: flex;
-  flex-shrink: 0;
   align-items: center;
   justify-content: space-between; // Put modal header elements (title and dismiss) on opposite ends
   padding: 0.75rem;
-  border-bottom: 1px solid $sg-modal-text-color;
-  @include border-top-radius($sg-modal-radius);
+  //border-bottom: 1px solid $sg-modal-text-color;
+  //@include border-top-radius($sg-modal-radius);
 
   margin: 0;
 
@@ -111,18 +127,20 @@ $sg-modal-transition: transform .3s ease-out;
   margin: 0;
 }
 .sg-modal-body {
+  grid-row: body;// 2 / span 1;
   position: relative;
-  flex: 1 1 auto;
   padding: 1rem;
-  background-color: color.mix(white,$sg-modal-background-color, 10%);
+  background-color: color-mix(in oklab, $sg-modal-background-color, currentColor 5%);
+
+  min-height: 20ch;
   
-  max-height: 40ch;
   overflow: auto;
   p {
     margin: 0;
   }
 }
 .sg-modal-footer {
+  grid-row: footer;// 3 / span 1;
   display: flex;
   flex-shrink: 0;
   flex-wrap: wrap;
@@ -130,18 +148,55 @@ $sg-modal-transition: transform .3s ease-out;
   justify-content: flex-end;
   padding: 0.75rem;
   background-color: $sg-modal-background-color;
-  border-top: 1px solid $sg-modal-text-color;
-  @include border-bottom-radius($sg-modal-radius);
+  //border-top: 1px solid $sg-modal-background-color; //$sg-modal-text-color;
+  //@include border-bottom-radius($sg-modal-radius);
 
   gap: 0.5rem;
 }
 
-$modal-lg: 800px !default;
-$modal-xl: 1140px !default;
+
+$modal-sm: 300px !default;
+$modal-md: 500px !default;
+$modal-lg: 700px !default;
 
 $container-max-widths: ( sm: 540px, md: 720px, lg: 960px, xl: 1140px, xxl: 1320px ) !default;
 $grid-breakpoints: (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px, xxl: 1400px ) !default;
+//300, 500, 800
+.sg-modal-sm {
+  max-width: $modal-sm;
+}
+.sg-modal-md {
+  max-width: $modal-md;
+}
+.sg-modal-lg {
+  max-width: $modal-lg;
+}
+@media (max-width: 324px) {
+  .sg-modal-tag {
+    margin: auto;
+    top: 0;
+    width: 100%;
+  }
+}
+@media (min-width: 325px) and (max-width: 575px) {
+  .sg-modal-md, .sg-modal-lg {
+    max-width: $modal-sm;
+  }
+}
+@media (min-width: 576px) and (max-width:767px) {
+  .sg-modal-lg {
+    max-width: $modal-md;
+  }
+}
+@media (min-width: 768px) {
+  .sg-modal-lg {
+    max-width: $modal-lg;
+  }
+}
 
+
+
+/*
 @each $breakpoint, $value in $grid-breakpoints {
   @if $breakpoint == "xs" {
     @media (max-width: 575px) {
@@ -177,3 +232,4 @@ $grid-breakpoints: (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px, xxl: 140
     }
   }
 }
+*/

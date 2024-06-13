@@ -94,7 +94,7 @@ const updateAutoPosition = (autoPositionRef:any, positionRef:any, overlayRef:any
     }
 }
 
-const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, show=false, onToggle, position="auto", trigger="click", defaultShow=false}, ref) => {
+const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, tooltip, show=false, onToggle, position="auto", trigger="click", defaultShow=false}, ref) => {
     if(Array.isArray(children)) {
         throw new Error(
             "Overlay can only wrap a single element, either introduce a wrapper or remove all but one trigger element!"
@@ -111,6 +111,10 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, sh
     const setInternalShowRef = (updatedValue: boolean) => {
         internalShowRef.current = updatedValue
         setInternalShow(updatedValue)
+    }
+    if(show && show != internalShow) {
+        console.log("show")
+        setInternalShowRef(show)
     }
 
     //const positionsList = ["top", "right", "bottom", "left"]
@@ -162,6 +166,7 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, sh
         }
     }
     const onHover = (event: MouseEvent) => {
+        setInternalShowRef(true)
         if(!isHovering) {
             setIsHovering(true)
             if(onToggle) {
@@ -200,8 +205,9 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, sh
         if(overlayRef.current && arrowRef.current) {
             positionSetter(positionRef, overlayRef, arrowRef)
         }
-        setInternalShowRef(show)
-    },[show, overlayRef, positionRef, autoPosition])
+        //setInternalShowRef(show)
+    },[internalShow, overlayRef, positionRef, autoPosition])
+
 
     useEffect(() => {
         window.addEventListener("scroll", handleScroll, true)
@@ -234,24 +240,38 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, sh
                     onBlur: triggerArray.find(trigger => trigger === "focus") ? onBlur : null,
                 })
             }
-            {show ? createPortal(
-                <>
-                    <div
-                        ref={mergeRefs([ref,overlayRef])}
-                        style={{ 
-                            maxWidth:"100%", 
-                            maxHeight:"100%", 
-                            position:checkRefPositionStyle(positionRef), top:overlayPosition!.top, left:overlayPosition!.left, zIndex:"1010"}}
-                    >{overlay}</div>
-                    <div
-                        id="sg-overlay-arrow" ref={arrowRef} aria-hidden
-                        className={`sg-overlay-arrow${autoPosition ? " overlay-position-"+autoPosition : ""}`} 
-                        style={{position:checkRefPositionStyle(positionRef), top:arrowPosition!.top, left:arrowPosition!.left,}}>
-                    </div>
-                </>
+            {internalShow ? createPortal(
+                overlay ?
+                    <>
+                        <div className="sg-overlay-wrapper"
+                            ref={mergeRefs([ref,overlayRef])}
+                            style={{ position:checkRefPositionStyle(positionRef), top:overlayPosition!.top, left:overlayPosition!.left }}
+                        >{overlay}</div>
+                        <div
+                            ref={arrowRef} aria-hidden
+                            className={`sg-overlay-arrow${autoPosition ? " overlay-position-"+autoPosition : ""}`} 
+                            style={{position:checkRefPositionStyle(positionRef), top:arrowPosition!.top, left:arrowPosition!.left,}}>
+                        </div>
+                    </>
+                    :
+                tooltip ? 
+                    <>
+                        <div className="sg-overlay-wrapper sg-tooltip-wrapper"
+                            ref={mergeRefs([ref,overlayRef])}
+                            style={{ position:checkRefPositionStyle(positionRef), top:overlayPosition!.top, left:overlayPosition!.left }}
+                        >{tooltip}</div>
+                        <div
+                            ref={arrowRef} aria-hidden
+                            className={`sg-overlay-arrow sg-tooltip-arrow${autoPosition ? " overlay-position-"+autoPosition : ""}`} 
+                            style={{position:checkRefPositionStyle(positionRef), top:arrowPosition!.top, left:arrowPosition!.left,}}>
+                        </div>
+                    </>
+                    :
+                null
             , document.body) : null}
         </>
     )
 })
+Overlay.displayName = "Overlay"
 
 export default Overlay

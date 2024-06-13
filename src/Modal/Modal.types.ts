@@ -8,7 +8,7 @@ export type ModalType = {
     children:ReactNode,
     className?: string,
     id?: string,
-    centered?: boolean,
+    fill?: boolean,
     size?: string,
     show: boolean,
     backdrop?: string,

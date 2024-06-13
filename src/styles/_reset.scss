@@ -11,16 +11,16 @@
   --sg-link-color: #fc5d5d;// #4D9DE0;// #0d6efd;
   --sg-link-hover-color: color.mix(black, #E15554, 15%);// #62a4da;// #0a58ca;
 
-  --primary: color-mix(in srgb, black 42%, #4D9DE0);
-  --secondary: #6c757d;
-  --success: color-mix(in srgb, black 44%, hsl(148, 70%, 42%)); //hsl(148, 50%, 46%)
-  --info: #7768AE;
-  --warning: #E1BC29;
-  --danger: #fc5f5f;
-  --light: #f8f9fa;
-  --dark: #212529;
+  --sg-primary: rgb(73, 149, 213);
+  --sg-secondary: rgb(108, 117, 125);
+  --sg-success: rgb(31, 173, 97); //hsl(148, 50%, 46%)
+  --sg-info: rgb(145, 132, 189);
+  --sg-warning: rgb(224, 188, 41);
+  --sg-danger: rgb(252, 95, 95);
+  --sg-light: rgb(248, 249, 250);
+  --sg-dark: rgb(33, 37, 41);
 
-  --red-2: #f87171;
+  --red-2: rgb(248, 113, 113);
   --orange-2: rgb(251 146 60);
   --yellow-2: rgb(251 191 36);
 
@@ -90,7 +90,7 @@ body {
 }
 
 :focus-visible {
-  z-index: 9999;
+  //z-index: 9999;
 }
 .flex-column {
   display: flex;

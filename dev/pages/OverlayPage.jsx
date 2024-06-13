@@ -16,10 +16,16 @@ const OverlayPage = () => {
     }
     return (
         <>
-            <h4 style={{marginLeft:"1.5rem"}}>Overlay</h4>
+            <h4>Overlay</h4>
             <section className="overlay-container">
-                <Overlay overlay={<OverlayElement/>} show={show} onToggle={handleToggle}>
+                <Overlay overlay={<OverlayElement/>}  trigger={"hover"}>
                     <Button>Click</Button>
+                </Overlay>
+            </section>
+            <h4>Tooltip</h4>
+            <section className="overlay-container">
+                <Overlay tooltip={"Testing a tooltip with a long message. This messsage is so long it hsould in theory trigger a wrap."} trigger={"hover"}>
+                    <span>Click</span>
                 </Overlay>
             </section>
         </>

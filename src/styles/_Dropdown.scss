@@ -18,14 +18,14 @@
   z-index: $zindex-dropdown;
   display: none; // none by default, but block on "open" of the menu
   min-width: 10rem;
-  padding: 0.5rem 0rem;
+  padding: 0;
   margin: 0; // Override default margin of ul
   text-align: left; // Ensures proper alignment if parent has it changed (e.g., modal footer)
   list-style: none;
-  background-color: $sg-dropdown-list-bg;
+  background-color: $sg-body-bg; //$sg-dropdown-list-bg;
   color: white;
   background-clip: padding-box;
-  border: 2px outset white;
+  border: 2px outset color-mix(in oklab, $sg-body-bg, white 60%);// white;
   //border-radius: 0.375rem;
 }
 .sg-dropdown-list.show {
@@ -88,7 +88,7 @@
   white-space: nowrap; // prevent links from randomly breaking onto new lines
   background-color: transparent; // For `<button>`s
   color: inherit;
-  border: 1px solid transparent; // For `<button>`s
+  border: 2px solid transparent; // For `<button>`s
 
   &.active,
   &:active {
@@ -101,9 +101,13 @@
       opacity: 0.5;
   }
   &.sg-dropdown-item-visual-focus {
+    /*
     background-color: $sg-dropdown-item-hover-bg;
     border-top: 1px solid white;
     border-bottom: 1px solid white;
+    */
+    background-color: color-mix(in oklab, $danger, transparent 50%);
+    border: 2px outset color-mix(in oklab, $danger, currentColor 20%)
     //@include sg-focus-visible();
   }
 }

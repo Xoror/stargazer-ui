@@ -113,6 +113,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownType>((
         </div>
     )
 })
+Dropdown.displayName = "Dropdown"
 
 
 export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownToggleType>( ({children, className, as="button", variant="primary", ...restProps}, ref) => {
@@ -226,6 +227,7 @@ export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, Dropdown
         </Component>
     )
 })
+Toggle.displayName = "DropdownToggle"
 
 
 export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, className, style = {}, ...restProps}, ref) => {
@@ -315,6 +317,7 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
         </ul>
     )
 })
+Menu.displayName = "DropdownMenu"
 
 
 export const Item = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownItemType>( ({children, as="button", className, ...restProps}, ref) => {
@@ -327,12 +330,14 @@ export const Item = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownIt
         </li>
     )
 })
+Item.displayName = "DropdownItem"
 
 export const Divider = forwardRef<HTMLHRElement, DropdownDividerType>( ({className="", ...restProps}, ref) => {
     return (
         <hr ref={ref} className={`.sg-dropdown-divider${className}`} {...restProps}></hr>
     )
 })
+Divider.displayName = "DropdownDivider"
 
 export default  Object.assign(Dropdown, {
     Toggle: Toggle,

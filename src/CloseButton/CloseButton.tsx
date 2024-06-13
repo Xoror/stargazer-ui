@@ -9,5 +9,6 @@ const CloseButton = forwardRef<HTMLButtonElement, CloseButtonType>( ({className,
         </button>
     )
 })
+CloseButton.displayName = "CloseButton"
 
 export default CloseButton

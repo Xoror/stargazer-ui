@@ -1,6 +1,6 @@
 {
   "name": "stargazer-ui",
-  "version": "1.0.30",
+  "version": "1.1.0",
   "description": "React component library made by Stargazer Works",
   "module": "./index.js",
   "types": "./index.d.ts",
@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/Xoror/stargazer-ui#readme",
   "peerDependencies": {
+    "lodash": "^4.17.21",
     "react": ">=17.0.0",
     "react-dom": ">=17.0.0"
   },
@@ -47,6 +48,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@types/lodash": "^4.17.4",
     "@types/node": "^20.8.10",
     "@types/react": "^18.2.35",
     "@types/react-dom": "^18.2.14",
@@ -58,9 +60,11 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
     "glob": "^10.3.10",
+    "lodash": "^4.17.21",
     "react": ">=17.0.0",
     "react-bootstrap": "^2.10.1",
     "react-dom": ">=17.0.0",
+    "react-router-dom": "^6.23.1",
     "rollup": "^4.12.0",
     "rollup-plugin-dts": "^6.1.0",
     "rollup-plugin-generate-package-json": "^3.2.0",

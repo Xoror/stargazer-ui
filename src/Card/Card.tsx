@@ -9,6 +9,7 @@ const Card = forwardRef<HTMLDivElement, CardType>( ({children, className, varian
         </div>
     )
 })
+Card.displayName = "Card"
 
 const Header = forwardRef<HTMLDivElement | HTMLHeadingElement | HTMLSpanElement, CardHeaderType>( ({as="div", className, children, ...restProps}, ref) => {
     let validAs = ["div", "span", "h1", "h2", "h3", "h4", "h5", "h6"]
@@ -20,6 +21,7 @@ const Header = forwardRef<HTMLDivElement | HTMLHeadingElement | HTMLSpanElement,
         </Component>
     )
 })
+Header.displayName = "CardHeader"
 
 const Title = forwardRef<HTMLHeadingElement, CardHeaderType>(({as="h5", className, children, ...restProps}, ref) => {
     let validAs = ["h1", "h2", "h3", "h4", "h5", "h6"]
@@ -30,6 +32,7 @@ const Title = forwardRef<HTMLHeadingElement, CardHeaderType>(({as="h5", classNam
         </Component>
     )
 })
+Title.displayName  = "CardTitle"
 
 const Body = forwardRef<HTMLDivElement, CardBodyType>( ({children, className, ...restProps}, ref) => {
     return (
@@ -38,6 +41,7 @@ const Body = forwardRef<HTMLDivElement, CardBodyType>( ({children, className, ..
         </div>
     )
 })
+Body.displayName = "CardBody"
 
 const Text = forwardRef<HTMLParagraphElement, CardTextType>( ({children, className, ...restProps}, ref) => {
     return (
@@ -46,6 +50,7 @@ const Text = forwardRef<HTMLParagraphElement, CardTextType>( ({children, classNa
         </p>
     )
 })
+Text.displayName = "CardText"
 
 const Footer = forwardRef<HTMLDivElement, CardFooterType>( ({children, className, ...restProps}, ref) => {
     return (
@@ -54,6 +59,7 @@ const Footer = forwardRef<HTMLDivElement, CardFooterType>( ({children, className
         </div>
     )
 })
+Footer.displayName = "CardFooter"
 
 export default  Object.assign(Card, {
     Header: Header,

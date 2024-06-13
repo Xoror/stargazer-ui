@@ -16,5 +16,6 @@ const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonType>( ({children
         </button>
     )
 })
+ToggleButton.displayName = "ToggleButton"
 
 export default ToggleButton

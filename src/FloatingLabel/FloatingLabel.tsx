@@ -17,5 +17,6 @@ const FloatingLabel = forwardRef<HTMLLabelElement, FloatingLabelType>( ({childre
         </FormContextProvider>
     )
 })
+FloatingLabel.displayName = "FloatingLabel"
 
 export default FloatingLabel

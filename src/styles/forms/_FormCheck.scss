@@ -1,129 +1,267 @@
-$line-height: 1.4em;
-$primary-bg-color: #0d6efd;
-$primary-text-color: white;
-
 $form-switch-width: 2em;
 $form-switch-color: rgba(black, .25);
 
 .sg-form-check {
-    display: block;
-    min-height: $line-height;
-    padding-left: $line-height;
-    margin-bottom: 0.125em;
+  --input-background-color: #{$input-background-color};
+  --input-border-color: #{$input-border-color};
+  --input-border-color-focus: #{$input-border-color-focus};
+  --input-border-color-invalid: #{$input-border-color-invalid};
 
-    .sg-form-check-input {
-        float: left;
-        margin-left: $line-height* -1;
-    }
+  display: block;
+  min-height: $input-line-height;
+  padding-bottom: 0.5rem;
+
+  .sg-form-check-input {
+      float: left;
+  }
 }
 .sg-form-check-reverse {
-    display: block;
-    min-height: $line-height;
-    padding-right: $line-height;
-    margin-bottom: 0.125em;
-    text-align: right;
+  display: block;
+  min-height: $input-line-height;
+  padding-right: $input-line-height;
+  padding-bottom: 0.5rem;
+  text-align: right;
+
+  .sg-form-check-input {
+    float: right;
+    margin-right: $input-line-height * -1;
+    margin-left: 0;
+  }
+}
+/*
+@media (prefers-color-scheme: dark) {
+  .sg-form-check {
+    --input-background-color: #{$input-background-color-dark};
+    --input-border-color: #{$input-border-color-dark};
+    --input-border-color-focus: #{$input-border-color-focus-dark};
+    --input-border-color-invalid: #{$input-border-color-invalid-dark};
+  }
+
+}
+  */
+
+.sg-form-check-input {
+  margin-right: 1ch;
+  width: calc($input-line-height - 2px);
+  height: calc($input-line-height - 2px);
+
+  background-color: var(--input-background-color);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  appearance: none;
+  print-color-adjust: exact; // Keep themed appearance for print
+  border: $input-border-width $input-border-style var(--input-border-color);
+
+  &[type="checkbox"] {
+    border-radius: $input-border-radius;
+    background-clip: padding-box;
+    
+
+    &:indeterminate {
+      background-color: var(--input-border-color-focus);
+      border-color: var(--input-border-color-focus);
   
-    .sg-form-check-input {
-      float: right;
-      margin-right: $line-height * -1;
-      margin-left: 0;
+      background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{$input-background-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/></svg>");
     }
   }
 
-.sg-form-check-input {
-    width: 1em;
-    height: 1em;
-    margin-top: ($line-height - 1em) * .5; // line-height minus check height
-    vertical-align: top;
-    background-color: white;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    border: 1px;
-    appearance: none;
-    print-color-adjust: exact; // Keep themed appearance for print
-  
+  &[type="radio"] {
+    // stylelint-disable-next-line property-disallowed-list
+    border-radius: 50%;
+  }
+  &[type="color"] {
+    width: 3em;
+    height: $input-height;
+    padding: $input-padding-x;
+
+    &:not(:disabled):not([readonly]) {
+      cursor: pointer;
+    }
+
+    &::-moz-color-swatch {
+      border: 0 !important; // stylelint-disable-line declaration-no-important
+      border-radius: $input-border-radius;
+    }
+
+    &::-webkit-color-swatch {
+      border-radius: $input-border-radius;
+    }
+  }
+
+  &:active {
+    filter: brightness(90%);
+  }
+
+  &:focus-visible {
+    border-color: var(--input-border-color-focus);
+    outline: 0;
+    box-shadow: 0;
+  }
+
+  &:checked {
+    $currentColor: $input-border-color-focus;
+
     &[type="checkbox"] {
-        border-radius: 0.25em;
+      background-image: url("data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon style='fill:#{$currentColor};' points='11.941,28.877 0,16.935 5.695,11.24 11.941,17.486 26.305,3.123 32,8.818'/></svg>");
     }
-  
+
     &[type="radio"] {
-      // stylelint-disable-next-line property-disallowed-list
-      border-radius: 50%;
+      background-image: url("data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='-4 -4 8 8'><circle r='2' fill='#{$currentColor}' /></svg>");
     }
-  
-    &:active {
-      filter: brightness(90%);
-    }
-  
-    &:focus-visible {
-        @include sg-focus-visible();
-        border: 1px solid $primary-text-color;
-    }
-  
-    &:checked {
-      background-color: $primary-bg-color;
-      border-color: $primary-bg-color;
-  
-      &[type="checkbox"] {
-        background-image: url("data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 20 20'><path fill='none' stroke='#{$primary-text-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/></svg>");
-      }
-  
-      &[type="radio"] {
-        background-image: url("data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='-4 -4 8 8'><circle r='2' fill='#{$primary-text-color}' /></svg>");
-      }
-      &:focus-visible {
-        border: 1px solid $primary-text-color;
-    }
-    }
-  
-    &[type="checkbox"]:indeterminate {
-        background-color: $primary-bg-color;
-        border-color: $primary-bg-color;
-  
-        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{$primary-text-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/></svg>");
-       
-    }
-  
-    &:disabled {
-      pointer-events: none;
-      filter: none;
+    
+  }
+
+  &:disabled {
+    pointer-events: none;
+    filter: none;
+    opacity: 0.5;
+  }
+
+  // Use disabled attribute in addition of :disabled pseudo-class
+  // See: https://github.com/twbs/bootstrap/issues/28247
+  &[disabled],
+  &:disabled {
+    ~ .form-check-label {
+      cursor: default;
       opacity: 0.5;
     }
-  
-    // Use disabled attribute in addition of :disabled pseudo-class
-    // See: https://github.com/twbs/bootstrap/issues/28247
-    &[disabled],
-    &:disabled {
-      ~ .form-check-label {
-        cursor: default;
-        opacity: 0.5;
-      }
-    }
+  }
+
+  &:user-invalid, &.invalid {
+    box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
+  }
 }
 
 .sg-form-check-label {
     cursor: null;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
 }
 
+
 .sg-form-switch {
-    padding-left: $form-switch-width + 0.5em;
-  
-    .sg-form-check-input {
-        width: $form-switch-width;
-        margin-left: ($form-switch-width + 0.5em) * -1;
-        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$form-switch-color}'/></svg>");
-        background-position: left center;
-        border-radius: $form-switch-width;
-        transition: background-position .15s ease-in-out;
-  
-        &:focus-visible {
-            @include sg-focus-visible()
-        }
-  
-        &:checked {
-            background-position: right center;
-            background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$primary-text-color}'/></svg>");
-        }
+  .sg-form-check-input {
+    width: $form-switch-width;
+    margin-right: 1ch;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$input-border-color}'/></svg>");
+    background-position: left center;
+    border-radius: $form-switch-width;
+    transition: background-position .15s ease-in-out;
+
+    &:focus-visible {
+      border-color: var(--input-border-color-focus);
+      outline: 0;
+      box-shadow: 0;
     }
+
+    &:checked {
+        background-position: right center;
+        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$input-border-color-focus}'/></svg>");
+    }
+  }
+}
+
+
+.sg-form-check-border {
+  //--spin-degree: 40deg;
+  position: relative;
+  padding: 2px;
+  width: fit-content;
+  height: fit-content;
+
+  margin-right: 1ch;
+  //border: 2px solid transparent;
+  overflow: hidden;
+  --border-opacity: 0;
+  &:focus-within {
+    --border-opacity: 1;
+    
+  }
+  box-shadow: 50% 50% 0 white;
+  
+  &::before {
+    content: "";
+    opacity: var(--border-opacity);
+    display: block;
+    position: absolute;
+    top: 25%;// -8px;
+    left: -25%;// -8px;
+    width: 150%;// calc(16px + 100%);
+    height: 50%;// calc(16px + 100%);
+    background-image: conic-gradient(from 0deg, white, white 50%);
+    z-index: -2;
+    animation: spin 3s linear;
+    animation-direction: forwards;
+    animation-iteration-count: infinite;
+  }
+  &::after {
+    content: "";
+    opacity: var(--border-opacity);
+    display: block;
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: calc(4px + 100%);
+    height: calc(4px + 100%);
+    background-color: transparent;
+    clip-path: rect( -2px 100% 100% -2px);
+    z-index: -1;
+  }
+  
+
+  
+    //animation: spin 3s ease-in-out infinite forwards;
+
+  &:has(:focus-visible) {
+    
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(-45deg);
+  }
+  50% {
+    transform: rotate(45deg);
+  }
+  100% {
+    transform: rotate(-45deg);
+  }
+}
+
+.sg-input-group-grid {
+  > .sg-form-check {
+    position: relative;
+    padding-bottom: 0;
+    > .sg-form-check-label {
+      display: block;
+    }
+    .sg-form-check-input {
+      margin: 0;
+      height: 100%;
+      width:auto;
+      aspect-ratio: 1;
+    }
+    span {
+      display: flex;
+      flex: 0 1 auto;
+      overflow: auto;
+      width: fit-content;
+      max-width: 8rem;
+      align-items: center;
+      text-align: center;
+      font-size: 0.85rem;
+
+      padding: $input-padding-x $input-padding-y;
+
+      white-space: nowrap;
+
+      background-color: $input-border-color;
+      color: $input-text-color;
+      border: $input-border-width outset $input-border-color;
+      border-right-width: 0;
+      border-radius: $input-border-radius;
+    }
+  }
 }

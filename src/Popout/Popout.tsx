@@ -92,6 +92,7 @@ const Popout = forwardRef<HTMLDialogElement, PopoutType>(({children, initialPosi
         )
     )
 })
+Popout.displayName = "Popout"
 
 const Header = forwardRef<HTMLDivElement | HTMLSpanElement | HTMLHeadingElement, PopoutHeaderType>(
         ({ children, className, as = "div", ...restProps}, ref) => 
@@ -104,6 +105,7 @@ const Header = forwardRef<HTMLDivElement | HTMLSpanElement | HTMLHeadingElement,
         </Component>
     )
 })
+Header.displayName = "PopoutHeader"
 
 const Title = forwardRef<HTMLHeadingElement, PopoutTitleType>( ({as="h4", className, children, ...restProps}, ref) => {
     let validAs = ["h1", "h2", "h3", "h4", "h5", "h6"]
@@ -114,6 +116,7 @@ const Title = forwardRef<HTMLHeadingElement, PopoutTitleType>( ({as="h4", classN
         </Component>
     )
 })
+Title.displayName = "PopoutTitle"
 
 const Body = forwardRef<HTMLDivElement, PopoutBodyType>( ({children, className, ...restProps}, ref) => {
     return (
@@ -122,6 +125,7 @@ const Body = forwardRef<HTMLDivElement, PopoutBodyType>( ({children, className, 
         </div>
     )
 })
+Body.displayName = "PopoutBody"
 
 const Text = forwardRef<HTMLParagraphElement, PopoutTextType>( ({children, className, ...restProps}, ref) => {
     return (
@@ -130,6 +134,7 @@ const Text = forwardRef<HTMLParagraphElement, PopoutTextType>( ({children, class
         </p>
     )
 })
+Text.displayName = "PopoutText"
 
 const Footer = forwardRef<HTMLDivElement, PopoutFooterType>( ({children, className, ...restProps}, ref) => {
     return (
@@ -138,6 +143,7 @@ const Footer = forwardRef<HTMLDivElement, PopoutFooterType>( ({children, classNa
         </div>
     )
 })
+Footer.displayName = "PopoutFooter"
 
 export default  Object.assign(Popout, {
     Header: Header,

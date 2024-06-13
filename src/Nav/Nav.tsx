@@ -15,7 +15,7 @@ const Nav = forwardRef<HTMLElement, NavType>(({children, className, as="ul", ...
         </Component>
     )
 })
-
+Nav.displayName = "Nav"
 
 const Item = forwardRef<HTMLElement, NavItemType>( ({children, className, as="li", ...restProps}, ref) => {
     const Component = as
@@ -25,7 +25,7 @@ const Item = forwardRef<HTMLElement, NavItemType>( ({children, className, as="li
         </Component>
     )
 })
-
+Item.displayName = "NavItem"
 
 const Link = forwardRef<HTMLElement, NavLinkType>( ({children, className, as="a", ...restProps}, ref) => {
     const Component = as
@@ -35,6 +35,7 @@ const Link = forwardRef<HTMLElement, NavLinkType>( ({children, className, as="a"
         </Component>
     )
 })
+Link.displayName = "NavLink"
 
 export default  Object.assign(Nav, {
     Item: Item,

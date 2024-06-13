@@ -1,3 +1,21 @@
-.sg-from-group {
+.sg-form-group {
     padding-bottom: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    label {
+        margin-bottom: 0.5rem;
+    }
+    &.sg-form-group-vertical {
+        flex-direction: row;
+        align-items: center;
+        label {
+            min-width: max-content;
+            margin-right: 0.5rem;
+            margin-bottom: 0;
+        }
+    }
+
+    .sg-form-check {
+        padding-bottom: 0;
+    }
 }

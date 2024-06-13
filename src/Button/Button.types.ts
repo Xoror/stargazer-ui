@@ -5,4 +5,4 @@ export type ButtonType = {
     children: ReactNode
     variant?: string,
     className?: string,
-} & BaseButtonType
+} &  React.ComponentPropsWithRef<"button">

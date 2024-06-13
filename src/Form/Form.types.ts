@@ -1,6 +1,6 @@
 import { ReactNode, Dispatch, Children } from "react";
 
-import { BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSmallType, BaseUListType } from "../utils/BaseTypes";
+import { BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSpanType, BaseSliderType, BaseSmallType, BaseUListType } from "../utils/BaseTypes";
 
 export type FormContextType = {
     controlId: string
@@ -21,6 +21,7 @@ export type FormControlType = {
 
 // Form Select types
 export type SelectContextType = {
+    internalId?:string,
     showList: boolean,
     setShowList: Dispatch<React.SetStateAction<boolean>>,
     activeDescendant: string,
@@ -32,7 +33,8 @@ export type FormSelectType = {
     children: ReactNode,
     className?: string,
     id?: string,
-} & BaseDivType // BaseSelectType
+    required?: boolean
+} & (BaseSelectType & BaseDivType)
 export type FormSelectControlType = {
     children?: ReactNode,
     className?: string,
@@ -62,6 +64,7 @@ export type FormGroupType = {
     children: ReactNode,
     className?: string,
     controlId: string,
+    vertical?: boolean
 } & BaseDivType
 
 export type FormLabelType = {
@@ -71,22 +74,44 @@ export type FormLabelType = {
 } & BaseLabelType
 
 export type FormCheckType = {
+    children?: ReactNode,
+    style?: React.CSSProperties,
     classNameContainer?:string,
     containerRef?:React.LegacyRef<HTMLDivElement>,
     containerId?: string,
-    style?: React.CSSProperties,
+    styleContainer?: React.CSSProperties,
     classNameLabel?: string,
     labelRef?: React.LegacyRef<HTMLLabelElement>,
     label?: string,
     labelId?: string,
+    styleLabel?: React.CSSProperties,
     className?: string,
     type?: string,
     controlId?: string,
     reverse?: boolean,
-    checkStyle?: React.CSSProperties
 } & BaseInputType
 
 export type FormTextType = {
     children: ReactNode,
     className?: string,
 } & BaseSmallType
+
+export type FormSliderType = {
+    children?: ReactNode,
+    className?: string,
+    style?: React.CSSProperties,
+    controlId: string,
+    min?: number,
+    max?: number,
+    step?: number,
+    defaultValue?: number,
+    value: number,
+    onChange(value :number): () => any
+} & BaseSpanType // BaseSliderType
+export type SliderContextType = {
+    children: ReactNode,
+    controlId: string,
+    min?: number,
+    max?: number,
+    step?: number
+}

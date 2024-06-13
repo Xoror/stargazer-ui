@@ -83,6 +83,7 @@ const NavDropdown = forwardRef<HTMLDivElement, NavDropdownType>((
         </div>
     )
 })
+NavDropdown.displayName = "NavDropdown"
 
 export default  Object.assign(NavDropdown, {
     Toggle: Dropdown.Toggle,

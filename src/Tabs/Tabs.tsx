@@ -20,16 +20,26 @@ const useTabsContext = () => {
     return context
 }
 
-const Tabs = forwardRef<HTMLDivElement, TabsType>(({children, className, controlId, activeClassName, defaultActive, ...restProps}, ref) => {
+const Tabs = forwardRef<HTMLDivElement, TabsType>(({children, className, controlId, activeClassName, defaultActive, active, onTabChange, ...restProps}, ref) => {
     const [activeTab, setActiveTab] = useState<string>(defaultActive)
     const activeClass= activeClassName ? activeClassName: "sg-active"
+    if(active && activeTab != active) {
+        setActiveTab(active)
+    }
+
+    if(active && !onTabChange || !active && onTabChange) {
+        throw new Error(
+            "If you control the tabs externally, you need both an 'active' state and a function 'onTabChange' that controls the 'active' state!"
+        )
+    }
     
     const contextValue = useMemo(() => ({
         activeTab,
         setActiveTab,
         controlId,
-        activeClass
-    }), [activeTab, setActiveTab, controlId])
+        activeClass,
+        onTabChange
+    }), [activeTab, activeClass, controlId, activeClass, onTabChange])
     return (
         <TabsContextProvider value={contextValue}>
             <div ref={ref} id={controlId+"-tab-wrapper"} className={`sg-tabs${className ? " "+className: ""}`} {...restProps}>
@@ -38,6 +48,7 @@ const Tabs = forwardRef<HTMLDivElement, TabsType>(({children, className, control
         </TabsContextProvider>
     )
 })
+Tabs.displayName = "Tabs"
 
 const Controls = forwardRef<HTMLDivElement, TabsControlsType>( ({children, className, ...restProps}, ref) => {
     const { controlId, activeClass } = useTabsContext()
@@ -70,13 +81,19 @@ const Controls = forwardRef<HTMLDivElement, TabsControlsType>( ({children, class
         </div>
     )
 })
+Controls.displayName = "TabsControl"
 
 const Button = forwardRef<HTMLButtonElement, TabsButtonType>( ({children, className, onClick, tabId, id,...restProps}, ref) => {
-    const { activeTab, setActiveTab, activeClass } = useTabsContext()
+    const { activeTab, setActiveTab, activeClass, onTabChange } = useTabsContext()
     const classNameComputed = "sg-tabs-button" + (className ? " "+className:"") + (activeTab === tabId ? " "+activeClass : "")
     const isActiveTab = activeTab === tabId
     const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        setActiveTab(tabId)
+        if(onTabChange) {
+            onTabChange(tabId)
+        }
+        else {
+            setActiveTab(tabId)
+        }
         if(onClick) {
             onClick(event)
         }
@@ -90,6 +107,7 @@ const Button = forwardRef<HTMLButtonElement, TabsButtonType>( ({children, classN
         </button>
     )
 })
+Button.displayName = "TabsButton"
 
 const Content = forwardRef<HTMLDivElement, TabsContentType>( ({children, className, ...restProps}, ref) => {
     return (
@@ -98,6 +116,7 @@ const Content = forwardRef<HTMLDivElement, TabsContentType>( ({children, classNa
         </div>
     )
 })
+Content.displayName = "TabsContent"
 
 const Page = forwardRef<HTMLDivElement, TabsPageType>( ({children, className, tabId, ...restProps}, ref) => {
     const { activeTab, activeClass } = useTabsContext()
@@ -111,6 +130,7 @@ const Page = forwardRef<HTMLDivElement, TabsPageType>( ({children, className, ta
         </div>
     )
 })
+Page.displayName = "TabsPage"
 
 export default  Object.assign(Tabs, {
     Controls: Controls,

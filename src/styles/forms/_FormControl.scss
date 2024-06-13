@@ -1,16 +1,25 @@
 @use "sass:color";
 
 .sg-form-control {
+  --input-text-color: #{$input-text-color};
+  --input-background-color: #{$input-background-color};
+  --input-border-color: #{$input-border-color};
+  --input-border-color-focus: #{$input-border-color-focus};
+  --input-border-color-invalid: #{$input-border-color-invalid};
+  --input-disabled-color: #{$input-disabled-color};
+
   position: relative;
   display: block;
   width: 100%;
+  min-width: 5rem;
   padding: $input-padding-x $input-padding-y;
-  color: $input-text-color;
-  background-color: $input-background-color;
-  background-clip: padding-box;
-  border: $input-border-width solid $input-border-color;
-  appearance: none;
+  color: var(--input-text-color);
+  background-color: var(--input-background-color);
+  border: $input-border-width $input-border-style var(--input-border-color);
+  //appearance: none;
   border-radius: $input-border-radius;
+
+  caret-color: white;
 
   transition: border-color .15s ease-in-out;
 
@@ -23,7 +32,10 @@
   }
 
   &:focus-visible {
-    @include sg-focus-visible()
+    //@include sg-focus-visible()
+    border-color: var(--input-border-color-focus);
+    outline: 0;
+    box-shadow: 0;
   }
 
   &::-webkit-date-and-time-value {
@@ -37,7 +49,7 @@
 
   &:disabled {
     color: null;
-    background-color: $input-disabled-color;
+    background-color: var(--input-disabled-color);
     border-color: null;
     opacity: 1;
   }
@@ -57,7 +69,12 @@
   }
 
   &:hover:not(:disabled):not([readonly])::file-selector-button {
-    background-color: color.mix(black, $input-text-color , 5%);
+    background-color: color-mix(in oklab, var(--input-text-color) , black 5%);
+  }
+
+  &:user-invalid, &.invalid {
+    //outline: 2px solid $input-border-color-invalid;
+    box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
   }
 }
 
@@ -66,39 +83,18 @@
   width: 100%;
   padding: $input-padding-x 0;
   margin-bottom: 0; // match inputs if this class comes on inputs with default margins
-  color: $input-text-color;
+  color: var(--input-text-color);
   background-color: transparent;
   border: solid transparent;
   border-width: $input-border-width 0;
-
-  &:focus-visible {
-    outline: 0;
-  }
 }
 
 textarea {
   &.sg-form-control {
     min-height: $input-height;
+    margin: 0;
   }
 }
   // stylelint-enable selector-no-qualifying-type
-  
-.sg-form-control-color {
-  width: 3em;
-  height: $input-height;
-  padding: $input-padding-x;
 
-  &:not(:disabled):not([readonly]) {
-    cursor: pointer;
-  }
-
-  &::-moz-color-swatch {
-    border: 0 !important; // stylelint-disable-line declaration-no-important
-    border-radius: $input-border-radius;
-  }
-
-  &::-webkit-color-swatch {
-    border-radius: $input-border-radius;
-  }
-}
   

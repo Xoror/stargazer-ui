@@ -9,4 +9,6 @@ const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupType>( ({ children, cl
     )
 })
 
+ButtonGroup.displayName = "ButtonGroup"
+
 export default ButtonGroup

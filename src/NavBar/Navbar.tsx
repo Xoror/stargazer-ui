@@ -29,6 +29,7 @@ const Navbar = forwardRef<HTMLElement, NavbarType>(({children, className, navbar
         </nav>
     )
 })
+Navbar.displayName = "Navbar"
 
 const Brand = forwardRef<HTMLAnchorElement | HTMLElement, NavbarBrandType>( ({children, className, href="#", as="a", ...restProps}, ref) => {
     const Component = as || (href && as != "Link" ? 'a' : 'span')
@@ -38,6 +39,7 @@ const Brand = forwardRef<HTMLAnchorElement | HTMLElement, NavbarBrandType>( ({ch
         </Component>
     )
 })
+Brand.displayName = "NavbarBrand"
 
 const Text = forwardRef<HTMLElement, NavbarTextType>( ({children, className, as="span", ...restProps}, ref) => {
     const Component = as
@@ -47,6 +49,7 @@ const Text = forwardRef<HTMLElement, NavbarTextType>( ({children, className, as=
         </Component>
     )
 })
+Text.displayName = "NavbarText"
 
 export default  Object.assign(Navbar, {
     Brand: Brand,

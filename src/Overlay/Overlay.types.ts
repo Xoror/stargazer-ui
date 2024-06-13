@@ -3,7 +3,8 @@ import { BaseDivType } from "../utils/BaseTypes"
 
 export type OverlayType = {
     children: ReactNode,
-    overlay: React.JSX.Element,
+    overlay?: React.JSX.Element,
+    tooltip?: React.JSX.Element,
     show?: boolean,
     onToggle?: Function,
     position?: string,

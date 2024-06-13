@@ -11,5 +11,6 @@ const Table = forwardRef<HTMLTableElement, TableType>( ({children, size="lg", cl
         </table>
     )
 })
+Table.displayName = "Table"
 
 export default Table

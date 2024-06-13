@@ -1,25 +1,35 @@
-/*
-.sg-form-select {
+
+.sg-form-select-tag {
+    --input-text-color: #{$input-text-color};
+    --input-background-color: #{$input-background-color};
+    --input-border-color: #{$input-border-color};
+    --input-border-color-focus: #{$input-border-color-focus};
+    --input-border-color-invalid: #{$input-border-color-invalid};
+    --input-disabled-color: #{$input-disabled-color};
+
     position: relative;
     display: block;
     width: 100%;
     padding-block: $input-padding-x;
     padding-inline: $input-padding-y calc(3 * $input-padding-y);
-    color: $input-text-color;
+    color: var(--input-text-color);
 
-    background-color: $input-background-color;
+    background-color: var(--input-background-color);
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right $input-padding-x center;
     background-size: 1em 0.75em;
 
-    border: $input-border-width solid $input-border-color;
+    border: $input-border-width $input-border-style var(--input-border-color);
     border-radius: $input-border-radius;
 
     appearance: none;
 
-    &:focus-visible {
-        @include sg-focus-visible()
+    &:focus-visible, &:focus {
+        //@include sg-focus-visible()
+        border-color: var(--input-border-color-focus);
+        outline: 0;
+        box-shadow: 0;
     }
     &[multiple], &[size]:not([size="1"]) {
         padding-right: $input-padding-x;
@@ -27,17 +37,29 @@
     }
     &:disabled {
         color: null;
-        background-color: $input-disabled-color;
+        background-color: var(--input-disabled-color);
         border-color: null;
         opacity: 1;
     }
+    &.invalid, &:user-invalid {
+        box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
+    }
 }
-*/
+
 
 .sg-form-select {
+    --input-text-color: #{$input-text-color};
+    --input-background-color: #{$input-background-color};
+    --input-border-color: #{$input-border-color};
+    --input-border-color-focus: #{$input-border-color-focus};
+    --input-border-color-invalid: #{$input-border-color-invalid};
+    --input-disabled-color: #{$input-disabled-color};
     position: relative;
     display: block;
     width: 100%;
+    color: $input-text-color;
+
+    
 }
 
 .sg-select-control {
@@ -45,7 +67,7 @@
     height: fit-content;
     padding-block: $input-padding-x;
     padding-inline: $input-padding-y calc(3 * $input-padding-y);
-    color: $input-text-color;
+    color: inherit;
 
     background-color: $input-background-color;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
@@ -56,8 +78,14 @@
     border: $input-border-width solid $input-border-color;
     border-radius: $input-border-radius;
 
-    &.focus{
-        @include sg-focus-visible()
+    &:focus-within {
+        //@include sg-focus-visible()
+        border-color: $input-border-color-focus;
+        outline: 0;
+        box-shadow: 0;
+    }
+    &.invalid {
+        border-color: $input-border-color-invalid;
     }
 }
 
@@ -66,6 +94,7 @@
     border: none;
     height: 100%;
     max-width: 80%;
+    color: inherit;
 
     &[multiple], &[size]:not([size="1"]) {
         padding-right: $input-padding-x;
@@ -80,6 +109,10 @@
         border-color: transparent;
         outline: none;
     }
+    &::placeholder {
+        color: $input-placeholder-color;
+        opacity: 1;
+      }
     
 }
 
@@ -88,15 +121,16 @@
     --txt-color: black;
 
     background-color: var(--bg-color);
-    color: var(--txt-color);
+    color: inherit;
 
     position: absolute;
     top: calc(100% + 1px);
     width: 100%;
     padding: 0;
 
-    border-radius: 0.375rem;
-    border: 1px solid color-mix(in srgb, currentColor, white);
+    border-radius: 0;// 0.375rem;
+    //border: 1px solid color-mix(in srgb, currentColor, white);
+    border: 2px outset color-mix(in oklab, $sg-body-bg, white 60%);
 
     list-style-type: none;
 }
@@ -104,11 +138,17 @@
 .sg-select-list-item {
     padding: 0.25rem 0.5rem;
     font-size: 0.85rem;
+    border: 2px solid transparent;
+    
 
     &.focus {
-        background-color: color-mix(in srgb, var(--bg-color) 80%, black);
+        //background-color: color-mix(in srgb, var(--bg-color) 80%, black);
+        background-color: color-mix(in oklab, $danger, transparent 50%);
+        border: 2px outset color-mix(in oklab, $danger, currentColor 20%);
         &:active {
-            background-color: color-mix(in srgb, var(--bg-color) 60%, black);
+            //background-color: color-mix(in srgb, var(--bg-color) 60%, black);
+            background-color: color-mix(in oklab, $danger, transparent 60%);
+            border: 2px outset color-mix(in oklab, $danger, currentColor 30%);
         }
     }
 
