@@ -17,10 +17,16 @@ const FormPage = () => {
             <div style={{height:"fit-content", width:"fit-content", border:"1px solid white", padding:"1rem", resize:"both", overflow:"hidden"}}>
                 <Form onSubmit={event => event.preventDefault()}>
                     <FileUploadButton />
-                    <Form.Group controlId="form-control">
-                        <Form.Label>Form Control</Form.Label>
-                        <Form.Control placeholder="Placeholder..."/>
-                    </Form.Group>
+                    <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem"}}>
+                        <Form.Group controlId="form-control">
+                            <Form.Label>Form Control</Form.Label>
+                            <Form.Control placeholder="Placeholder..."/>
+                        </Form.Group>
+                        <Form.Group controlId="form-control-disabled">
+                            <Form.Label>Form Control Disabled</Form.Label>
+                            <Form.Control placeholder="Placeholder..." defaultValue={"test"} disabled/>
+                        </Form.Group>
+                    </div>
                     <Form.Group controlId="form-control-vertical" vertical={true}>
                         <Form.Label>Form Control Vertical</Form.Label>
                         <Form.Control />

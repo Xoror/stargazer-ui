@@ -112,8 +112,10 @@ $form-switch-color: rgba(black, .25);
     
   }
 
-  &:disabled {
-    pointer-events: none;
+  &:disabled, .disabled {
+    --input-background-color: rgba(255, 255, 255, 0.04);
+    --input-text-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
+    cursor:not-allowed;
     filter: none;
     opacity: 0.5;
   }

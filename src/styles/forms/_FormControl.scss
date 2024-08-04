@@ -7,6 +7,7 @@
   --input-border-color-focus: #{$input-border-color-focus};
   --input-border-color-invalid: #{$input-border-color-invalid};
   --input-disabled-color: #{$input-disabled-color};
+  --input-placeholder-color: #{$input-placeholder-color};
 
   position: relative;
   display: block;
@@ -43,14 +44,15 @@
   }
 
   &::placeholder {
-    color: $input-placeholder-color;
+    color: var(--input-placeholder-color);
     opacity: 1;
   }
 
-  &:disabled {
-    color: null;
-    background-color: var(--input-disabled-color);
-    border-color: null;
+  &:disabled, .disabled {
+    --input-background-color: rgba(255, 255, 255, 0.04);
+    --input-placeholder-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
+    --input-text-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
+    cursor: not-allowed;
     opacity: 1;
   }
 

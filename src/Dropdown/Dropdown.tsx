@@ -18,7 +18,7 @@ const getDropdownMenuPlacement = (controlId: string, drop: string="down", align:
         top: drop === "up" ? buttonTopBase - (menu.clientHeight + button.clientHeight + topOffset) : buttonTopBase + topOffset, 
         left: drop === "right" ? buttonLeftBase + button.clientWidth + leftOffset: (drop === "left" ? buttonLeftBase - menu.clientWidth - leftOffset : buttonLeftBase)
     }
-    console.log(placement)
+    
     switch (placement) {
         case "down-start":
         case "up-start":
@@ -45,7 +45,6 @@ const getDropdownMenuPlacement = (controlId: string, drop: string="down", align:
             position.top += -1 * menu.clientHeight
         
     }
-
     return position
 }
 // is click event on the menu
@@ -243,6 +242,10 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
     }, [showInternal])
     
     useEffect(() => {
+        const handleResize = (event: UIEvent) => {
+            const basePosition = getDropdownMenuPlacement(controlId, drop, align)    
+            setComputedStyle(basePosition)
+        }
         if(showInternal) {
             const menu = document.getElementById(controlId+"-menu") as HTMLElement
             const menuChildren = document.getElementById(controlId+"-menu")!.children
@@ -278,9 +281,15 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
             }
             menu.setAttribute("aria-activedescendant", currentChild.id)
             menuChildren[currentIndex].children[0].classList.add("sg-dropdown-item-visual-focus")
+
+            //makes it so that the menu stays with the button
+            window.addEventListener("resize", handleResize, true)
         } else {
             const menu = document.getElementById(controlId+"-menu") as HTMLElement
             menu.setAttribute("aria-activedescendant", "")
+        }
+        return function cleanup() {
+            window.removeEventListener("resize", handleResize, true)
         }
     }, [controlId, showInternal, activeDescendant])
 

@@ -67,7 +67,7 @@ export const Component = () => {
                 <Tabs.Controls>
                     {
                         tabs.map(tab => 
-                            <Tabs.Button key={tab.id+"-button"} tabId={tab.id} style={{width:"20rem"}}>
+                            <Tabs.Button key={tab.id+"-button"} tabId={tab.id}>
                                 {tab.label}
                             </Tabs.Button>
                         )
