@@ -13,6 +13,7 @@ export type ModalType = {
     show: boolean,
     backdrop?: string,
     onHide: Function,
+    stretch?: boolean
 } & BaseDialogType
 
 export type ModalHeaderType = {

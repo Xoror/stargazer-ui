@@ -8,7 +8,6 @@ const ModalPage = () => {
     const [showModal, setShowModal] = useState(false)
     const {width} = useScreenSize()
     const onHide = (event) => {
-        console.log("test")
         setShowModal(false)
     }
     return (
@@ -22,7 +21,9 @@ const ModalPage = () => {
                 </Modal.Header>
                 <form>
                     <Modal.Body>
-                        <p>test</p>
+                        <p>
+                            test
+                        </p>
                     </Modal.Body>
                     <Modal.Footer>
                         <small>Test footer</small>

@@ -42,28 +42,23 @@ $sg-modal-transition: transform .3s ease-out;
 }
 
 .sg-modal-tag { //shell to position modal with bottom-padding
+  --height: fit-content;
   z-index: calc($zindex-modal + 1);
 
   padding: 0;
   top: 10%;
-  height: 80%;
-  //min-height: 40ch;
+  height: var(--height);
+  max-height: 80%;
   margin-right: auto;
   margin-left: auto;
-
-  //width: 100%; // Ensure `.modal-content` extends the full width of the parent `.modal-dialog`
-  
-  // counteract the pointer-events: none; in the .modal-dialog
 
   color: $sg-modal-text-color;
   background-color: $sg-modal-background-color;
   background-clip: padding-box;
   border: 2px outset color-mix(in oklab, $sg-modal-background-color, currentColor 60%);// 1px solid $sg-modal-text-color;
   //border-radius: $sg-modal-radius;
-  // Remove focus outline from opened modal
   flex-direction: column;
   overflow: auto;
-  //animation-fill-mode: forwards;
 
   &[open=""] {
     display: grid;
@@ -81,9 +76,13 @@ $sg-modal-transition: transform .3s ease-out;
   }
 
   > form {
-    grid: body;
     display: grid;
     grid-template-rows: [body-start] 1fr [body-end footer-start] auto [footer-end];
+    @supports (grid-template-rows: subgrid) {
+      grid-row-start: body-start;
+      grid-row-end: footer-end;
+      grid-template-rows: subgrid;
+    }
     .sg-modal-body {
       grid-row: body;
     }
@@ -132,7 +131,7 @@ $sg-modal-transition: transform .3s ease-out;
   padding: 1rem;
   background-color: color-mix(in oklab, $sg-modal-background-color, currentColor 5%);
 
-  min-height: 20ch;
+  min-height: fit-content;
   
   overflow: auto;
   p {

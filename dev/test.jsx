@@ -54,7 +54,7 @@ export const Component = () => {
 
 
     return (
-        <div style={{height:"200vh"}}>
+        <div >
             {false ? 
                 <Popout move="true">
                     <Popout.Header>
@@ -67,7 +67,7 @@ export const Component = () => {
                 <Tabs.Controls>
                     {
                         tabs.map(tab => 
-                            <Tabs.Button key={tab.id+"-button"} tabId={tab.id}>
+                            <Tabs.Button key={tab.id+"-button"} tabId={tab.id} style={{width:"20rem"}}>
                                 {tab.label}
                             </Tabs.Button>
                         )

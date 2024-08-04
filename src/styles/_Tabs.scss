@@ -1,39 +1,121 @@
 .sg-tabs {
     width: 100%;
+    display: grid;
+    grid-template-rows: [control-start] auto [control-end page-start] 100% [page-end];
 }
 
 .sg-tabs-controls {
+    --border-bottom-color: white;
+    --border-width: 2px;
+    grid-row: control;
+    position: relative;
     display: flex;
     flex-direction: row;
     background-color: $sg-tab-controls-bg;
-    min-height: 2rem;
-    border-bottom: 1px solid white;
+    
+    &::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: var(--border-width);
+        background-color: var(--border-bottom-color);
+    }
+
+    overflow-x: auto;
+    scrollbar-width: none;
+    @media (prefers-reduce-motion: no-preference) {
+        scroll-behavior: smooth;
+    }
+    > * {
+        flex: 0 0 auto;
+    }
 }
 
 .sg-tabs-button {
+    --border-color: #{$sg-tab-controls-bg};
+    --text-color: #{$sg-tab-button-color};
+    --background-color: #{$sg-tab-controls-bg};
+    --hover-background-color: #{$sg-tab-button-hover};
+    --active-background-color: #{$sg-tab-button-active};
+
+    position: relative;
     display: block;
-    color: $sg-tab-button-color;
-    background-color: $sg-tab-controls-bg;
+    color: var(--text-color);
+    background-color: var(--background-color);
     padding: 0.375rem 0.75rem;
-    border: 2px solid $sg-tab-controls-bg;
+    border: var(--border-width) solid var(--border-color);
+    border-bottom-color: var(--border-bottom-color);
     font-size: 0.85rem;
+    //transition: all 0.2s ease-in-out;
+
+    &::after, &::before {
+        content: "";
+        position: absolute;
+        width: var(--border-width);
+        height: var(--border-width);
+        bottom: calc(-1 * var(--border-width));
+        left: calc(-1 * var(--border-width));
+        background-color: var(--border-bottom-color);
+        z-index: 2;
+    }
+    &::after {
+        left: unset;
+        right: calc(-1 * var(--border-width));
+    }
     
     &:hover {
-        background-color: $sg-tab-button-hover;
+        background-color: var(--hover-background-color);
     }
     &:active {
-        background-color: $sg-tab-button-active;
+        
+        background-color: var(--active-background-color);
     }
 
     &.sg-active {
-        border: 2px solid $sg-tab-button-color;
+        border: 2px solid var(--border-bottom-color);
         border-bottom: 2px solid var(--sg-body-bg);
         //color: white;
+    }
+    
+    &.sg-tabs-scroll-button {
+        position: sticky;
+        left: 0;
+        height: 100%;
+        aspect-ratio: 1;
+        padding: 0;
+        z-index: 2;
+        svg {
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+        &[data-position="right"] {
+            position: sticky;
+            left: unset;
+            right: 0;
+        }
+
+        &:first-child {
+            border-right-color: var(--border-bottom-color);
+            &::after {
+                bottom: unset;
+                top: calc(-1 * var(--border-width));
+            }
+        }
+        &:last-child {
+            border-left-color: var(--border-bottom-color);
+            &::before {
+                bottom: unset;
+                top: calc(-1 * var(--border-width));
+            }
+        }
     }
 }
 
 .sg-tabs-content {
     width: 100%;
+    grid-row: page;
 }
 
 .sg-tabs-page {

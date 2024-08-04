@@ -128,7 +128,7 @@ $sg-table-padding-sm: 0.25rem;
 /* Tabs */
 $sg-tab-controls-bg: #212529;
 
-$sg-tab-button-color: white;// $danger;
+$sg-tab-button-color: $danger;
 $sg-tab-button-hover: color-mix(in srgb, black 15%, $sg-tab-controls-bg);
 $sg-tab-button-active: color-mix(in srgb, black 25%, $sg-tab-controls-bg);
 

@@ -25,12 +25,12 @@ const useModalContext = () => {
     return context
 }
 
-const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children, size = "md",  show,  backdrop = "static", fill=false,  onHide, className, id, ...restProps 
+const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children, size = "md",  show,  backdrop = "static", fill=false,  onHide, className, id, stretch, style, ...restProps 
     }, ref) => {
     const [showModal, setShowModal] = useState<boolean>(show)
-    useEffect(() => {
+    if(show && show != showModal) {
         setShowModal(show)
-    }, [show])
+    }
 
     const modalRef = useRef<HTMLDialogElement>(null)
     useKeepElementFocused(modalRef)
@@ -93,7 +93,7 @@ const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children, size = "md"
 
     return (
             createPortal(
-                <dialog ref={mergeRefs([ref, modalRef])} className={classNameComputed} onKeyDown={(event) => handleKeyDown(event)} {...restProps }>
+                <dialog ref={mergeRefs([ref, modalRef])} className={classNameComputed} onKeyDown={(event) => handleKeyDown(event)} {...restProps } style={{"--height":stretch ? "80%":null, ...style} as React.CSSProperties}>
                     <ModalContextProvider value={closeModal}>
                         {!typeCheck ?
                             children :

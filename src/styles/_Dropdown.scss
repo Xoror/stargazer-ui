@@ -82,7 +82,7 @@
 .sg-dropdown-item {
   display: block;
   width: 100%; // For `<button>`s
-  padding: 0.25rem 1rem;
+  padding: 0.25rem 0.5rem;
   clear: both;
   text-align: inherit; // For `<button>`s
   white-space: nowrap; // prevent links from randomly breaking onto new lines
@@ -110,4 +110,11 @@
     border: 2px outset color-mix(in oklab, $danger, currentColor 20%)
     //@include sg-focus-visible();
   }
+}
+a.sg-dropdown-item {
+  cursor: pointer;
+  text-decoration: none;
+}
+[data-nav="true"] .sg-dropdown-item {
+  font-size: 0.85rem;
 }

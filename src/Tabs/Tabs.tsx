@@ -1,6 +1,10 @@
-import React, { createContext, forwardRef, useContext, useMemo, useState } from "react"
+import React, { createContext, forwardRef, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 
-import { TabsButtonType, TabsContentType, TabsContextType, TabsControlsType, TabsPageType, TabsType } from "./Tabs.types"
+import { TabsButtonType, TabsContentType, TabsContextType, TabsControlsType, TabsPageType, TabsType, TabsScrollButtonType } from "./Tabs.types"
+
+import mergeClassnames from "../utils/MergeClassnames"
+import mergeRefs from "../utils/MergeRefs"
+import { useScreenSize } from "../hooks"
 
 const TabsContext = createContext<TabsContextType | null>(null)
 const TabsContextProvider = ({children, value}:{children: React.ReactNode, value: TabsContextType}) => {
@@ -50,34 +54,105 @@ const Tabs = forwardRef<HTMLDivElement, TabsType>(({children, className, control
 })
 Tabs.displayName = "Tabs"
 
+const ScrollButton = forwardRef<HTMLButtonElement, TabsScrollButtonType>( ({className, left = true, controlsRef, style, ...restProps}, ref) => {
+    const internalRef = useRef<HTMLButtonElement>(null)
+
+    const handleScrollBy = () => {
+        if(!controlsRef || !controlsRef.current) return
+
+        const tabControls = controlsRef.current
+        const toScroll = (left ? -1 : 1) * 32
+        tabControls.scrollBy(toScroll, 0)
+    }
+ 
+    let scrollIntervalId: NodeJS.Timeout
+    const handlePointerDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+        clearInterval(scrollIntervalId)
+        scrollIntervalId = setInterval(handleScrollBy, 20)
+    }
+    const handlePointerUp = (event: React.MouseEvent<HTMLButtonElement>) => {
+        clearInterval(scrollIntervalId)
+    }
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement> ) => {
+        if(event.key === "Space" || event.key === "Enter") {
+            clearInterval(scrollIntervalId)
+            scrollIntervalId = setInterval(handleScrollBy, 20)
+            return
+        }
+        clearInterval(scrollIntervalId)
+    }
+    const handleKeyUp = (event: React.KeyboardEvent<HTMLButtonElement> ) => {
+        clearInterval(scrollIntervalId)
+    }
+
+
+    
+    return (
+        <button 
+            type="button" ref={mergeRefs([ref, internalRef])} data-position={left ? "left":"right"} 
+            onPointerDown={handlePointerDown} onPointerUp={handlePointerUp} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}
+            className={mergeClassnames("sg-tabs-button", "sg-tabs-scroll-button", className)}
+            {...restProps} >
+            <span className="visually-hidden">Scroll tab controls {left ? "left":"right"}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                <polyline 
+                    points={left ? "144 88 104 128 144 168" : "112 88 152 128 112 168" } //168 64 104 128 168 192
+                    fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32"
+                />
+            </svg>
+        </button>
+    )
+})
+
 const Controls = forwardRef<HTMLDivElement, TabsControlsType>( ({children, className, ...restProps}, ref) => {
     const { controlId, activeClass } = useTabsContext()
+    const [ isOverflow, setIsOverflow ] = useState(false)
+    const internalRef = useRef<HTMLDivElement>(null)
+
+    const checkWidthOverflow = () => {
+        if(!internalRef.current) return
+
+        const el = internalRef.current
+        setIsOverflow(el.clientWidth < el.scrollWidth)
+    }
+    useLayoutEffect(() => {
+        console.log(internalRef.current)
+        checkWidthOverflow()
+    }, [children])
+    useEffect(() => {
+        window.addEventListener("resize", checkWidthOverflow, true)
+        return function cleanup() {
+            window.removeEventListener("resize", checkWidthOverflow, true)
+        }
+    }, [])
     
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         const key = event.key
-        const tabsControls = document.getElementById(controlId+"-tab-controls")
+        const tabsControls = internalRef.current
         if(tabsControls) {
             const tabControlsChildren = Array.from(tabsControls.children) as HTMLElement[]
+            let newIndex
             if(key === "ArrowRight" || key === "ArrowLeft") {
                 event.preventDefault()
                 const activeTab = document.querySelector(".sg-tabs-button"+"."+activeClass) as HTMLElement
                 const activeTabIndex = tabControlsChildren.indexOf(activeTab)
                 const indexChange = key === "ArrowRight" ? 1 : -1
-                const newIndex = activeTabIndex + indexChange < 0 ? tabControlsChildren.length - 1 : (activeTabIndex + indexChange >= tabControlsChildren.length ? 0 : activeTabIndex + indexChange)
-                tabControlsChildren[newIndex].focus()
-                tabControlsChildren[newIndex].click()
+                newIndex = activeTabIndex + indexChange < 0 ? tabControlsChildren.length - 1 : (activeTabIndex + indexChange >= tabControlsChildren.length ? 0 : activeTabIndex + indexChange)
             } else if (key === "Home" || key === "End") {
                 event.preventDefault()
-                const newIndex = key === "Home" ? 0 : tabControlsChildren.length -1
-                tabControlsChildren[newIndex].focus()
-                tabControlsChildren[newIndex].click()
+                newIndex = key === "Home" ? 0 : tabControlsChildren.length -1
             }
+            if(!newIndex) return
+            tabControlsChildren[newIndex].focus()
+            tabControlsChildren[newIndex].click()
         }
     }
-
+//div style={{maxWidth:"100%", display:"flex", overflowX:"auto"}}
     return (
-        <div onKeyDown={(event) => handleKeyDown(event)} role="tablist" id={controlId+"-tab-controls"} ref={ref} className={`sg-tabs-controls${className ? " "+className:""}`} {...restProps}>
+        <div tabIndex={-1} onKeyDown={(event) => handleKeyDown(event)} role="tablist" id={controlId+"-tab-controls"} ref={mergeRefs([ref, internalRef])} className={`sg-tabs-controls${className ? " "+className:""}`} {...restProps}>
+            {isOverflow ? <ScrollButton controlsRef={internalRef} /> : null }
             {children}
+            {isOverflow ? <ScrollButton controlsRef={internalRef} left={false}/> : null }
         </div>
     )
 })
@@ -85,8 +160,8 @@ Controls.displayName = "TabsControl"
 
 const Button = forwardRef<HTMLButtonElement, TabsButtonType>( ({children, className, onClick, tabId, id,...restProps}, ref) => {
     const { activeTab, setActiveTab, activeClass, onTabChange } = useTabsContext()
-    const classNameComputed = "sg-tabs-button" + (className ? " "+className:"") + (activeTab === tabId ? " "+activeClass : "")
     const isActiveTab = activeTab === tabId
+    const classNameComputed = "sg-tabs-button" + (className ? " "+className:"") + (isActiveTab ? " "+activeClass : "")
     const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         if(onTabChange) {
             onTabChange(tabId)

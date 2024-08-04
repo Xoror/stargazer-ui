@@ -23,6 +23,12 @@ export type TabsControlsType = {
     className?: string,
 } & BaseDivType
 
+export type TabsScrollButtonType = {
+    className?: string,
+    left?: boolean,
+    controlsRef?: React.RefObject<HTMLDivElement>
+} & BaseButtonType
+
 export type TabsButtonType = {
     children: React.ReactNode,
     className?: string,

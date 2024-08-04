@@ -106,7 +106,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownType>((
     computedClassName += navDropdown ? " sg-nav-item" : ""
     
     return (
-        <div id={controlId+"-wrapper"} ref={ref} className={computedClassName} {...restProps} >
+        <div id={controlId+"-wrapper"} ref={ref} className={computedClassName}  data-nav={navDropdown ? "true":null} {...restProps} >
             <DropdownContextProvider value={contextValue}>
                 {children}
             </DropdownContextProvider>
@@ -321,7 +321,8 @@ Menu.displayName = "DropdownMenu"
 
 
 export const Item = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownItemType>( ({children, as="button", className, ...restProps}, ref) => {
-    const Component = as
+    const { navDropdown } = useDropdownContext()
+    const Component = navDropdown ? "a" : as
     return (
         <li role="none">
             <Component ref={ref} role="menuitem" tabIndex="-1" className={`sg-dropdown-item${className ? " "+className:""}`} {...restProps}>

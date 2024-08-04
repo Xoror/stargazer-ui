@@ -7,13 +7,14 @@
 }
   
 .sg-nav-link {
-  padding: 0.5rem 1rem;
+  padding: 0.25rem 0.5rem;
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-block: auto;
   color: var(--sg-navbar-link-color);
+  font-size: 0.85rem;
 
   &:hover {
     color: var(--sg-navbar-hover-color);

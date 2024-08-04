@@ -8,7 +8,7 @@ const DropdownPage = () => {
         <>
             {dropPossible.map(drop => 
                 <Fragment key={drop}>
-                    <h4 style={{marginLeft:"1.5rem"}}> Dropdown </h4>
+                    <h4> Dropdown </h4>
                     <section className="dropdown-container">
                         {alignPossible.map(align => 
                             <Dropdown key={`drop-${drop}-${align}`} controlId={`drop-${drop}-${align}`} drop={drop} align={align}>
