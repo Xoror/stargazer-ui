@@ -1,10 +1,13 @@
-import React, { useEffect, useRef, useState, cloneElement, forwardRef, ReactNode, useLayoutEffect } from "react";
+import React, { useEffect, useRef, useState, cloneElement, forwardRef, ReactNode, useLayoutEffect, ReactElement } from "react";
 import { createPortal } from "react-dom";
 import { OverlayType, PositionObject } from "./Overlay.types";
 
 import mergeRefs from "../utils/MergeRefs";
+import mergeClassnames from "../utils/MergeClassnames";
+
 
 const setPosition = (referenceElement:any, overlayElement:any, position:string, arrowElement: any, isArrow: boolean=false, boundaryCorrection: PositionObject = {top:0, left:0, bottom: 0, right: 0}) => {
+    if(!overlayElement.current) return {top:0, left:0}
     const refCurrent = referenceElement.current as HTMLElement 
     const overlayCurrent = overlayElement.current as HTMLElement 
     const arrowCurrent = arrowElement.current as HTMLElement 
@@ -14,14 +17,16 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
     const refLeft = refCurrent.getBoundingClientRect().left
     const refWidth = refCurrent.offsetWidth
 
-    const overlayHeight = overlayCurrent.clientHeight
-    const overlayWidth = overlayCurrent.clientWidth
+    const overlayHeight = overlayCurrent.getBoundingClientRect().height
+    const overlayWidth = overlayCurrent.getBoundingClientRect().width
 
-    const arrowHeight = arrowCurrent.clientHeight
-    const arrowWidth = arrowCurrent.clientWidth
+    const arrowHeight = arrowCurrent.getBoundingClientRect().height
+    const arrowWidth = arrowCurrent.getBoundingClientRect().width
+    //console.log(refTop, arrowHeight, arrowWidth)
 
-    const arrowOffsetHeight = isArrow ? 0 : arrowHeight - 1
-    const arrowOffsetWidth = isArrow ? 0 : arrowWidth - 1
+    const overlayBorderWidth = parseFloat(getComputedStyle(overlayCurrent).borderWidth.split("px")[0])
+    const arrowOffsetHeight = isArrow ? arrowHeight/2 : arrowHeight - overlayBorderWidth
+    const arrowOffsetWidth = isArrow ? arrowWidth/2 : arrowWidth - overlayBorderWidth
 
     const correctPosition = (position:string, offset:number, boundary:number) => {
         const positionKey = position as keyof typeof tempPos
@@ -38,8 +43,9 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
         case "top": 
             tempPos = { 
                 top: refTop - overlayHeight - arrowOffsetHeight, 
-                left: refLeft + refWidth/2 - overlayWidth/2 
+                left: refLeft + refWidth/2 - (isArrow ? arrowOffsetWidth/2 : overlayWidth/2) 
             }
+            console.log(isArrow, refLeft, refWidth/2, overlayWidth/2 )
             //tempPos.right = correctPosition("right", 12, 0)
             //tempPos.left = correctPosition("left", 0, 0)
             return tempPos
@@ -94,7 +100,11 @@ const updateAutoPosition = (autoPositionRef:any, positionRef:any, overlayRef:any
     }
 }
 
-const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, tooltip, show=false, onToggle, position="auto", trigger="click", defaultShow=false}, ref) => {
+const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
+        children, overlay, tooltip, show=false, onToggle, 
+        position="auto", trigger="click", defaultShow=false,
+        tooltipClassname, tooltipStyle, arrowClassname, arrowStyle}, ref
+    ) => {
     if(Array.isArray(children)) {
         throw new Error(
             "Overlay can only wrap a single element, either introduce a wrapper or remove all but one trigger element!"
@@ -151,10 +161,11 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, to
             //setAutoPosition(detectAutoPostition(overlayRef, autoPositionRef))
         }
     }
-
+    const { onClick, onHover, onFocus, onBlur, onMouseOver, onMouseLeave} = (children as ReactElement)!.props
+    //console.log(children)
     /* Event handler funtions */
-    const onClick = (event: MouseEvent) => {
-        //console.log("click")
+    const handleClick = (event: MouseEvent) => {
+        
         if(isFocused && firstClick) {
             //this is needed in case both "focus" and "click" are triggers, otherwise there's weird behaviour
             setFirstClick(false) 
@@ -164,8 +175,11 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, to
         if(onToggle) {
             onToggle(!internalShow)
         }
+        if(onClick) {
+            onClick(event)
+        }
     }
-    const onHover = (event: MouseEvent) => {
+    const handleHover = (event: MouseEvent) => {
         setInternalShowRef(true)
         if(!isHovering) {
             setIsHovering(true)
@@ -173,16 +187,22 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, to
                 onToggle(true)
             }
         }
+        if(onHover) {
+            onHover(event)
+        }
     }
-    const onFocus = (event: MouseEvent) => {
+    const handleFocus = (event: MouseEvent) => {
         //console.log("focus")
         setInternalShowRef(true)
         setIsFocused(true)
         if(onToggle) {
             onToggle(true)
         }
+        if(onFocus) {
+            onFocus(event)
+        }
     }
-    const onBlur = (event: MouseEvent) => {
+    const handleBlur = (event: MouseEvent) => {
         //console.log("blur")
         if(isHovering) {
             setIsHovering(false)
@@ -193,6 +213,9 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, to
         setInternalShowRef(false)
         if(onToggle) {
             onToggle(false)
+        }
+        if(onBlur) {
+            onBlur(event)
         }
     }
     useLayoutEffect(() => {
@@ -228,46 +251,56 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({children, overlay, to
             return "absolute"
         }
     }
+    const tooltipClassnames = mergeClassnames("sg-overlay-wrapper", "sg-tooltip-wrapper", tooltipClassname)
+    const arrowClassnames = mergeClassnames(
+        "sg-overlay-arrow", 
+        autoPosition ? " overlay-position-"+autoPosition : "",
+        tooltip ? "sg-tooltip-arrow":"",
+        arrowClassname
+    )
+    
     return (
         <>
             {
                 cloneElement(children as any, {
-                    ref: positionRef,
-                    onClick: triggerArray.find(trigger => trigger === "click") ? onClick : null,
-                    onMouseOver: triggerArray.find(trigger => trigger === "hover") ? onHover : null,
-                    onMouseLeave: triggerArray.find(trigger => trigger === "hover") ? onBlur : null,
-                    onFocus: triggerArray.find(trigger => trigger === "focus") ? onFocus : null,
-                    onBlur: triggerArray.find(trigger => trigger === "focus") ? onBlur : null,
+                    ref: mergeRefs([positionRef, (children as any).ref]),
+                    onClick: triggerArray.find(trigger => trigger === "click") ? handleClick : onClick,
+                    onMouseOver: triggerArray.find(trigger => trigger === "hover") ? handleHover : onMouseOver,
+                    onMouseLeave: triggerArray.find(trigger => trigger === "hover") ? handleBlur : onMouseLeave,
+                    onFocus: triggerArray.find(trigger => trigger === "focus") ? handleFocus : onFocus,
+                    onBlur: triggerArray.find(trigger => trigger === "focus") ? handleBlur : onBlur,
                 })
             }
             {internalShow ? createPortal(
-                overlay ?
-                    <>
-                        <div className="sg-overlay-wrapper"
-                            ref={mergeRefs([ref,overlayRef])}
-                            style={{ position:checkRefPositionStyle(positionRef), top:overlayPosition!.top, left:overlayPosition!.left }}
-                        >{overlay}</div>
-                        <div
-                            ref={arrowRef} aria-hidden
-                            className={`sg-overlay-arrow${autoPosition ? " overlay-position-"+autoPosition : ""}`} 
-                            style={{position:checkRefPositionStyle(positionRef), top:arrowPosition!.top, left:arrowPosition!.left,}}>
-                        </div>
-                    </>
-                    :
-                tooltip ? 
-                    <>
-                        <div className="sg-overlay-wrapper sg-tooltip-wrapper"
-                            ref={mergeRefs([ref,overlayRef])}
-                            style={{ position:checkRefPositionStyle(positionRef), top:overlayPosition!.top, left:overlayPosition!.left }}
-                        >{tooltip}</div>
-                        <div
-                            ref={arrowRef} aria-hidden
-                            className={`sg-overlay-arrow sg-tooltip-arrow${autoPosition ? " overlay-position-"+autoPosition : ""}`} 
-                            style={{position:checkRefPositionStyle(positionRef), top:arrowPosition!.top, left:arrowPosition!.left,}}>
-                        </div>
-                    </>
-                    :
-                null
+                <>
+                    {overlay ?
+                        <>
+                            <div className="sg-overlay-wrapper"
+                                ref={mergeRefs([ref,overlayRef])}
+                                style={{ position:checkRefPositionStyle(positionRef), top:overlayPosition!.top, left:overlayPosition!.left }}
+                            >{overlay}</div>
+                            <div
+                                ref={arrowRef} aria-hidden
+                                className={arrowClassnames} 
+                                style={{...arrowStyle, position:checkRefPositionStyle(positionRef), top:arrowPosition!.top, left:arrowPosition!.left,}}>
+                            </div>
+                        </>
+                    : null}
+                    {tooltip ? 
+                        <>
+                            <div className={tooltipClassnames}
+                                ref={mergeRefs([ref,overlayRef])}
+                                style={{...tooltipStyle, position:checkRefPositionStyle(positionRef), top:overlayPosition!.top, left:overlayPosition!.left }}
+                            >{tooltip}</div>
+                            <div
+                                ref={arrowRef} aria-hidden
+                                className={arrowClassnames} 
+                                style={{...arrowStyle, position:checkRefPositionStyle(positionRef), top:arrowPosition!.top, left:arrowPosition!.left,}}>
+                            </div>
+                        </>
+                        :
+                    null}
+                </>
             , document.body) : null}
         </>
     )

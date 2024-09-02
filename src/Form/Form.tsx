@@ -1,10 +1,62 @@
 import React, { forwardRef, useContext, createContext, useMemo, useState, useRef, useEffect, InvalidEvent } from "react";
 
-import { FormCheckType, FormContextType, FormControlType, FormGroupType, FormLabelType, FormSliderType, FormTextType, FormType, FormSelectType, FormSelectControlType, FormSelectInputType, FormSelectListType, FormSelectListItemType, SelectContextType, SliderContextType } from "./Form.types";
+import { HintType, ErrorType, FormTagContextType, FormCheckType, FormContextType, FormControlType, FormGroupType, FormLabelType, FormSliderType, FormTextType, FormType, FormSelectType, FormSelectControlType, FormSelectInputType, FormSelectListType, FormSelectListItemType, SelectContextType, SliderContextType, WarningIconType } from "./Form.types";
 import useClassname from "../hooks/useClassname";
+import mergeClassnames from "../utils/MergeClassnames";
 import mergeRefs from "../utils/MergeRefs";
 import contrastingColor from "../utils/ContrastingColor";
-import { debounce } from "lodash";
+
+import Overlay from "../Overlay";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger"
+import Tooltip from "react-bootstrap/Tooltip"
+
+const WarningIcon = forwardRef<SVGSVGElement, WarningIconType>( ({className, alt, color, size, ...restProps}, ref) => {
+    const sizeComputed = {width: size ?? "1rem", height: size ?? "1rem"}
+    const classNameComputed = mergeClassnames("sg-form-control-error-icon", className)
+
+    return (
+        <svg 
+            ref={ref} className={classNameComputed} color={color ?? "currentColor"} xmlns="http://www.w3.org/2000/svg" 
+            width={sizeComputed.width} height={sizeComputed.height} viewBox="0 0 256 256" 
+            {...restProps}
+        >
+            <path
+                fill="transparent"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={28}
+                d="M128 83v65"
+            />
+            <circle cx={128} cy={183} r={14} fill="currentColor" />
+            <path
+                fill="transparent"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={20}
+                d="M40 223h176l16-32-79-158h-50L24 191l16 32Z"
+            />
+        </svg>
+    )
+})
+WarningIcon.displayName = "WarningIcon"
+
+const FormTagContext = createContext<FormTagContextType | null>(null)
+const FormTagContextProvider = ({children, value} : {children: React.ReactNode, value:FormTagContextType}) => {
+    return(
+        <FormTagContext.Provider value={value}>
+            {children}
+        </FormTagContext.Provider>
+    )
+}
+export const useFormTagContext = () => {
+    const context = useContext(FormTagContext)
+    if(!context) {
+        return { noValidate: null}
+    }
+    return context
+}
 
 export const FormContext = createContext<FormContextType | null>(null)
 export const FormContextProvider = ({children, value} : {children: React.ReactNode, value:FormContextType}) => {
@@ -17,35 +69,98 @@ export const FormContextProvider = ({children, value} : {children: React.ReactNo
 export const useFormContext = () => {
     const context = useContext(FormContext)
     if(!context) {
-        return { controlId: null}
+        return {}
     }
     return context
 }
 
 
-const Form = forwardRef<HTMLFormElement, FormType>(({children, ...restProps}, ref) => {
+const Form = forwardRef<HTMLFormElement, FormType>(({children, noValidate, ...restProps}, ref) => {
+    const context = useMemo(() => {
+        return {noValidate: !!noValidate}
+    }, [noValidate])
     return (
-        <form ref={ref} {...restProps}>
-            {children}
+        <form ref={ref} noValidate={noValidate} {...restProps}>
+            <FormTagContextProvider value={context}>
+                {children}
+            </FormTagContextProvider>
         </form>
     )
 })
 Form.displayName = "Form"
 
+const ErrorMessage = forwardRef<HTMLParagraphElement, ErrorType>(({children, className, id, message, ...restProps}, ref) => {
 
+    const classNameComputed = mergeClassnames("sg-form-control-error", className)
+    return(
+        <p ref={ref} id={id+"-error-message"} className={classNameComputed} {...restProps}>
+            <WarningIcon width="1.25em" height="1.25em"  /> 
+            <span>{message ?? children}</span>
+        </p>
+    )
+})
+ErrorMessage.displayName = "ErrorMessage"
+const HintMessage = forwardRef<HTMLParagraphElement, HintType>(({children, className, id, message, ...restProps}, ref) => {
+    const classNameComputed = mergeClassnames("sg-form-control-hint", className)
+    return(
+        <>
+            {message ?
+                <p ref={ref} id={id+"-hint-message"} className={classNameComputed} {...restProps}>
+                    {message}
+                </p>
+                : 
+                <div ref={ref} id={id} className={classNameComputed} {...restProps}>
+                    {children}
+                </div>
+            }
+        </>
+    )
+})
+HintMessage.displayName = "HintMessage"
 const Control = forwardRef<HTMLInputElement, FormControlType>( (
-        {as = "input", className = "", plaintext = false, id="", type = "text", autoFocus=false, ...restProps}, ref
+        {as = "input", className = "", plaintext = false, id, type = "text", autoFocus=false, error, errorAsOverlay=false, hint, required, "aria-describedby":ariaDescribedby, ...restProps}, ref
 ) => {
     let Component = as
 
-    const { controlId } = useFormContext()
+    const { noValidate } = useFormTagContext()
+    const { controlId, isInputGroup, isFLoatingLabel } = useFormContext()
+    const isOverlay = isInputGroup || isFLoatingLabel || errorAsOverlay
 
-    let elementId = controlId ?? id
+    let elementId = id ?? controlId
 
-    let computedClassName = (plaintext ? "sg-form-control-plaintext" : "sg-form-control") + (className != "" ? " "+className : "") + (type == "color" ? " sg-form-control-color" : "")
+    let computedClassName = mergeClassnames(
+        plaintext ? "sg-form-control-plaintext" : "sg-form-control",
+        className != "" ? className : "",
+        type == "color" ? "sg-form-control-color" : "",
+        error ? "invalid":""
+    )
+    const errorMessageId = error ? elementId+"-error-message":undefined
+    const hintMessageId = hint ? elementId+"-hint-message":undefined
+    const tooltipMessage = isOverlay && (error || hint) ? 
+        <div className="sg-form-control-description tooltip">
+            {error? <ErrorMessage id={errorMessageId} message={error.message} /> : null}
+            {hint? <HintMessage id={hintMessageId} message={hint.message} /> : null}
+        </div> : undefined// "Testing a tooltip with a long message. This messsage is so long it hsould in theory trigger a wrap."
 
+    const describedby = mergeClassnames(ariaDescribedby, errorMessageId, hintMessageId)
     return (
-        <Component autoFocus={autoFocus} ref={ref} id={elementId} type={type} className={computedClassName} {...restProps} />
+        <>
+            <Overlay trigger={"focus"} position="top" tooltip={tooltipMessage}>
+                <Component 
+                    required={(required && !noValidate) ?? undefined} 
+                    aria-required={required ?? undefined} aria-invalid={error ? "true":"false"} aria-describedby={describedby != "" ? describedby : null}
+                    autoFocus={autoFocus} ref={ref} 
+                    id={elementId} type={type} className={computedClassName} {...restProps} />
+            </Overlay>
+            <div className="sg-form-control-description">
+                {error && !isOverlay ? 
+                    <ErrorMessage id={elementId} message={error.message} style={error.style} className={error.className}/>
+                    : null }
+                {hint && !isOverlay ?
+                    <HintMessage id={elementId} message={hint.message} style={hint.style} className={hint.className}/>
+                    : null }
+            </div>
+        </>
     )
 })
 Control.displayName = "FormControl"
@@ -64,12 +179,12 @@ const Group = forwardRef<HTMLDivElement, FormGroupType>( ({children, className, 
 })
 Group.displayName = "FormGroup"
  
-const Label = forwardRef<HTMLLabelElement, FormLabelType>( ({children, className, htmlFor}, ref) => {
+const Label = forwardRef<HTMLLabelElement, FormLabelType>( ({children, className, htmlFor, ...restProps}, ref) => {
     const { controlId } = useFormContext()
 
-    let elementHtmlFor = controlId ?? htmlFor
+    let elementHtmlFor = htmlFor ?? controlId
     return (
-        <label ref={ref} htmlFor={elementHtmlFor} className={`sg-form-label${className ? " "+className : ""}`}>
+        <label ref={ref} htmlFor={elementHtmlFor} className={`sg-form-label${className ? " "+className : ""}`} {...restProps}>
             {children}
         </label>
     )
@@ -79,37 +194,44 @@ Label.displayName = "FormLabel"
 const Check = forwardRef<HTMLInputElement, FormCheckType>( ({ children,
         classNameContainer, containerRef, containerId, styleContainer,
         classNameLabel, labelRef, label, labelId, styleLabel,
-        className, type="checkbox", id, reverse=false, style, onChange, ...restProps 
+        className, type="checkbox", id, reverse=false, style, onChange, required, ...restProps 
     } , ref) => {
+    const { noValidate } = useFormTagContext()
     const { controlId } = useFormContext()
     
     const typeComputed = !["radio", "checkbox", "color"].includes(type) ? "checkbox" :  type
+    const classNameComputed = mergeClassnames(
+        "sg-form-check-input",
+        className ?? ""
+    )
+    const classNameLabelComputed = mergeClassnames(
+        "sg-form-check-label",
+        classNameLabel ?? ""
+    )
+    const classNameContainerComputed = mergeClassnames(
+        "sg-form-check",
+        reverse ? " sg-form-check-reverse":"",
+        classNameContainer ?? "",
+        type === "switch" ? " sg-form-switch":""
+    )
 
     const [contrastColor, setContrastColor] = useState<React.CSSProperties>({})
     const onChangeInternal = (event: React.ChangeEvent<HTMLInputElement>) => {
         //setContrastColor({backgroundColor: "#"+contrastingColor(event.target.value)})
         if(onChange) onChange(event)
     }
-
-
+    //required={(required && !noValidate) ?? undefined} aria-required={required ?? undefined}
+    const elementId = id ?? controlId
     return (
-        <div ref={containerRef} id={containerId} style={styleContainer} className={`sg-form-check${reverse ? " sg-form-check-reverse":""}${classNameContainer ? " "+classNameContainer : ""}${type === "switch" ? " sg-form-switch":""}`} >
+        <div ref={containerRef} id={containerId} style={styleContainer} className={classNameContainerComputed} >
             {
                 controlId ?
-                    <input id={controlId} ref={ref} type={typeComputed} style={style} className={`sg-form-check-input${className ? " "+className : ""}`} onChange={event => onChangeInternal(event)} {...restProps} />
+                    <input required={(required && !noValidate) ?? undefined} aria-required={required ?? undefined} id={controlId} ref={ref} type={typeComputed} style={style} className={classNameComputed} onChange={event => onChangeInternal(event)} {...restProps} />
                 :
-                    <label ref={labelRef} id={labelId} style={styleLabel} className={`sg-form-check-label${classNameLabel ? " "+classNameLabel : ""}`}>
-                        {reverse ?
-                            <>
-                                <span>{children ?? label}</span>
-                                <input ref={ref} type={typeComputed} style={style} className={`sg-form-check-input${className ? " "+className : ""}`} onChange={event => onChangeInternal(event)} {...restProps} />
-                            </>
-                        :
-                            <>
-                                <input ref={ref} type={typeComputed} style={style} className={`sg-form-check-input${className ? " "+className : ""}`} onChange={event => onChangeInternal(event)} {...restProps} />
-                                <span>{children ?? label}</span>
-                            </>
-                        }
+                    <label ref={labelRef} htmlFor={elementId} id={labelId} style={styleLabel} className={classNameLabelComputed}>
+                        {reverse ? <span>{children ?? label}</span> : null}
+                        <input required={(required && !noValidate) ?? undefined} aria-required={required ?? undefined} ref={ref} type={typeComputed} style={style} id={elementId} className={classNameComputed} onChange={event => onChangeInternal(event)} {...restProps} />
+                        {!reverse ? <span>{children ?? label}</span> : null}
                     </label>
             }
         </div>
@@ -263,12 +385,13 @@ export const useSelectContext = () => {
     return context
 }
 
-const SelectTag = forwardRef<HTMLSelectElement, FormSelectType>( ({children, className, id, ...restProps}, ref) => {
+const SelectTag = forwardRef<HTMLSelectElement, FormSelectType>( ({children, className, id, required,...restProps}, ref) => {
+    const { noValidate } = useFormTagContext()
     const { controlId } = useFormContext()
-    const elementId = controlId ?? id
-    const classNames = ["sg-form-select-tag", className]
+    const elementId = id ?? controlId
+    const classNameComputed = mergeClassnames("sg-form-select-tag", className ?? "")
     return (
-        <select ref={ref} className={`sg-form-select-tag${className ? " "+className : ""}`} id={elementId} {...restProps}>
+        <select ref={ref} required={(required && !noValidate) ?? undefined} aria-required={required ?? undefined} className={classNameComputed} id={elementId} {...restProps}>
             {children}
         </select>
     )
@@ -441,5 +564,8 @@ export default  Object.assign(Form, {
     Label: Label,
     Check: Check,
     Text: Text,
-    Slider: Slider
+    Slider: Slider,
+    WarningIcon: WarningIcon,
+    Hint: HintMessage,
+    Error: ErrorMessage
 })

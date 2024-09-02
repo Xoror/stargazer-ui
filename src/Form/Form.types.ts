@@ -1,22 +1,44 @@
 import { ReactNode, Dispatch, Children } from "react";
 
-import { BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSpanType, BaseSliderType, BaseSmallType, BaseUListType } from "../utils/BaseTypes";
+import { BaseParagraphType, BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSpanType, BaseSliderType, BaseSmallType, BaseUListType, BaseSVGType } from "../utils/BaseTypes";
 
+export type FormTagContextType = {
+    noValidate: boolean
+}
 export type FormContextType = {
-    controlId: string
+    controlId?: string,
+    isInputGroup?: boolean,
+    isFLoatingLabel?: boolean,
 }
 
 export type FormType = {
     children: ReactNode
 } & BaseFormType
 
+type ErrorMessageType = {
+    message: string,
+    type?: string,
+    className?: string,
+    style?: React.CSSProperties,
+} & BaseParagraphType
+type HintMessageType = {
+    message: string,
+    custom?: boolean,
+    className?: string,
+    style?: React.CSSProperties,
+} & BaseParagraphType
+export type ErrorType = {children?:  ReactNode} & ErrorMessageType
+export type HintType = {children?: ReactNode} & HintMessageType
 export type FormControlType = {
     as?: React.ElementType,
     className?: string,
     plaintext?: boolean,
     id?: string,
     type?: string,
-    autoFocus?: boolean
+    autoFocus?: boolean,
+    error?: ErrorMessageType,
+    errorAsOverlay?: boolean
+    hint?: HintMessageType
 } & BaseInputType
 
 // Form Select types
@@ -115,3 +137,9 @@ export type SliderContextType = {
     max?: number,
     step?: number
 }
+
+export type WarningIconType = {
+    alt?: string,
+    size?: string | number,
+    color?: string
+} & BaseSVGType

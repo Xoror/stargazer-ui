@@ -19,7 +19,7 @@ const packageJsonTemplate = (folder) => {
 
 const getComponentsFolders = () => {
     const dirs = fs.readdirSync("./src")
-    const dirsWithoutIndex = dirs.filter(name => !name.includes(".ts") && name != "styles" && name != "utils")
+    const dirsWithoutIndex = dirs.filter(name => !name.includes(".ts") && name != "styles" && name != "utils" && name != "assets")
     return dirsWithoutIndex
   }
   

@@ -5,21 +5,20 @@
     color: var(--sg-navbar-link-color);
     text-decoration: none;
     border-radius: 0;
-    border: 1px solid transparent;
+    border: none;
     cursor: pointer;
+    font-family: inherit;
     //transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
   
-    &:hover,
-    &:focus {
+    &:hover {
         background-color: transparent;//color.mix(black, #4c5055, 15%);
-        border: 1px solid transparent;
         color: var(--sg-navbar-hover-color);
     }
     &:active {
         background-color: transparent;//color.mix(black, #4c5055, 20%);
     }
     &:focus-visible, &:focus {
-        border: 1px solid transparent;
+        color: var(--sg-navbar-hover-color);
     }
     &[aria-expanded="true"] {
         color:var(--sg-navbar-hover-color);

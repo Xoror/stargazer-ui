@@ -31,7 +31,6 @@ $grid-breakpoints: (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px, xxl: 140
 $container-max-widths: ( sm: 540px, md: 720px, lg: 960px, xl: 1140px, xxl: 1320px ) !default;
 
 /* z indices */
-$zindex-navbar:						990 !default;
 $zindex-dropdown:                   1000 !default;
 $zindex-popover:                    1010 !default;
 $zindex-sticky:                     1020 !default;
@@ -42,6 +41,7 @@ $zindex-modal-backdrop:             1050 !default;
 $zindex-modal:                      1060 !default;
 $zindex-tooltip:                    1080 !default;
 $zindex-toast:                      1090 !default;
+$zindex-navbar:						1200 !default;
 
 /* Button */
 //$colors: ("red": #E15554, "green": #3BB273, "yellow": #E1BC29, "blue": #4D9DE0, "purple": #7768AE);
@@ -49,7 +49,36 @@ $colors: ("primary": #0d6efd, "secondary": #6c757d, "success": #198754, "info": 
 $colors: ("primary": #4D9DE0, "secondary": #6c757d, "success": #3BB273, "info": #7768AE, "warning": #E1BC29, "danger": #E15554, "light": #f8f9fa, "dark": #212529);
 $colors: ("primary": $danger, "secondary": $secondary, "success": $success, "info": $info, "warning": $warning, "danger": $primary, "light": $light, "dark": $dark);
 
-/* Input and forms */
+
+/* Card */
+$card-bg-color: color-mix(in hsl, #212529, white 5%) !default;
+$card-header-bg-color: color-mix(in hsl, white 3%, #212529) !default;
+$card-text-color: white !default;
+$card-border-color: white !default;
+
+.popover-header {
+	background-color: var(--nav-color);
+	color: white;
+}
+.popover-body {
+	background-color: var(--background-color);
+	color: var(--text-color);
+	border-bottom-right-radius: 0.5em;
+	border-bottom-left-radius: 0.5em;
+    max-height: 30em;
+    overflow: auto;
+}
+
+
+/* Dropdown */
+$sg-dropdown-list-bg: #343a40;
+
+$sg-dropdown-item-hover-bg: color.mix(black, $sg-dropdown-list-bg, 15%);
+$sg-dropdown-item-action-bg: color.mix(black, $sg-dropdown-list-bg, 20%);
+$sg-dropdown-item-disabled-bg: color.mix(white, $sg-dropdown-list-bg, 15%);
+
+
+/* Form */
 $input-text-color: white;// #212529;
 $input-text-color-dark: black;
 
@@ -95,25 +124,33 @@ $slider-empty-border-color: color-mix(in oklab, $input-border-color, black 15%);
 $slider-empty-border-hover-color: color-mix(in oklab, $input-border-color, black 25%);
 
 
-/* Card */
+/* Nav */
+$sg-link-color: $danger;// #4D9DE0;// #0d6efd;
+$sg-link-hover-color: white;//color.mix(black, #E15554, 15%);// #62a4da;// #0a58ca;
+$sg-link-disable-color: rgb(180, 180, 180);
 
-$card-bg-color: color-mix(in hsl, #212529, white 5%) !default;
-$card-header-bg-color: color-mix(in hsl, white 3%, #212529) !default;
-$card-text-color: white !default;
-$card-border-color: white !default;
 
-.popover-header {
-	background-color: var(--nav-color);
-	color: white;
-}
-.popover-body {
-	background-color: var(--background-color);
-	color: var(--text-color);
-	border-bottom-right-radius: 0.5em;
-	border-bottom-left-radius: 0.5em;
-    max-height: 30em;
-    overflow: auto;
-}
+/* Overlay */
+$sg-arrow-border: white;
+$sg-arrow-fill: rgb(26, 27, 29);
+$tooltip-arrow-filter: brightness(66.666666%);
+
+$tooltip-text-color: white;
+$tooltip-background-color: rgb(26, 27, 29);
+
+
+$tooltip-font-size: 0.75rem;
+$tooltip-max-width: 12rem;
+
+$tooltip-padding-x: 0.375em;
+$tooltip-padding-y: 0.5em;
+
+$tooltip-border-color: color-mix(in oklab, $sg-nav-color, white 25%) ;
+$tooltip-border-radius: 0;
+$tooltip-border-width: 2px;
+$tooltip-border-style: inset;
+$tooltip-border-color: $tooltip-text-color;
+
 
 /* Table */
 $sg-table-padding: 0.5rem;
@@ -125,22 +162,3 @@ $sg-tab-controls-bg: #212529;
 $sg-tab-button-color: $danger;
 $sg-tab-button-hover: color-mix(in srgb, black 15%, $sg-tab-controls-bg);
 $sg-tab-button-active: color-mix(in srgb, black 25%, $sg-tab-controls-bg);
-
-/* Dropdown */
-
-$sg-dropdown-list-bg: #343a40;
-
-$sg-dropdown-item-hover-bg: color.mix(black, $sg-dropdown-list-bg, 15%);
-$sg-dropdown-item-action-bg: color.mix(black, $sg-dropdown-list-bg, 20%);
-$sg-dropdown-item-disabled-bg: color.mix(white, $sg-dropdown-list-bg, 15%);
-
-/* Nav */
-
-$sg-link-color: $danger;// #4D9DE0;// #0d6efd;
-$sg-link-hover-color: white;//color.mix(black, #E15554, 15%);// #62a4da;// #0a58ca;
-$sg-link-disable-color: rgb(180, 180, 180);
-
-/* Overlay */
-
-$sg-arrow-border: black;
-$sg-arrow-fill: black;

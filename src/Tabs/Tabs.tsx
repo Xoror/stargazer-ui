@@ -4,7 +4,7 @@ import { TabsButtonType, TabsContentType, TabsContextType, TabsControlsType, Tab
 
 import mergeClassnames from "../utils/MergeClassnames"
 import mergeRefs from "../utils/MergeRefs"
-import { useScreenSize } from "../hooks"
+import { useScreenSize, useQueryParams } from "../hooks"
 
 const TabsContext = createContext<TabsContextType | null>(null)
 const TabsContextProvider = ({children, value}:{children: React.ReactNode, value: TabsContextType}) => {
@@ -24,9 +24,15 @@ const useTabsContext = () => {
     return context
 }
 
-const Tabs = forwardRef<HTMLDivElement, TabsType>(({children, className, controlId, activeClassName, defaultActive, active, onTabChange, ...restProps}, ref) => {
-    const [activeTab, setActiveTab] = useState<string>(defaultActive)
-    const activeClass= activeClassName ? activeClassName: "sg-active"
+const Tabs = forwardRef<HTMLDivElement, TabsType>(({children, className, controlId, activeClassName, defaultActive, active, onTabChange, queryParam, setQueryParam, ...restProps}, ref) => {
+    const tabIdsMap = new Map()
+    Array.from(document.querySelectorAll<HTMLElement>('[data-tabd]')).forEach(el => tabIdsMap.set(el.dataset.tabid,1) )
+
+    const isTabId: boolean = tabIdsMap.get(queryParam) && queryParam
+    const [activeTab, setActiveTab] = useState<string>(isTabId ? queryParam! : defaultActive)
+    
+    
+    const activeClass= activeClassName ?? "sg-active"
     if(active && activeTab != active) {
         setActiveTab(active)
     }
@@ -36,13 +42,20 @@ const Tabs = forwardRef<HTMLDivElement, TabsType>(({children, className, control
             "If you control the tabs externally, you need both an 'active' state and a function 'onTabChange' that controls the 'active' state!"
         )
     }
+    if(queryParam && !setQueryParam || !queryParam && setQueryParam) {
+        throw new Error(
+            "If you control the query parameters externally, you need both an 'queryParam' state and a function 'setQueryParam' that controls the 'queryParam' state!"
+        )
+    }
+
     
     const contextValue = useMemo(() => ({
         activeTab,
         setActiveTab,
         controlId,
         activeClass,
-        onTabChange
+        onTabChange,
+        setQueryParam
     }), [activeTab, activeClass, controlId, activeClass, onTabChange])
     return (
         <TabsContextProvider value={contextValue}>
@@ -116,7 +129,7 @@ const Controls = forwardRef<HTMLDivElement, TabsControlsType>( ({children, class
         setIsOverflow(el.clientWidth < el.scrollWidth)
     }
     useLayoutEffect(() => {
-        console.log(internalRef.current)
+        //console.log(internalRef.current)
         checkWidthOverflow()
     }, [children])
     useEffect(() => {
@@ -159,7 +172,7 @@ const Controls = forwardRef<HTMLDivElement, TabsControlsType>( ({children, class
 Controls.displayName = "TabsControl"
 
 const Button = forwardRef<HTMLButtonElement, TabsButtonType>( ({children, className, onClick, tabId, id,...restProps}, ref) => {
-    const { activeTab, setActiveTab, activeClass, onTabChange } = useTabsContext()
+    const { activeTab, setActiveTab, setQueryParam, activeClass, onTabChange } = useTabsContext()
     const isActiveTab = activeTab === tabId
     const classNameComputed = "sg-tabs-button" + (className ? " "+className:"") + (isActiveTab ? " "+activeClass : "")
     const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -171,6 +184,9 @@ const Button = forwardRef<HTMLButtonElement, TabsButtonType>( ({children, classN
         }
         if(onClick) {
             onClick(event)
+        }
+        if(setQueryParam) {
+            setQueryParam(tabId)
         }
     }
     return (
@@ -198,7 +214,7 @@ const Page = forwardRef<HTMLDivElement, TabsPageType>( ({children, className, ta
     const classNameComputed = "sg-tabs-page" + (className ? " "+className:"") + (activeTab === tabId ? " "+activeClass : "")
     return (
         <div 
-            role="tabpanel" id={tabId+"-page"} aria-labelledby={tabId+"-button"}
+            role="tabpanel" id={tabId+"-page"} data-tabid={tabId} aria-labelledby={tabId+"-button"}
             ref={ref} className={classNameComputed} {...restProps}
         >
             {children}

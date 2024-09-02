@@ -11,7 +11,8 @@ export type InputGroupType = {
 export type InputGroupText = {
     children: ReactNode,
     className?: string,
-    htmlFor?: string
+    htmlFor?: string,
+    as?: string
 } & BaseLabelType
 
 export type InputGroupGridType = {

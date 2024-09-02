@@ -1,4 +1,4 @@
-import { useLocation  } from "react-router-dom"
+import { useEffect, useState } from "react"
 
 import Tabs from '../src/Tabs'
 import Popout from '../src/Popout'
@@ -10,7 +10,6 @@ import OverlayPage from './pages/OverlayPage'
 import FormPage from './pages/FormPage'
 import ModalPage from './pages/ModalPage'
 import ListPage from './pages/ListPage'
-import { useState } from "react"
 
 const tabs = [
     {
@@ -51,10 +50,10 @@ const tabs = [
 ]
 
 export const Component = () => {
-
+    const url = new URL(window.location.href)
 
     return (
-        <div >
+        <div>
             {false ? 
                 <Popout move="true">
                     <Popout.Header>
@@ -63,7 +62,7 @@ export const Component = () => {
                     <Popout.Body><p>test</p></Popout.Body>
                 </Popout>
             : null}
-            <Tabs controlId="tabs-test" defaultActive={tabs[0].id}>
+            <Tabs controlId="tabs-test" defaultActive={url.searchParams.get("tabid") ?? tabs[0].id}>
                 <Tabs.Controls>
                     {
                         tabs.map(tab => 

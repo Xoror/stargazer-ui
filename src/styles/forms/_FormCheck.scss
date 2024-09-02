@@ -130,8 +130,9 @@ $form-switch-color: rgba(black, .25);
     }
   }
 
-  &:user-invalid, &.invalid {
+  &:user-invalid, &.invalid, &[aria-invalid="true"] {
     box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
+    z-index: 2;
   }
 }
 

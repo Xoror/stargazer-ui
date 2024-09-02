@@ -57,3 +57,18 @@
     display: grid;
     place-items: center;
 }
+
+.fixed-navbar {
+    --_width: calc(100dvh*(16/9));
+    position: relative;
+    border: unset;
+    border-inline: 1px solid white;
+    background: unset;
+    background-color: unset;
+    width: var(--_width);
+    top: max(-100px, -1px * var(--scroll));
+    left: unset;
+    right: max(0px, (100vw - var(--_width)) / 2);
+    padding-right: 1rem;
+    background-color: transparent;
+}

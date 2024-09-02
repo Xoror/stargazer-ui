@@ -7,7 +7,7 @@ import { useClassname } from "../hooks"
 
 const InputGroup = forwardRef<HTMLDivElement, InputGroupType>(({children, className, controlId,  ...restProps}, ref) => {
     const context = useMemo(() => {
-        return {controlId: controlId}
+        return {controlId: controlId, isInputGroup: true}
     }, [controlId])
     return (
         <div ref={ref} className={useClassname("sg-input-group", className)} {...restProps}>

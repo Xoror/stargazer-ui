@@ -18,6 +18,7 @@ type BaseSelectType = React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSel
 type BaseSliderType = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 type BaseSmallType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
 type BaseSpanType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>;
+type BaseSVGType = React.SVGProps<SVGSVGElement>
 type BaseTableType = React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>;
 type BaseUListType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>;
 
@@ -26,5 +27,5 @@ type BaseElementType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>
 export { 
     BaseAnchorType, BaseButtonType, BaseDialogType, BaseDivType, BaseElementType, BaseFormType, BaseHeadingType, BaseHrType,
     BaseInputType, BaseLItemType, BaseLabelType, BaseSliderType, BaseMeterType, BaseNavType, BaseParagraphType, BaseProgressBarType, BaseSelectType, BaseSmallType, BaseSpanType,
-    BaseTableType, BaseUListType
+    BaseSVGType, BaseTableType, BaseUListType
 }

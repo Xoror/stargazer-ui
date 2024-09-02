@@ -14,6 +14,14 @@ const getDropdownMenuPlacement = (controlId: string, drop: string="down", align:
     const buttonTopBase = button.getBoundingClientRect().top + button.clientHeight
 
     const menu = document.getElementById(controlId+"-menu")!
+    const navbars = Array.from(document.querySelectorAll(".sg-navbar"))
+    if(navbars) {
+        for (const navbar of navbars) {
+            if(navbar.contains(button)) {
+                menu.style.setProperty("position", "absolute")
+            }
+        }
+    }
     let position = {
         top: drop === "up" ? buttonTopBase - (menu.clientHeight + button.clientHeight + topOffset) : buttonTopBase + topOffset, 
         left: drop === "right" ? buttonLeftBase + button.clientWidth + leftOffset: (drop === "left" ? buttonLeftBase - menu.clientWidth - leftOffset : buttonLeftBase)
@@ -228,6 +236,34 @@ export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, Dropdown
 })
 Toggle.displayName = "DropdownToggle"
 
+const isValidListElement = (elementList: HTMLCollection, startIndex: number, direction: "forward" | "backward" ) => {
+    let testIndex = startIndex
+    
+    let count = 0
+    let stop = false
+    while(!stop) {
+        const test = elementList[testIndex].children[0] ? true : false
+        if(test) {
+            stop = true
+            break
+        }
+
+        if(direction === "forward" && testIndex === elementList.length - 1) {
+            testIndex = 0
+        } else if (direction === "backward" && testIndex === 0) {
+            testIndex = elementList.length - 1
+        } else {
+            testIndex += direction === "forward" ? 1 : -1
+        }
+        
+        count += 1
+        if(count >= 100) {
+            stop = true
+        }
+    }
+    
+    return testIndex
+}
 
 export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, className, style = {}, ...restProps}, ref) => {
     const { controlId, showInternal, activeDescendant, navDropdown, align, drop } = useDropdownContext()
@@ -240,12 +276,12 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
             setComputedStyle(basePosition)
         }
     }, [showInternal])
-    
+    const handleResize = (event: UIEvent | Event) => {
+        const basePosition = getDropdownMenuPlacement(controlId, drop, align)    
+        setComputedStyle(basePosition)
+    }
     useEffect(() => {
-        const handleResize = (event: UIEvent) => {
-            const basePosition = getDropdownMenuPlacement(controlId, drop, align)    
-            setComputedStyle(basePosition)
-        }
+        
         if(showInternal) {
             const menu = document.getElementById(controlId+"-menu") as HTMLElement
             const menuChildren = document.getElementById(controlId+"-menu")!.children
@@ -263,19 +299,20 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
             }
             switch (activeDescendant.case) {
                 case "first":
-                    currentChild = menuChildren[0].children[0]
-                    currentIndex = 0
-                    break
-                case "last":
-                    currentChild = menuChildren[menuChildrenLast].children[0]
-                    currentIndex = menuChildrenLast
-                    break
-                case "next":
-                    currentIndex = currentIndex === menuChildrenLast ? 0 : currentIndex + 1
+                    currentIndex = isValidListElement(menuChildren, 0, "forward")
                     currentChild = menuChildren[currentIndex].children[0]
                     break
+                case "last":
+                    currentIndex = isValidListElement(menuChildren, menuChildrenLast, "backward")
+                    currentChild = menuChildren[currentIndex].children[0]
+                    break
+                case "next":
+                    currentIndex = isValidListElement(menuChildren, currentIndex === menuChildrenLast ? 0 : currentIndex + 1, "forward")
+                    currentChild = menuChildren[currentIndex].children[0]
+                    console.log(menuChildren[currentIndex+1])
+                    break
                 case "previous":
-                    currentIndex = currentIndex === 0 ? menuChildrenLast : currentIndex - 1
+                    currentIndex = isValidListElement(menuChildren, currentIndex === 0 ? menuChildrenLast : currentIndex - 1, "backward")
                     currentChild = menuChildren[currentIndex].children[0]
                     break
             }
@@ -283,20 +320,24 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
             menuChildren[currentIndex].children[0].classList.add("sg-dropdown-item-visual-focus")
 
             //makes it so that the menu stays with the button
-            window.addEventListener("resize", handleResize, true)
+            window.addEventListener("resize", event => handleResize(event), true)
+            window.addEventListener("scroll", event => handleResize(event), true)
         } else {
             const menu = document.getElementById(controlId+"-menu") as HTMLElement
             menu.setAttribute("aria-activedescendant", "")
         }
         return function cleanup() {
             window.removeEventListener("resize", handleResize, true)
+            window.removeEventListener("scroll", event => handleResize(event), true)
         }
     }, [controlId, showInternal, activeDescendant])
 
     const handleMouseOver = (event: MouseEvent) => {
         const target = event.target as HTMLElement
         let active=target.classList.contains("sg-dropdown-item-visual-focus")
-        const menu = document.getElementById(controlId+"-menu") as HTMLElement
+        const menuId = controlId+"-menu"
+        //console.log(menuId)
+        const menu = document.getElementById(menuId) as HTMLElement
         if(active) {
             return
         } else {
@@ -307,13 +348,14 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
         }
     }
     useEffect(() => {
+        console.log(controlId+"-menu")
         const menu = document.getElementById(controlId+"-menu") as HTMLElement
         for (let i=0; i< menu.children.length; i++) {
-            (menu.children[i] as HTMLElement).addEventListener("mouseover", handleMouseOver, true)
+            if(menu.children[i].children[0]) { (menu.children[i] as HTMLElement).addEventListener("mouseover", handleMouseOver, true) }
         }
         return function cleanup() {
             for (let i=0; i< menu.children.length; i++) {
-                (menu.children[i] as HTMLElement).addEventListener("mouseover", handleMouseOver, true)
+                if(menu.children[i].children[0]) { (menu.children[i] as HTMLElement).addEventListener("mouseover", handleMouseOver, true) }
             }
         }
     }, [])

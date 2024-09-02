@@ -26,7 +26,7 @@ const App = () => {
         <Navbar.Brand className={"navigation-link"}>
             Testing
         </Navbar.Brand >
-        <Dropdown navDropdown={true} controlId='test-navdropdown' style={{marginLeft:"auto"}}>
+        <Dropdown navDropdown={true} controlId='test-navdropdown' style={{marginLeft:"auto"}} align='end'>
             <Dropdown.Toggle>Open</Dropdown.Toggle>
             <Dropdown.Menu>
                 <Dropdown.Item id="test-1">Test 1</Dropdown.Item>

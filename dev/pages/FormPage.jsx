@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import Form from "../../src/Form"
 import Button from "../../src/Button"
@@ -12,15 +12,27 @@ const FormPage = () => {
         console.log(event)
         setSliderValue(event)
     }
+    const testRef = useRef(null)
+    useEffect(() => {
+        if(testRef.current) {
+            //console.log(testRef.current.getBoundingClientRect())
+        }
+    }, [testRef])
     return (
-        <div style={{display:"grid", placeContent:"center"}}>
+        <div ref={testRef} style={{display:"grid", placeContent:"center"}}>
             <div style={{height:"fit-content", width:"fit-content", border:"1px solid white", padding:"1rem", resize:"both", overflow:"hidden"}}>
                 <Form onSubmit={event => event.preventDefault()}>
                     <FileUploadButton />
                     <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem"}}>
                         <Form.Group controlId="form-control">
                             <Form.Label>Form Control</Form.Label>
-                            <Form.Control placeholder="Placeholder..."/>
+                            <Form.Control aria-describedby="test-hint" hint={{message: "Testing this error message"}} errorAsOverlay={true} error={{message: "Testing this error message"}} required type="number" min={4} placeholder="Placeholder..."/>
+                            <Form.Hint id="test-hint">
+                                <details>
+                                    <summary>test</summary>
+                                    more test
+                                </details>
+                            </Form.Hint>
                         </Form.Group>
                         <Form.Group controlId="form-control-disabled">
                             <Form.Label>Form Control Disabled</Form.Label>
@@ -107,7 +119,7 @@ const FormPage = () => {
                     <h6>Floating Label (in Input Group Grid)</h6>
                     <InputGroup.Grid>
                         <FloatingLabel controlId="floating-1" label="Floating 1">
-                            <Form.Control placeholder="Enter input..." />
+                            <Form.Control hint={{message: "Testing this error message looooooooooooooooooooooooooooooooooooooooooooong"}} error={{message: "Testing this error message"}} placeholder="Enter input..." />
                         </FloatingLabel>
                         <FloatingLabel controlId="floating-2" label="Floating 2">
                             <Form.SelectTag>

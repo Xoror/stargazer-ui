@@ -6,7 +6,7 @@ import { FloatingLabelType } from "./FloatingLabel.types";
 
 const FloatingLabel = forwardRef<HTMLLabelElement, FloatingLabelType>( ({children, label, controlId, className, htmlFor,...restProps}, ref) => {
     const context = useMemo<FormContextType>(() => {
-        return {controlId: controlId}
+        return {controlId: controlId, isFLoatingLabel: true}
     }, [controlId])
     return (
         <FormContextProvider value={context} >

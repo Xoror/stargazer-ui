@@ -74,9 +74,10 @@
     background-color: color-mix(in oklab, var(--input-text-color) , black 5%);
   }
 
-  &:user-invalid, &.invalid {
+  &:user-invalid, &.invalid, &[aria-invalid="true"] {
     //outline: 2px solid $input-border-color-invalid;
     box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
+    z-index: 2;
   }
 }
 
@@ -99,4 +100,36 @@ textarea {
 }
   // stylelint-enable selector-no-qualifying-type
 
-  
+.sg-form-control-error, .sg-form-control-hint {
+    max-width: 100%;
+    word-break: break-word;
+    margin: 0;
+    color: var(--text-color, white);
+    display: flex;
+    align-items:center;
+    font-size: 0.8rem;
+    .sg-form-control-error-icon {
+        color: currentColor;
+        margin-right: 0.5ch;
+    }
+}
+.sg-form-control-error {
+    --text-color: #{$input-border-color-invalid};
+}
+.sg-form-control-hint {
+    --text-color: #{$input-text-color};
+}
+
+.sg-form-control-description {
+    margin-top: var(--error-message-margin, 0.25rem);
+    &.tooltip {
+        --error-message-margin: 0;
+        .sg-form-control-error-icon {
+            align-self: last baseline;
+        }
+    }
+
+    &:empty {
+        display: none;
+    }
+}
