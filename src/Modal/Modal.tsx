@@ -27,13 +27,10 @@ const useModalContext = () => {
 
 const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children, size = "md",  show,  backdrop = "static", fill=false,  onHide, className, id, stretch, style, ...restProps 
     }, ref) => {
+    //Two "show modal" states exist to allow for the modal to not render when not used (meaning you don't have to deal with states
+    //for forms or other data that has to be renedered even though the modal is "display: none"). Also allows for an in/out-going animation
     const [showModal, setShowModal] = useState<boolean>(show)
-    if(show && show != showModal) {
-        setShowModal(show)
-    }
-
-    const modalRef = useRef<HTMLDialogElement>(null)
-    useKeepElementFocused(modalRef)
+    const [renderModal, setRenderModal] = useState<boolean>(show)
 
     let typeCheck : {show: boolean, onHide: boolean} | undefined = typeof(show) === "boolean" && typeof(onHide) === "function" ? undefined : {show: typeof(show) === "boolean", onHide: typeof(onHide) === "function"}
     if(typeCheck) {
@@ -43,16 +40,26 @@ const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children, size = "md"
         )
     }
 
+    if(show != showModal) {
+        setShowModal(show)
+        if(show) {
+            setRenderModal(true)
+        }
+    }
+
+    const modalRef = useRef<HTMLDialogElement>(null)
+    useKeepElementFocused(modalRef)
+
     const closeModal = () => {
         const modal = modalRef.current!
         modal.classList.add("close")
         modal.addEventListener('animationend', (event) => {
-            console.log(event)
-            if(event.animationName === "scale-down") {
+            if(event.animationName === "fade-out-modal") {
                 if(onHide) {
-                    onHide()
+                    onHide(false)
                 }
-                setShowModal(false)
+                modal.close()
+                setRenderModal(false)
             }
           }, {once : true});
     }
@@ -65,10 +72,10 @@ const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children, size = "md"
         if(showModal) {
             modal.classList.remove('close')
             modal.showModal()
+            
         }
         else {
-           // modal.classList.add('close')
-            modal.close()
+            closeModal()
         }
         
     }, [showModal])
@@ -92,6 +99,7 @@ const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children, size = "md"
     }
 
     return (
+        renderModal ?
             createPortal(
                 <dialog ref={mergeRefs([ref, modalRef])} className={classNameComputed} onKeyDown={(event) => handleKeyDown(event)} {...restProps } style={{"--height":stretch ? "80%":null, ...style} as React.CSSProperties}>
                     <ModalContextProvider value={closeModal}>
@@ -102,6 +110,7 @@ const Modal = forwardRef<HTMLDialogElement, ModalType>( ({ children, size = "md"
                     </ModalContextProvider>
                 </dialog>
             , document.body)
+        : null
     )
 })
 Modal.displayName = "Modal"

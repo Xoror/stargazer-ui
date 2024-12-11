@@ -10,21 +10,21 @@ $sg-modal-transition: transform .3s ease-out;
 .sg-modal-tag::backdrop {
     z-index: calc($zindex-modal);
     background: hsla(0, 0%, 0%);
-    opacity: 0.75;
-    animation-name: fadeInBackdrop;
+    opacity: 0.5;
+    animation-name: fade-in-backdrop;
     animation-duration: 0.3s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: forwards;
     &.close {
       background: transparent;
       opacity: 0;
-      animation-name: fadeInBackdrop;
+      animation-name: fade-out-backdrop;
       animation-duration: 0.3s;
       animation-timing-function: ease-in-out;
       animation-fill-mode: backwards;
     }
 }
-@keyframes fadeInBackdrop {
+@keyframes fade-in-backdrop {
   from {
     opacity: 0;
   }
@@ -32,7 +32,7 @@ $sg-modal-transition: transform .3s ease-out;
     opacity: 0.5;
   }
 }
-@keyframes fadeOutBackdrop {
+@keyframes fade-out-backdrop {
   from {
     opacity: 0.5;
   }
@@ -64,14 +64,14 @@ $sg-modal-transition: transform .3s ease-out;
     display: grid;
     width: 100%;
     grid-template-rows: [header-start] auto [header-end body-start] 1fr [body-end footer-start] auto [footer-end] ;// auto 1fr auto;
-    animation-name: slide-in-up;
+    animation-name: fade-in-modal;
     animation-duration: .3s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: forwards;
   }
 
   &.close {
-    animation: scale-down 0.3s ease-in-out;
+    animation: fade-out-modal 0.3s ease-in-out;
     animation-fill-mode: forwards;
   }
 
@@ -91,10 +91,10 @@ $sg-modal-transition: transform .3s ease-out;
     }
   }
 }
-@keyframes scale-down {
+@keyframes fade-out-modal {
   to { transform: translateY(10%); opacity: 0;}
 }
-@keyframes slide-in-up {
+@keyframes fade-in-modal {
   from {transform: translateY(-10%); opacity: 0.5;}
 }
 

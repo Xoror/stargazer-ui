@@ -142,23 +142,25 @@ const Controls = forwardRef<HTMLDivElement, TabsControlsType>( ({children, class
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         const key = event.key
         const tabsControls = internalRef.current
-        if(tabsControls) {
-            const tabControlsChildren = Array.from(tabsControls.children) as HTMLElement[]
-            let newIndex
-            if(key === "ArrowRight" || key === "ArrowLeft") {
-                event.preventDefault()
-                const activeTab = document.querySelector(".sg-tabs-button"+"."+activeClass) as HTMLElement
-                const activeTabIndex = tabControlsChildren.indexOf(activeTab)
-                const indexChange = key === "ArrowRight" ? 1 : -1
-                newIndex = activeTabIndex + indexChange < 0 ? tabControlsChildren.length - 1 : (activeTabIndex + indexChange >= tabControlsChildren.length ? 0 : activeTabIndex + indexChange)
-            } else if (key === "Home" || key === "End") {
-                event.preventDefault()
-                newIndex = key === "Home" ? 0 : tabControlsChildren.length -1
-            }
-            if(!newIndex) return
-            tabControlsChildren[newIndex].focus()
-            tabControlsChildren[newIndex].click()
+        if(!tabsControls) return
+        
+        const tabControlsChildren = Array.from(tabsControls.children) as HTMLElement[]
+        let newIndex
+        if(key === "ArrowRight" || key === "ArrowLeft") {
+            event.preventDefault()
+            const activeTab = document.querySelector(".sg-tabs-button"+"."+activeClass) as HTMLElement
+            const activeTabIndex = tabControlsChildren.indexOf(activeTab)
+            const indexChange = key === "ArrowRight" ? 1 : -1
+            const isChangeTooBig = activeTabIndex + indexChange >= tabControlsChildren.length
+            const isChangeNegative = activeTabIndex + indexChange < 0
+            newIndex = isChangeNegative ? tabControlsChildren.length - 1 : (isChangeTooBig ? 0 : activeTabIndex + indexChange)
+        } else if (key === "Home" || key === "End") {
+            event.preventDefault()
+            newIndex = key === "Home" ? 0 : tabControlsChildren.length -1
         }
+        if(newIndex === undefined || newIndex === null) return
+        tabControlsChildren[newIndex].focus()
+        tabControlsChildren[newIndex].click()
     }
 //div style={{maxWidth:"100%", display:"flex", overflowX:"auto"}}
     return (

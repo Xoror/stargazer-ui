@@ -1,6 +1,6 @@
-import { ReactNode, Dispatch, Children } from "react";
+import { ReactNode, Dispatch, Children, ReactElement } from "react";
 
-import { BaseParagraphType, BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSpanType, BaseSliderType, BaseSmallType, BaseUListType, BaseSVGType } from "../utils/BaseTypes";
+import { BaseElementType, BaseElementType2, BaseParagraphType, BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSpanType, BaseSliderType, BaseSmallType, BaseUListType, BaseSVGType, BaseButtonType } from "../utils/BaseTypes";
 
 export type FormTagContextType = {
     noValidate: boolean
@@ -46,25 +46,43 @@ export type SelectContextType = {
     internalId?:string,
     showList: boolean,
     setShowList: Dispatch<React.SetStateAction<boolean>>,
-    activeDescendant: string,
-    setActiveDescendant: Dispatch<React.SetStateAction<string>>,
+    activeDescendant: any,
+    setActiveDescendant: Dispatch<React.SetStateAction<any>>,
     inputValue: string, 
-    setInputValue: Dispatch<React.SetStateAction<string>>
+    setInputValue: Dispatch<React.SetStateAction<string>>,
+    selectedDescendant: any
+    setSelectedDescendant: Dispatch<React.SetStateAction<any>>,
+    children: ReactNode
 }
+export type FormSelectTagType = {
+    children: ReactNode,
+    className?: string,
+    id?: string,
+    required?: boolean,
+    value?: any,
+    error?: ErrorMessageType,
+    errorAsOverlay?: boolean
+    hint?: HintMessageType
+} & BaseSelectType
 export type FormSelectType = {
     children: ReactNode,
     className?: string,
     id?: string,
-    required?: boolean
-} & (BaseSelectType & BaseDivType)
+    required?: boolean,
+    value?: any,
+    error?: ErrorMessageType,
+    errorAsOverlay?: boolean
+    hint?: HintMessageType
+} & BaseButtonType
 export type FormSelectControlType = {
     children?: ReactNode,
+    required?: boolean,
     className?: string,
     placeholder?: string,
     searchable?: boolean,
-    inputRef?: React.Ref<HTMLInputElement>,
-    inputOptions?: FormSelectInputType
-} & BaseDivType
+    value: any,
+    label: ReactNode
+} & BaseButtonType
 export type FormSelectInputType = {
     className?: string,
     id?: string
@@ -74,12 +92,15 @@ export type FormSelectListType = {
     className?: string,
     id?: string
 } & BaseUListType
-export type FormSelectListItemType = {
-    children: ReactNode,
+export type FormSelectOptionType = {
+    children?: ReactNode,
     className?: string,
-    id?: string,
-    value?: string
-} & BaseLItemType
+    value: string,
+    disabled?: boolean,
+    label?: string,
+    selected?: boolean,
+    type?: string
+} & BaseLItemType & BaseElementType
 
 
 export type FormGroupType = {

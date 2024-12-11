@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-import { BaseDivType, BaseAnchorType, BaseButtonType, BaseUListType, BaseHrType, BaseElementType } from "../utils/BaseTypes";
+import { BaseDivType, BaseAnchorType, BaseButtonType, BaseUListType, BaseHrType, BaseElementType, BaseLItemType } from "../utils/BaseTypes";
 
 export type DropdownContextType = {
     align: string,
@@ -44,7 +44,8 @@ export type DropdownMenuType = {
 export type DropdownItemType = {
     children: ReactNode,
     as?: React.ElementType,
-    className?: string
+    className?: string,
+    liProps: BaseLItemType
 } & (BaseAnchorType | BaseButtonType)
 
 export type DropdownDividerType = {

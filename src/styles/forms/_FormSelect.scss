@@ -56,38 +56,68 @@
     --input-border-color-focus: #{$input-border-color-focus};
     --input-border-color-invalid: #{$input-border-color-invalid};
     --input-disabled-color: #{$input-disabled-color};
+
     position: relative;
     display: block;
-    width: 100%;
-    color: $input-text-color;
-
     
-}
-
-.sg-select-control {
-    width: 100%;
-    height: fit-content;
+    height: calc(1.4rem + $input-padding-x + $input-padding-x);
+    min-width: 12rem;
+    max-width: 15rem;
+    
     padding-block: $input-padding-x;
     padding-inline: $input-padding-y calc(3 * $input-padding-y);
-    color: inherit;
+    color: var(--input-text-color);
 
-    background-color: $input-background-color;
+    background-color: var(--input-background-color);
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right $input-padding-x center;
     background-size: 1em 0.75em;
-
-    border: $input-border-width solid $input-border-color;
+    border: $input-border-width outset var(--input-border-color);
     border-radius: $input-border-radius;
+
+    font-size: 0.85rem;
+    line-height: 1.4;
+
+    span {
+        pointer-events:visible;
+        display: inline-block;
+        width: 100%;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
     &:focus-within {
         //@include sg-focus-visible()
-        border-color: $input-border-color-focus;
+        border-color: var(--input-border-color-focus);
         outline: 0;
         box-shadow: 0;
     }
-    &.invalid {
-        border-color: $input-border-color-invalid;
+    .disabled {
+        --input-background-color: rgba(255, 255, 255, 0.04);
+        --input-placeholder-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
+        --input-text-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
+    }
+}
+
+.sg-select-control {
+    text-align: start;
+
+    cursor: default;
+
+    &:disabled {
+        --input-background-color: rgba(255, 255, 255, 0.04);
+        --input-placeholder-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
+        --input-text-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
+        cursor: not-allowed;
+        opacity: 1;
+    }
+    &:user-invalid, &.invalid, &[aria-invalid="true"] {
+        //outline: 2px solid $input-border-color-invalid;
+        box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
+        z-index: 2;
     }
 }
 
@@ -121,12 +151,14 @@
 .sg-select-list {
     --bg-color: #{$input-background-color};
     --txt-color: black;
+    --z-index: #{$zindex-dropdown};
 
     background-color: var(--bg-color);
     color: inherit;
 
     position: absolute;
-    top: calc(100% + 1px);
+    top: calc(100% + 3px);
+    left: 0;
     width: 100%;
     padding: 0;
 
@@ -135,22 +167,19 @@
     border: 2px outset color-mix(in oklab, $sg-body-bg, white 60%);
 
     list-style-type: none;
+
+    z-index: var(--z-index);
 }
 
 .sg-select-list-item {
     padding: 0.25rem 0.5rem;
-    font-size: 0.85rem;
-    border: 2px solid transparent;
-    
+    font-size: 0.85rem;    
+    user-select: none;
 
     &.focus {
-        //background-color: color-mix(in srgb, var(--bg-color) 80%, black);
-        background-color: color-mix(in oklab, $danger, transparent 50%);
-        border: 2px outset color-mix(in oklab, $danger, currentColor 20%);
+        background-color: color-mix(in oklab, var(--input-background-color), white 20%);
         &:active {
-            //background-color: color-mix(in srgb, var(--bg-color) 60%, black);
-            background-color: color-mix(in oklab, $danger, transparent 60%);
-            border: 2px outset color-mix(in oklab, $danger, currentColor 30%);
+            background-color: color-mix(in oklab, var(--input-background-color), white 25%);
         }
     }
 

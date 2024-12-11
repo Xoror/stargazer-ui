@@ -45,7 +45,6 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
                 top: refTop - overlayHeight - arrowOffsetHeight, 
                 left: refLeft + refWidth/2 - (isArrow ? arrowOffsetWidth/2 : overlayWidth/2) 
             }
-            console.log(isArrow, refLeft, refWidth/2, overlayWidth/2 )
             //tempPos.right = correctPosition("right", 12, 0)
             //tempPos.left = correctPosition("left", 0, 0)
             return tempPos

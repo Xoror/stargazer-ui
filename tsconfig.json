@@ -3,7 +3,7 @@
 		"target": "esnext",
 		"module": "ESNext",
     "lib": ["dom", "esnext"],
-		"jsx": "react",
+		"jsx": "react-jsx",
 		"sourceMap": true,
 		"strict": true,
 		"moduleResolution": "node",

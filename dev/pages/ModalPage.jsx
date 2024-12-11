@@ -15,7 +15,7 @@ const ModalPage = () => {
             <Button onClick={(event) => setShowModal(true)}>
                 Modal
             </Button>
-            <Modal show={showModal} onHide={onHide} size='md'>
+            <Modal fill show={showModal} onHide={onHide} size='md'>
                 <Modal.Header closeButton>
                     <Modal.Title>Test Modal: {width}</Modal.Title>
                 </Modal.Header>
@@ -27,6 +27,7 @@ const ModalPage = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <small>Test footer</small>
+                        <button type="button" onClick={(event) => setShowModal(false)}>Cancel</button>
                     </Modal.Footer>
                 </form>
             </Modal>

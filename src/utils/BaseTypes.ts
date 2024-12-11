@@ -23,9 +23,10 @@ type BaseTableType = React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTable
 type BaseUListType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>;
 
 type BaseElementType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+type BaseElementType2 = React.DetailedHTMLProps<React.HTMLAttributes<Element>, Element>;
 
 export { 
-    BaseAnchorType, BaseButtonType, BaseDialogType, BaseDivType, BaseElementType, BaseFormType, BaseHeadingType, BaseHrType,
+    BaseAnchorType, BaseButtonType, BaseDialogType, BaseDivType, BaseElementType, BaseElementType2, BaseFormType, BaseHeadingType, BaseHrType,
     BaseInputType, BaseLItemType, BaseLabelType, BaseSliderType, BaseMeterType, BaseNavType, BaseParagraphType, BaseProgressBarType, BaseSelectType, BaseSmallType, BaseSpanType,
     BaseSVGType, BaseTableType, BaseUListType
 }

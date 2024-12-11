@@ -1,26 +1,50 @@
 import { useEffect, useRef, useState } from "react"
 
 import Form from "../../src/Form"
+import Select from "../../src/Form/FormSelect.tsx"
 import Button from "../../src/Button"
 import InputGroup from "../../src/InputGroup"
 import FloatingLabel from "../../src/FloatingLabel"
 import FileUploadButton from "../../src/FileUploadButton/FileUploadButton"
 
 const FormPage = () => {
-    const [sliderValue, setSliderValue] = useState(5)
+    const [selectValue, setSelectValue] = useState("")
     const handleChange = (event) => {
-        console.log(event)
-        setSliderValue(event)
+        console.log(event.target.value)
+        setSelectValue(event.target.value)
     }
     const testRef = useRef(null)
     useEffect(() => {
-        if(testRef.current) {
-            //console.log(testRef.current.getBoundingClientRect())
-        }
-    }, [testRef])
+        console.log(testRef.current)
+    }, [testRef.current])
+
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        console.log(event.target[0].value)
+    }
+
     return (
-        <div ref={testRef} style={{display:"grid", placeContent:"center"}}>
+        <div style={{display:"grid", placeContent:"center"}}>
             <div style={{height:"fit-content", width:"fit-content", border:"1px solid white", padding:"1rem", resize:"both", overflow:"hidden"}}>
+                <Form onSubmit={handleSubmit}>
+                    <Select disabled errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}} ref={testRef} value={selectValue} onChange={handleChange} id="custom-select-test">
+                        <Select.Option value="">Select option...</Select.Option>
+                        <Select.Option value="1"> test 1</Select.Option>
+                        <Select.Option value="2">2</Select.Option>
+                        <Select.Option value="3">3</Select.Option>
+                        <Select.Option value="4">4</Select.Option>
+                        <Select.Option value="5">5</Select.Option>
+                        <Select.Option value="6">6</Select.Option>
+                        <Select.Option value="7">7</Select.Option>
+                        <Select.Option value="8">8</Select.Option>
+                        <Select.Option value="9">9</Select.Option>
+                        <Select.Option value="10">10</Select.Option>
+                        <Select.Option value="11">11</Select.Option>
+                        <Select.Option value="12">12</Select.Option>
+                        <Select.Option value="13">13</Select.Option>
+                    </Select>
+                    <Button type="submit">Test</Button>
+                </Form>
                 <Form onSubmit={event => event.preventDefault()}>
                     <FileUploadButton />
                     <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem"}}>
@@ -58,24 +82,14 @@ const FormPage = () => {
                         <Form.Control type="date"/>
                     </Form.Group>
 
-                    <Form.Group controlId="form-select">
-                        <Form.Label>Form Select</Form.Label>
-                        {true ? 
-                            <Form.SelectTag>
-                                <option value="">Select option...</option>
-                                <option value="test-1">Test 1</option>
-                                <option value="test-2">Test 2</option>
-                                <option value="test-3">Test 3</option>
-                            </Form.SelectTag> :
-                            <Form.Select>
-                                <Form.Select.Control/>
-                                <Form.Select.Options>
-                                    <Form.Select.Option value="test-1">Test 1</Form.Select.Option>
-                                    <Form.Select.Option value="test-2">Test 2</Form.Select.Option>
-                                    <Form.Select.Option value="test-3">Test 3</Form.Select.Option>
-                                </Form.Select.Options>
-                            </Form.Select>
-                        }
+                    <Form.Group controlId="form-select-tag">
+                        <Form.Label>Form Select Tag</Form.Label>
+                        <Form.SelectTag onChange={event => console.log(event)}>
+                            <option value="">Select option...</option>
+                            <option value="test-1">Test 1</option>
+                            <option value="test-2">Test 2</option>
+                            <option value="test-3">Test 3</option>
+                        </Form.SelectTag>
                     </Form.Group>
 
                     <Form.Group controlId="form-prtogress">

@@ -10,10 +10,13 @@ const getDropdownMenuPlacement = (controlId: string, drop: string="down", align:
     const leftOffset = drop === "right" || drop === "left" ? 5 : 0
 
     const button = document.getElementById(controlId)!
+    const {width: buttonWidth, height: buttonHeight} = button.getBoundingClientRect()
     const buttonLeftBase = button.getBoundingClientRect().left
-    const buttonTopBase = button.getBoundingClientRect().top + button.clientHeight
+    const buttonTopBase = button.getBoundingClientRect().top + buttonHeight
 
     const menu = document.getElementById(controlId+"-menu")!
+    const {width: menuWidth, height: menuHeight, top: menuTop, left: menuLeft, right: menuRight, bottom: menuBottom} = menu.getBoundingClientRect()
+
     const navbars = Array.from(document.querySelectorAll(".sg-navbar"))
     if(navbars) {
         for (const navbar of navbars) {
@@ -23,9 +26,17 @@ const getDropdownMenuPlacement = (controlId: string, drop: string="down", align:
         }
     }
     let position = {
-        top: drop === "up" ? buttonTopBase - (menu.clientHeight + button.clientHeight + topOffset) : buttonTopBase + topOffset, 
-        left: drop === "right" ? buttonLeftBase + button.clientWidth + leftOffset: (drop === "left" ? buttonLeftBase - menu.clientWidth - leftOffset : buttonLeftBase)
+        top: drop === "up" ? buttonTopBase - (menuHeight + buttonHeight + topOffset) : buttonTopBase + topOffset, 
+        left: drop === "right" ? buttonLeftBase + buttonWidth + leftOffset: (drop === "left" ? buttonLeftBase - menuWidth - leftOffset : buttonLeftBase)
     }
+
+    const windowHeight = window.innerHeight
+    const windowWidth = window.innerWidth
+    
+    if( menuTop < 0 ) placement = "down-"+placement.split("-")[1]
+    if( menuBottom > windowHeight) placement = "up-"+placement.split("-")[1]
+    if( menuLeft < 0) placement = placement.split("-")[0]+"-start"
+    if( menuRight > windowWidth) placement = placement.split("-")[0]+"-end"
     
     switch (placement) {
         case "down-start":
@@ -33,26 +44,26 @@ const getDropdownMenuPlacement = (controlId: string, drop: string="down", align:
             break
         case "down-center":
         case "up-center":
-            position.left += -1 * (menu.clientWidth - button.clientWidth)/2
+            position.left += -1 * (menuWidth - buttonWidth)/2
             break
         case "down-end":
         case "up-end":
-            position.left += -1 * (menu.clientWidth - button.clientWidth)
+            position.left += -1 * (menuWidth - buttonWidth)
             break
-        
         case "right-start":
         case "left-start":
-            position.top += -1 * button.clientHeight
+            position.top += -1 * buttonHeight
             break
         case "right-center":
         case "left-center":
-            position.top += -1 * button.clientHeight/2 - menu.clientHeight/2
+            position.top += -1 * buttonHeight/2 - menuHeight/2
             break
         case "right-end":
         case "left-end":
-            position.top += -1 * menu.clientHeight
-        
+            position.top += -1 * menuHeight
     }
+    
+
     return position
 }
 // is click event on the menu
@@ -128,7 +139,6 @@ export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, Dropdown
     const Component = as
     const handleKeyPress = (event: KeyboardEvent) => {
         let flag = false
-        console.log(event.key)
         switch (event.key) {
             case "ArrowDown":
                 flag = true
@@ -309,7 +319,6 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
                 case "next":
                     currentIndex = isValidListElement(menuChildren, currentIndex === menuChildrenLast ? 0 : currentIndex + 1, "forward")
                     currentChild = menuChildren[currentIndex].children[0]
-                    console.log(menuChildren[currentIndex+1])
                     break
                 case "previous":
                     currentIndex = isValidListElement(menuChildren, currentIndex === 0 ? menuChildrenLast : currentIndex - 1, "backward")
@@ -336,7 +345,6 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
         const target = event.target as HTMLElement
         let active=target.classList.contains("sg-dropdown-item-visual-focus")
         const menuId = controlId+"-menu"
-        //console.log(menuId)
         const menu = document.getElementById(menuId) as HTMLElement
         if(active) {
             return
@@ -348,7 +356,6 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
         }
     }
     useEffect(() => {
-        console.log(controlId+"-menu")
         const menu = document.getElementById(controlId+"-menu") as HTMLElement
         for (let i=0; i< menu.children.length; i++) {
             if(menu.children[i].children[0]) { (menu.children[i] as HTMLElement).addEventListener("mouseover", handleMouseOver, true) }
@@ -371,11 +378,11 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
 Menu.displayName = "DropdownMenu"
 
 
-export const Item = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownItemType>( ({children, as="button", className, ...restProps}, ref) => {
+export const Item = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownItemType>( ({children, as="button", className, liProps, ...restProps}, ref) => {
     const { navDropdown } = useDropdownContext()
     const Component = navDropdown ? "a" : as
     return (
-        <li role="none">
+        <li role="none" {...liProps}>
             <Component ref={ref} role="menuitem" tabIndex="-1" className={`sg-dropdown-item${className ? " "+className:""}`} {...restProps}>
                 {children}
             </Component >

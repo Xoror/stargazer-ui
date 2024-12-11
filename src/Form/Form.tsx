@@ -1,12 +1,13 @@
 import React, { forwardRef, useContext, createContext, useMemo, useState, useRef, useEffect, InvalidEvent } from "react";
 
-import { HintType, ErrorType, FormTagContextType, FormCheckType, FormContextType, FormControlType, FormGroupType, FormLabelType, FormSliderType, FormTextType, FormType, FormSelectType, FormSelectControlType, FormSelectInputType, FormSelectListType, FormSelectListItemType, SelectContextType, SliderContextType, WarningIconType } from "./Form.types";
+import { HintType, ErrorType, FormTagContextType, FormCheckType, FormContextType, FormControlType, FormGroupType, FormLabelType, FormSliderType, FormTextType, FormType, FormSelectTagType, SliderContextType, WarningIconType } from "./Form.types";
 import useClassname from "../hooks/useClassname";
 import mergeClassnames from "../utils/MergeClassnames";
 import mergeRefs from "../utils/MergeRefs";
 import contrastingColor from "../utils/ContrastingColor";
 
 import Overlay from "../Overlay";
+import Select from "./FormSelect"
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from "react-bootstrap/Tooltip"
 
@@ -89,7 +90,7 @@ const Form = forwardRef<HTMLFormElement, FormType>(({children, noValidate, ...re
 })
 Form.displayName = "Form"
 
-const ErrorMessage = forwardRef<HTMLParagraphElement, ErrorType>(({children, className, id, message, ...restProps}, ref) => {
+export const ErrorMessage = forwardRef<HTMLParagraphElement, ErrorType>(({children, className, id, message, ...restProps}, ref) => {
 
     const classNameComputed = mergeClassnames("sg-form-control-error", className)
     return(
@@ -100,7 +101,7 @@ const ErrorMessage = forwardRef<HTMLParagraphElement, ErrorType>(({children, cla
     )
 })
 ErrorMessage.displayName = "ErrorMessage"
-const HintMessage = forwardRef<HTMLParagraphElement, HintType>(({children, className, id, message, ...restProps}, ref) => {
+export const HintMessage = forwardRef<HTMLParagraphElement, HintType>(({children, className, id, message, ...restProps}, ref) => {
     const classNameComputed = mergeClassnames("sg-form-control-hint", className)
     return(
         <>
@@ -369,23 +370,7 @@ const Slider = forwardRef<HTMLSpanElement, FormSliderType>( ({className, style, 
 })
 Slider.displayName = "FormSlider"
 
-export const SelectContext = createContext<SelectContextType | null>(null)
-export const SelectContextProvider = ({children, value} : {children: React.ReactNode, value:SelectContextType}) => {
-    return (
-        <SelectContext.Provider value={value}>
-            {children}
-        </SelectContext.Provider>
-    )
-}
-export const useSelectContext = () => {
-    const context = useContext(SelectContext)
-    if(!context) {
-        throw new Error("UseSelectContext must be used within a SelectContextProvider!")
-    }
-    return context
-}
-
-const SelectTag = forwardRef<HTMLSelectElement, FormSelectType>( ({children, className, id, required,...restProps}, ref) => {
+const SelectTag = forwardRef<HTMLSelectElement, FormSelectTagType>( ({children, className, id, required,...restProps}, ref) => {
     const { noValidate } = useFormTagContext()
     const { controlId } = useFormContext()
     const elementId = id ?? controlId
@@ -398,167 +383,9 @@ const SelectTag = forwardRef<HTMLSelectElement, FormSelectType>( ({children, cla
 })
 SelectTag.displayName = "FormSelectTag"
 
-const Select = forwardRef<HTMLDivElement, FormSelectType>( ({children, className, id, required="false", ...restProps}, ref) => {
-    const { controlId } = useFormContext()
-
-    const internalSelectRef = useRef<HTMLDivElement>(null)
-
-    const [ showList, setShowList ] = useState<boolean>(false)
-    const [ activeDescendant, setActiveDescendant ] = useState<string>("")
-    const [ inputValue, setInputValue ] = useState<string>("")
-
-    let elementId = controlId ?? id
-
-    const context = useMemo(() => ({
-        internalId: elementId,
-        showList,
-        setShowList,
-        activeDescendant,
-        setActiveDescendant,
-        inputValue,
-        setInputValue
-    }), [showList, activeDescendant, inputValue])
-
-    useEffect(() => {
-        const selectElement = internalSelectRef.current
-        const handleClick = (event: MouseEvent) => {
-            if(!selectElement!.contains(event.target as HTMLElement)) {
-                setShowList(false)
-                document.querySelectorAll(".sg-select-control.focus").forEach(element => {
-                    element.classList.remove("focus")
-                })
-            }
-        }
-        if(selectElement) {
-            document.addEventListener("click", handleClick, true)
-        }
-        const handleSubmit = (event: any) => {
-            console.log(event.target)
-        }
-        document.addEventListener("invalid", handleSubmit, true)
-        return function cleanup() {
-            if(selectElement) {
-                document.removeEventListener("click", handleClick, true)
-            }
-            document.removeEventListener("invalid", handleSubmit, true)
-        }
-    }, [internalSelectRef.current])
-
-    return (
-        <div ref={mergeRefs([ref, internalSelectRef])} className={`sg-form-select${className ? " "+className : ""}`} id={elementId} {...restProps} >
-            <SelectContextProvider value={context}>
-                {children}
-            </SelectContextProvider>
-        </div>
-    )
-})
-Select.displayName = "FormSelect"
-
-const SelectControl = forwardRef<HTMLDivElement, FormSelectControlType>( ({children, className, placeholder="Placeholder...", searchable=false, inputRef, inputOptions, ...restProps}, ref) => {
-    const { setShowList, internalId } = useSelectContext()
-    const selectControlRef = useRef<HTMLDivElement>(null)    
-
-    const handlePointerUp = (event: React.MouseEvent) => {
-        setShowList(prev => !prev);
-        const selectControl = selectControlRef.current
-        if(selectControl) {
-            selectControl.classList.add("focus")
-            const eventTargetChildren = selectControl.children[0] as HTMLElement
-            if(eventTargetChildren) { eventTargetChildren.focus() }
-        }
-    }
-    const inputParams = {...inputOptions, disabled:searchable, placeholder:placeholder, ref:inputRef}
-    
-    return (
-        <div ref={mergeRefs([ref, selectControlRef])} onPointerUp={handlePointerUp} className={useClassname("sg-select-control", className)} {...restProps}>
-            <SelectInput {...inputParams}/>
-        </div>
-    )
-})
-SelectControl.displayName = "FormSelectControl"
-
-const SelectInput = forwardRef<HTMLInputElement, FormSelectInputType>( ({className, id, value, onChange, ...restProps}, ref ) => {
-    const { showList, setShowList, inputValue, setInputValue, internalId } = useSelectContext()
-
-    const debouncedInput = (value: string) => {
-        setTimeout(()=>{
-            setInputValue(value)
-         }, 300)
-    }
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event)
-        if(!showList) { setShowList(true) }
-        if(onChange) { onChange(event) }
-        //debouncedInput(event.target.value)
-        setInputValue(event.target.value)
-    }
-    const handleKeyUp = (event: React.KeyboardEvent) => {
-        const key = event.key
-        switch(key) {
-            case "ArrowDown":
-                console.log("down arrow")
-                break
-            case "ArrowUp":
-                console.log("up arrow")
-                break
-        }
-    }
-
-
-    return (
-        <input value={inputValue} ref={ref}
-            onKeyUp={handleKeyUp} onChange={handleChange}
-            className={useClassname("sg-select-input", className)} 
-            {...restProps}
-        />
-    )
-})
-SelectInput.displayName = "FormSelectInput"
-
-const SelectList = forwardRef<HTMLUListElement, FormSelectListType>( ({children, className, id, ...restProps}, ref) => {
-    const { showList, internalId } = useSelectContext()
-
-    const listRef = useRef<HTMLUListElement>(null)
-    
-    return (
-        <ul ref={mergeRefs([ref, listRef])} className={useClassname("sg-select-list", className)} style={showList ? undefined : {display:"none"}} {...restProps}>
-            {children}
-        </ul>
-    )
-})
-SelectList.displayName = "FormSelectList"
-
-const SelectOption = forwardRef<HTMLLIElement, FormSelectListItemType>(({children, className, id, value,...restProps}, ref) => {
-    const { internalId } = useSelectContext()
-    const handlePointerEnter = (event: React.MouseEvent) => {
-        if(!event.target) return
-
-        let element = event.target as HTMLElement
-        let focusElement = document.querySelectorAll(".sg-select-list-item.focus")
-        //console.log(element, focusElement)
-        focusElement.forEach(element => element.classList.remove("focus"))
-        element.classList.add("focus")
-    }
-    const handlePointerUp = (event: React.MouseEvent) => {
-        console.log((event.target as HTMLElement).id)
-    }
-    return (
-        <li onPointerDown={handlePointerUp} onPointerOver={handlePointerEnter} id={value ?? id} className={useClassname("sg-select-list-item", className)} {...restProps}>
-            {children}
-        </li>
-    )
-})
-SelectOption.displayName = "FormSelectOption"
-
-
 export default  Object.assign(Form, {
     Control: Control,
-    Select:  Object.assign(Select, {
-        Control: SelectControl,
-        Input: SelectInput,
-        Options: SelectList,
-        Option: SelectOption
-    }),
+    Select:  Select,
     SelectTag: SelectTag,
     Group: Group,
     Label: Label,

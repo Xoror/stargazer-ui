@@ -21,7 +21,7 @@ InputGroup.displayName = "InputGroup"
 
 const Grid = forwardRef<HTMLDivElement, InputGroupGridType>( ({children, className, ...restProps}, ref) => {
     return (
-        <div ref={ref} className={useClassname("sg-input-group-grid", className)}>
+        <div ref={ref} className={useClassname("sg-input-group-grid", className)} {...restProps}>
             {children}
         </div> 
     )
