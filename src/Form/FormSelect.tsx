@@ -55,11 +55,19 @@ const inputKeys: InputKeyType[] = [
 
 
 const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
-        children, className, id, required=false, disabled=false, value, ref: ref2,
+        children, className, id, required=false, disabled=false, value, label,
         errorAsOverlay, error, hint, "aria-describedby":ariaDescribedby,
         onClick, onBlur, onKeyUp, onKeyDown, onChange,
         ...restProps
     }, ref) => {
+
+    if(Array.isArray(children)) {
+        children = children.filter(child => child !== null && child !== undefined)
+    } else {
+        children = [children].filter(child => child !== null && child !== undefined)
+    }
+    
+    
     const { noValidate } = useFormTagContext()
     const { controlId, isInputGroup, isFLoatingLabel } = useFormContext()
     const isOverlay = isInputGroup || isFLoatingLabel || errorAsOverlay
@@ -75,6 +83,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
     }
     const hasValidChildren = useMemo(() => {
         if(!children || !Array.isArray(children)) return false
+        if(children.length < 1) return false
 
         let isValid = true
         children.forEach(child => {
@@ -82,6 +91,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
                 isValid = false
             }
         })
+        
         if(children[0].props.value && children[0].props.value != "") {
             console.warn("It is recommended to have the first select option in a 'Form.Select' to be a placeholder like 'Select option...' with a value of an empty string")
         }
@@ -159,10 +169,23 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
         */
         if(onClick && event) onClick(event)
     }
-    const handleBlur = (event: React.FocusEvent<HTMLButtonElement>) => {
+    const handleBlur = (event: React.FocusEvent<HTMLButtonElement>, hasOnBlur=true) => {
         handleSetShowList(false)
-        if(onBlur) onBlur(event)
+        if(onBlur && hasOnBlur) onBlur(event)
     }
+    useEffect(() => {
+        const select = internalSelectControlRef.current
+        window.addEventListener("pointerdown", event => {
+            if(!select?.contains(event.target as HTMLElement)) handleSetShowList(false)
+        }, true)
+        window.addEventListener("resize", event => handleSetShowList(false), true)
+        return function cleanup () {
+            window.removeEventListener("pointerdown", event => {
+                if(select?.contains(event.target as HTMLElement)) handleSetShowList(false)
+            }, true)
+            window.removeEventListener("resize", event => handleSetShowList(false), true)
+        }
+    }, [])
 
     const changeActiveDescendant = (number: number, type: string) => {
         const maxIndex = children.length - 1
@@ -286,18 +309,19 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
         setInputValue,
         selectedDescendant,
         setSelectedDescendant,
-        children
+        children,
+        handleBlur
     }), [elementId, showList, activeDescendant, inputValue ])
     
     return (
         <SelectContextProvider value={context}>
-            <Overlay trigger={"focus"} position="top" tooltip={tooltipMessage}>
+            <Overlay trigger={"focus"} position="auto" tooltip={tooltipMessage}>
                 <SelectControl 
-                    value={selectedDescendant.value} label={selectedDescendant.label} ref={mergeRefs([ref, internalSelectControlRef])} 
+                    value={selectedDescendant.value} label={selectedDescendant.label} 
                     className={computedClassName} id={elementId} required={(required && !noValidate) ?? undefined}  disabled={disabled}
                     aria-required={required ?? undefined} aria-invalid={error ? "true":"false"} aria-describedby={describedby != "" ? describedby : undefined}
                     onClick={handleClick} onBlur={handleBlur} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}
-                    {...restProps}
+                    {...restProps} ref={mergeRefs([ref, internalSelectControlRef])} 
                 >
                     <SelectList>
                         {children}
@@ -357,7 +381,7 @@ SelectInput.displayName = "FormSelectInput"
 
 const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({children, className, value, label, searchable=false, required=false, onChange, ...restProps}, ref) => {
     const { activeDescendant, showList, internalId } = useSelectContext()
-    const internalButtonRef = useRef(null)
+    const internalButtonRef = useRef<HTMLButtonElement>(null)
     
     const computedClassName = mergeClassnames(className, "sg-select-control")
 
@@ -398,17 +422,56 @@ const SelectControlAlternate = forwardRef<HTMLDivElement, FormSelectControlType>
 })
 SelectControl.displayName = "FormSelectControl"
 */ 
+const listPositionSetter = (listRef: any) => {
+    const listElement = listRef.current
+    if(!listElement) return
+    const parent = listElement.parentElement
+    if(!parent) return
+    let position: React.CSSProperties = {}
+    const {height: listHeight } = listElement.getBoundingClientRect()
+    const { top, bottom} = parent.getBoundingClientRect()
+    const {innerHeight} = window
+
+    const isTop = top > listHeight
+    const isBottom = innerHeight - bottom > listHeight
+    const coordinate = "calc(100% + 4px)"
+    if(isBottom) {
+        position = {top: coordinate, bottom: "unset"}
+    } else if (isTop) {
+        position = {bottom:coordinate, top: "unset"}
+    } else {
+        const height = innerHeight - bottom - 2
+        position = {top: coordinate, maxHeight: height}
+    }
+    if(!listElement.children) return
+    const listChildren = listElement.children
+    const numberChildren = listChildren.length
+    const listElementHeight = listChildren[0].getBoundingClientRect().height
+    const numberOfRenderedChildren = numberChildren >= 5 ? 5 : numberChildren
+    const computedListHeight = numberOfRenderedChildren*listElementHeight + 4
+    position.height = computedListHeight
+
+    return position
+}
 
 const SelectList = forwardRef<HTMLUListElement, FormSelectListType>( ({children, className, id, ...restProps}, ref) => {
     const { showList, internalId } = useSelectContext()
 
+    const [computedStyle, setComputedStyle] = useState<React.CSSProperties>({})
+
     const listRef = useRef<HTMLUListElement>(null)
+    useLayoutEffect(() => {
+        if(!showList) return
+        const newPosition = listPositionSetter(listRef)
+        setComputedStyle(newPosition!)
+    }, [showList])
     
     return (
-        <ul role="listbox"
-            ref={mergeRefs([ref, listRef])} id={internalId+"-list"}
-            className={mergeClassnames("sg-select-list", className)} style={showList ? undefined : {display:"none"}} 
-            {...restProps}>
+        <ul 
+            role="listbox" ref={mergeRefs([ref, listRef])} id={internalId+"-list"} 
+            className={mergeClassnames("sg-select-list", className)} style={showList ? {...computedStyle} : {display:"none"}} 
+            {...restProps}
+        >
             {children}
         </ul>
     )

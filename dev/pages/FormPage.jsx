@@ -27,22 +27,10 @@ const FormPage = () => {
         <div style={{display:"grid", placeContent:"center"}}>
             <div style={{height:"fit-content", width:"fit-content", border:"1px solid white", padding:"1rem", resize:"both", overflow:"hidden"}}>
                 <Form onSubmit={handleSubmit}>
-                    <Select disabled errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}} ref={testRef} value={selectValue} onChange={handleChange} id="custom-select-test">
-                        <Select.Option value="">Select option...</Select.Option>
-                        <Select.Option value="1"> test 1</Select.Option>
-                        <Select.Option value="2">2</Select.Option>
-                        <Select.Option value="3">3</Select.Option>
-                        <Select.Option value="4">4</Select.Option>
-                        <Select.Option value="5">5</Select.Option>
-                        <Select.Option value="6">6</Select.Option>
-                        <Select.Option value="7">7</Select.Option>
-                        <Select.Option value="8">8</Select.Option>
-                        <Select.Option value="9">9</Select.Option>
-                        <Select.Option value="10">10</Select.Option>
-                        <Select.Option value="11">11</Select.Option>
-                        <Select.Option value="12">12</Select.Option>
-                        <Select.Option value="13">13</Select.Option>
-                    </Select>
+                    <Form.Select errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}} ref={testRef} value={selectValue} onChange={handleChange} id="custom-select-test">
+                        <Form.Select.Option value="">Select option...</Form.Select.Option>
+                        {null}
+                    </Form.Select>
                     <Button type="submit">Test</Button>
                 </Form>
                 <Form onSubmit={event => event.preventDefault()}>
@@ -90,6 +78,18 @@ const FormPage = () => {
                             <option value="test-2">Test 2</option>
                             <option value="test-3">Test 3</option>
                         </Form.SelectTag>
+                        <Form.Select errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}} ref={testRef} value={selectValue} onChange={handleChange} id="custom-select-test">
+                            <Form.Select.Option value="">Select option...</Form.Select.Option>
+                            <Form.Select.Option value="1">1</Form.Select.Option>
+                            <Form.Select.Option value="2">2</Form.Select.Option>
+                            <Form.Select.Option value="3">3</Form.Select.Option>
+                            <Form.Select.Option value="4">4</Form.Select.Option>
+                            <Form.Select.Option value="5">5</Form.Select.Option>
+                            <Form.Select.Option value="6">6</Form.Select.Option>
+                            <Form.Select.Option value="7">7</Form.Select.Option>
+                            <Form.Select.Option value="8">8</Form.Select.Option>
+                            <Form.Select.Option value="9">9</Form.Select.Option>
+                        </Form.Select>
                     </Form.Group>
 
                     <Form.Group controlId="form-prtogress">

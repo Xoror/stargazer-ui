@@ -117,7 +117,6 @@
     &:user-invalid, &.invalid, &[aria-invalid="true"] {
         //outline: 2px solid $input-border-color-invalid;
         box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
-        z-index: 2;
     }
 }
 
@@ -152,6 +151,7 @@
     --bg-color: #{$input-background-color};
     --txt-color: black;
     --z-index: #{$zindex-dropdown};
+    overflow-y: auto;
 
     background-color: var(--bg-color);
     color: inherit;
@@ -175,6 +175,8 @@
     padding: 0.25rem 0.5rem;
     font-size: 0.85rem;    
     user-select: none;
+
+    z-index: inherit;
 
     &.focus {
         background-color: color-mix(in oklab, var(--input-background-color), white 20%);

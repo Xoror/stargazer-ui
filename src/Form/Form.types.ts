@@ -64,7 +64,8 @@ export type FormSelectTagType = {
     errorAsOverlay?: boolean
     hint?: HintMessageType
 } & BaseSelectType
-export type FormSelectType = {
+
+export type FormSelectType =  {
     children: ReactNode,
     className?: string,
     id?: string,
@@ -73,7 +74,7 @@ export type FormSelectType = {
     error?: ErrorMessageType,
     errorAsOverlay?: boolean
     hint?: HintMessageType
-} & BaseButtonType
+} & FormSelectControlType
 export type FormSelectControlType = {
     children?: ReactNode,
     required?: boolean,
@@ -83,6 +84,7 @@ export type FormSelectControlType = {
     value: any,
     label: ReactNode
 } & BaseButtonType
+
 export type FormSelectInputType = {
     className?: string,
     id?: string

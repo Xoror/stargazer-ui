@@ -7,7 +7,7 @@ export type OverlayType = {
     tooltip?: React.JSX.Element | string,
     show?: boolean,
     onToggle?: Function,
-    position?: string,
+    position?: "auto" | "top" | "bottom" | "right" | "left",
     trigger?: string | string[],
     defaultShow?: boolean,
     tooltipClassname?: string,
