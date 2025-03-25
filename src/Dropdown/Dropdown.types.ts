@@ -24,7 +24,10 @@ export type DropdownType = {
     drop?: string,
     align?: string,
     autoClose?: boolean,
-    show?:boolean
+    show?:boolean,
+    label: string,
+    as?: React.ElementType,
+    variant?: string,
 } & BaseDivType
 
 export type DropdownToggleType = {
@@ -32,7 +35,8 @@ export type DropdownToggleType = {
     className?: string,
     navDropdown?: boolean,
     as?: React.ElementType,
-    variant?: string
+    variant?: string,
+    label: string
 } & (BaseAnchorType | BaseButtonType | BaseElementType)
 
 export type DropdownMenuType = {

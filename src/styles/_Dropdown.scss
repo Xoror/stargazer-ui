@@ -33,6 +33,7 @@
 }
 
 .sg-dropdown-toggle {
+    position: relative;
     white-space: nowrap;
     &::after {
         display: inline-block;

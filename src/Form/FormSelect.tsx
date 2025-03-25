@@ -56,13 +56,13 @@ const inputKeys: InputKeyType[] = [
 
 const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
         children, className, id, required=false, disabled=false, value, label,
-        errorAsOverlay, error, hint, "aria-describedby":ariaDescribedby,
+        errorAsOverlay, error, hint, "aria-describedby":ariaDescribedby, loading=false,
         onClick, onBlur, onKeyUp, onKeyDown, onChange,
         ...restProps
     }, ref) => {
 
     if(Array.isArray(children)) {
-        children = children.filter(child => child !== null && child !== undefined)
+        children = children.flat(Infinity).filter(child => child !== null && child !== undefined)
     } else {
         children = [children].filter(child => child !== null && child !== undefined)
     }
@@ -70,6 +70,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
     
     const { noValidate } = useFormTagContext()
     const { controlId, isInputGroup, isFLoatingLabel } = useFormContext()
+    
     const isOverlay = isInputGroup || isFLoatingLabel || errorAsOverlay
     const computedClassName = mergeClassnames(
         "sg-form-select", className, error ? "invalid":"", disabled ? "disabled":""
@@ -81,6 +82,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
             "Form.Select needs to have an id, either provided directly through the 'id' property or wrapped in a Form.Group with a 'controlId' !"
         )
     }
+    
     const hasValidChildren = useMemo(() => {
         if(!children || !Array.isArray(children)) return false
         if(children.length < 1) return false
@@ -102,7 +104,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
             "Form.Select needs to have 1 or more 'Form.Select.Option' children, each with value attributes!"
         )
     }
-
+    
     const errorMessageId = error ? elementId+"-error-message":undefined
     const hintMessageId = hint ? elementId+"-hint-message":undefined
     const tooltipMessage = isOverlay && (error || hint) ? 
@@ -119,7 +121,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
     const initialValue = value ? 
         {
             value: value,
-            label: children.find(child => child.props.value === value).children ?? "no label found"
+            label: children.find(child => child.props.value === value) ? children.find(child => child.props.value === value).props.children : "no label found"
         }:
         {
             value: children[0].props.value ?? "",
@@ -138,10 +140,25 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
     const [ activeDescendant, setActiveDescendant ] = useState<any>(initialValue.value)
     const [ selectedDescendant, setSelectedDescendant ] = useCustomState(initialValue, handleChange)
     const [ inputValue, setInputValue ] = useState<string>("")
+    
+    if(!loading) {
+        const isChild = children.find(child => child.props.value === value)
+        const isDefaultChild = children.find(child => child.props.value === "")
+        const computedLabel = isChild ? isChild.props.children : (isDefaultChild ? isDefaultChild.props.children : "no label found")    
+        if(selectedDescendant.label != computedLabel) {
+            setSelectedDescendant((prev: any) => ({
+                ...prev,
+                label: computedLabel
+            }), {middleware: false})
+        }
+    }
 
-    if(value && value !== selectedDescendant.value) {
-        const computedLabel = children.find(child => child.props.value === value).props.children ?? "no label found"
-        
+    if(value != undefined && value != null && value !== selectedDescendant.value && !loading) {
+        const isChild = children.find(child => child.props.value === value)
+        const isDefaultChild = children.find(child => child.props.value === "")
+        const computedLabel = isChild ? isChild.props.children : (isDefaultChild ? isDefaultChild.props.children : "no label found")
+        const computedValue = isChild ? value : ""
+        console.log(value, computedLabel)
         setSelectedDescendant({
             value: value,
             label: computedLabel
@@ -188,9 +205,9 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
     }, [])
 
     const changeActiveDescendant = (number: number, type: string) => {
-        const maxIndex = children.length - 1
+        const maxIndex = (children as any).length - 1
         const minIndex = 0
-        const currentIndex = children.indexOf(children.find(child => child.props.value === activeDescendant))
+        const currentIndex = (children as any).indexOf((children as any).find((child:any) => child.props.value === activeDescendant))
         let newIndex, temp
         switch (type) {
             case "add":
@@ -208,7 +225,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
                 newIndex = 0
                 break
         }
-        setActiveDescendant(children[newIndex].props.value)
+        setActiveDescendant((children as any)[newIndex].props.value)
     }
     const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
         const isInputKey = isValidInputKey(event, inputKeys)
@@ -263,7 +280,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
                 if(!showList) {
                     handleSetShowList(true)
                 }
-                changeActiveDescendant(children.length - 1, "set")
+                changeActiveDescendant((children as any).length - 1, "set")
                 break
             case "Enter":
             case " ":
@@ -315,7 +332,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
     
     return (
         <SelectContextProvider value={context}>
-            <Overlay trigger={"focus"} position="auto" tooltip={tooltipMessage}>
+            <Overlay trigger={"focus"} position="bottom" tooltip={tooltipMessage}>
                 <SelectControl 
                     value={selectedDescendant.value} label={selectedDescendant.label} 
                     className={computedClassName} id={elementId} required={(required && !noValidate) ?? undefined}  disabled={disabled}
@@ -324,7 +341,13 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
                     {...restProps} ref={mergeRefs([ref, internalSelectControlRef])} 
                 >
                     <SelectList>
-                        {children}
+                        {!loading ? 
+                            children
+                            :
+                            <SelectOption disabled={true} key="loading" value="">
+                                Loading...
+                            </SelectOption>
+                        }
                     </SelectList>
                 </SelectControl>
             </Overlay>
@@ -446,10 +469,13 @@ const listPositionSetter = (listRef: any) => {
     if(!listElement.children) return
     const listChildren = listElement.children
     const numberChildren = listChildren.length
-    const listElementHeight = listChildren[0].getBoundingClientRect().height
-    const numberOfRenderedChildren = numberChildren >= 5 ? 5 : numberChildren
-    const computedListHeight = numberOfRenderedChildren*listElementHeight + 4
-    position.height = computedListHeight
+    const numberOfRenderedChildren = numberChildren > 5 ? 5 : numberChildren
+    let renderedListHeight = 0
+    for (let i=0; i< numberOfRenderedChildren; i++) {
+        renderedListHeight += listChildren[i].getBoundingClientRect().height
+    }
+    renderedListHeight += 4
+    position.height = renderedListHeight ?? "auto"
 
     return position
 }
@@ -461,10 +487,12 @@ const SelectList = forwardRef<HTMLUListElement, FormSelectListType>( ({children,
 
     const listRef = useRef<HTMLUListElement>(null)
     useLayoutEffect(() => {
-        if(!showList) return
+        if(!showList) {
+            return
+        }
         const newPosition = listPositionSetter(listRef)
         setComputedStyle(newPosition!)
-    }, [showList])
+    }, [showList, listRef.current])
     
     return (
         <ul 
@@ -490,7 +518,8 @@ const SelectOption = forwardRef<HTMLLIElement, FormSelectOptionType>(({
     }
     const handleCLick = (event: React.MouseEvent<HTMLLIElement>) => {
         event.stopPropagation()
-
+        if(disabled) return
+        
         setSelectedDescendant( (prev:any) => ({
             value: value,
             label: children

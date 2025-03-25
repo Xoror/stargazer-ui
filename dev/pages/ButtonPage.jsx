@@ -25,7 +25,7 @@ const CardPage = () => {
                     </li>
                 </CodeBlock>
                 <div className="flex-display">
-                    {["primary", "secondary", "success", "info", "warning", "danger", "dark", "light"].map((color, index) => 
+                    {["primary", "secondary", "success", "info", "warning", "danger", "dark", "light", "custom"].map((color, index) => 
                         <Button key={color} variant={color}>{color}</Button>
                     )}
                 </div>

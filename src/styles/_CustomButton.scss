@@ -4,16 +4,17 @@
 
 
 .sg-button {
-    --text-color: white;
-    --bg-color: #0d6efd;
-    --border-color: #0d6efd;
-    --bg-hover-color: color.mix(white, #0d6efd, 15%);
-    --border-hover-color: color.mix(white, #0d6efd, 15%);
-    --bg-active-color: color.mix(white, #0d6efd, 20%);
-    --border-active-color: color.mix(white, #0d6efd, 20%);
-    --focus-visible-border-color: white;
-    --focus-visible-outline-color: #0d6efd;
-    --focus-visible-boxshadow-color: white;
+    --text-color: black;
+    --text-contrast: white;
+    --bg-color: rgb(252, 95, 95);
+    --border-color: var(--bg-color);
+    --bg-hover-color: color-mix(in oklab, var(--bg-color), var(--text-contrast) 15%) ;// color.mix(var(--text-color), var(--bg-color), 15%);
+    --border-hover-color: color-mix(in oklab, var(--bg-color), var(--text-contrast) 15%);
+    --bg-active-color: color-mix(in oklab, var(--bg-color), var(--text-contrast) 20%);
+    --border-active-color: color-mix(in oklab, var(--bg-color), var(--text-contrast) 20%);
+    --focus-visible-border-color: var(--text-contrast);
+    --focus-visible-outline-color: var(--bg-color);
+    --focus-visible-boxshadow-color: var(--text-contrast);
 
     //border-radius: 0.375rem;
     min-width: fit-content;

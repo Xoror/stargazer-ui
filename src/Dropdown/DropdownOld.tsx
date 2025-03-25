@@ -2,17 +2,20 @@ import React, { createContext, forwardRef, useCallback, useContext, useEffect, u
 
 import { DropdownContextType, DropdownItemType, DropdownDividerType, DropdownMenuType, DropdownToggleType, DropdownType } from "./Dropdown.types";
 //automatic menu placement function
-
 const getDropdownMenuPlacement = (controlId: string, drop: string="down", align: string="start") => {
     const dropPossible = ["down", "up", "right", "left"]
     const alignPossible = ["start", "end", "center"]
     let placement = (dropPossible.find(item => item === drop) ? drop : "down") + "-" + (alignPossible.find(item => item === align) ? align : "start")
+    const topOffset = drop === "down" || drop === "up" ? 5 : 0
+    const leftOffset = drop === "right" || drop === "left" ? 5 : 0
 
     const button = document.getElementById(controlId)!
     const {width: buttonWidth, height: buttonHeight} = button.getBoundingClientRect()
+    const buttonLeftBase = button.getBoundingClientRect().left
+    const buttonTopBase = button.getBoundingClientRect().top + buttonHeight
 
     const menu = document.getElementById(controlId+"-menu")!
-    const {width: menuWidth, height: menuHeight} = menu.getBoundingClientRect()
+    const {width: menuWidth, height: menuHeight, top: menuTop, left: menuLeft, right: menuRight, bottom: menuBottom} = menu.getBoundingClientRect()
 
     const navbars = Array.from(document.querySelectorAll(".sg-navbar"))
     if(navbars) {
@@ -22,47 +25,42 @@ const getDropdownMenuPlacement = (controlId: string, drop: string="down", align:
             }
         }
     }
-    let position:React.CSSProperties = {}
-    
-    const offset = "4px"
-    switch(drop) {
-        case "down":
-            position.top =  `calc(100% + ${offset})`
-            break
-        case "up":
-            position.bottom =  `calc(100% + ${offset})`
-            break
-        case "left":
-            position.right =  `calc(100% + ${offset})`
-            break
-        case "right":
-            position.left =  `calc(100% + ${offset})`
-            break
+    let position = {
+        top: drop === "up" ? buttonTopBase - (menuHeight + buttonHeight + topOffset) : buttonTopBase + topOffset, 
+        left: drop === "right" ? buttonLeftBase + buttonWidth + leftOffset: (drop === "left" ? buttonLeftBase - menuWidth - leftOffset : buttonLeftBase)
     }
+
+    const windowHeight = window.innerHeight
+    const windowWidth = window.innerWidth
+    
+    if( menuTop < 0 ) placement = "down-"+placement.split("-")[1]
+    if( menuBottom > windowHeight) placement = "up-"+placement.split("-")[1]
+    if( menuLeft < 0) placement = placement.split("-")[0]+"-start"
+    if( menuRight > windowWidth) placement = placement.split("-")[0]+"-end"
+    
     switch (placement) {
         case "down-start":
         case "up-start":
-            position.left = -2
             break
         case "down-center":
         case "up-center":
-            position.left = -1 * (menuWidth - buttonWidth)/2
+            position.left += -1 * (menuWidth - buttonWidth)/2
             break
         case "down-end":
         case "up-end":
-            position.right = -2
+            position.left += -1 * (menuWidth - buttonWidth)
             break
         case "right-start":
         case "left-start":
-            position.top = -2
+            position.top += -1 * buttonHeight
             break
         case "right-center":
         case "left-center":
-            position.top = -1 * buttonHeight/2 - menuHeight/2
+            position.top += -1 * buttonHeight/2 - menuHeight/2
             break
         case "right-end":
         case "left-end":
-            position.bottom = -2
+            position.top += -1 * menuHeight
     }
     
 
@@ -97,9 +95,7 @@ export const useDropdownContext = () => {
 const Dropdown = forwardRef<HTMLDivElement, DropdownType>((
         {
             children, className, onSelect, onToggle, controlId, navDropdown=false,
-            drop="down", align="start", autoClose=true, show="default", 
-            label, as="button", variant="primary",
-             ...restProps
+            drop="down", align="start", autoClose=true, show="default", ...restProps
         }, ref) => {
     
     const [showInternal, setShowInternal] = useState<boolean>(show === "default" ? false : show as boolean)
@@ -124,15 +120,13 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownType>((
         navDropdown:navDropdown
     }), [align, drop, show, showInternal, onToggle, controlId, activeDescendant, setActiveDescendant, navDropdown])
 
-    let computedClassName = `sg-dropdown`
+    let computedClassName = `sg-dropdown${className? " "+className:""}`
     computedClassName += navDropdown ? " sg-nav-item" : ""
     
     return (
         <div id={controlId+"-wrapper"} ref={ref} className={computedClassName}  data-nav={navDropdown ? "true":null} {...restProps} >
             <DropdownContextProvider value={contextValue}>
-                <Toggle className={className} label={label}>
-                    {children}
-                </Toggle>
+                {children}
             </DropdownContextProvider>
         </div>
     )
@@ -141,7 +135,7 @@ Dropdown.displayName = "Dropdown"
 
 
 export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownToggleType>( ({
-        children, className, as="button", variant="primary", label="add label", ...restProps}, ref
+        children, className, as="button", variant="primary", ...restProps}, ref
     ) => {
     const { controlId, handleToggle, setActiveDescendant, showInternal, navDropdown, drop } = useDropdownContext()
     const Component = as
@@ -248,10 +242,7 @@ export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, Dropdown
             ref={ref} className={classNamesComputed} data-drop={drop}
             onClick={(event: MouseEvent) => toggleButtonClick(event)} {...restProps}
         >
-            {label}
-            <Menu>
-                {children}
-            </Menu>
+            {children}
         </Component>
     )
 })
@@ -263,12 +254,8 @@ const isValidListElement = (elementList: HTMLCollection, startIndex: number, dir
     let count = 0
     let stop = false
     while(!stop) {
-        const test1 = elementList[testIndex].children[0] ? true : false
-        
-        const liItem = elementList[testIndex]
-        const test2 = getComputedStyle(liItem).getPropertyValue("display") != "none"
-        const test3 = test1 ? getComputedStyle(liItem.children[0]).getPropertyValue("display") != "none" : false
-        if(test1 && test2 && test3) {
+        const test = elementList[testIndex].children[0] ? true : false
+        if(test) {
             stop = true
             break
         }
@@ -296,6 +283,8 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
     useLayoutEffect(() => {
         if(showInternal) {
             const basePosition = getDropdownMenuPlacement(controlId, drop, align)
+            const menu = document.getElementById(controlId+"-menu") as HTMLElement
+
             setComputedStyle(basePosition)
         }
     }, [showInternal])

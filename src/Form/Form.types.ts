@@ -73,7 +73,8 @@ export type FormSelectType =  {
     value?: any,
     error?: ErrorMessageType,
     errorAsOverlay?: boolean
-    hint?: HintMessageType
+    hint?: HintMessageType,
+    loading?: boolean
 } & FormSelectControlType
 export type FormSelectControlType = {
     children?: ReactNode,
