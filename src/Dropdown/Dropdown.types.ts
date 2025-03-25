@@ -28,11 +28,14 @@ export type DropdownType = {
     label: string,
     as?: React.ElementType,
     variant?: string,
-} & BaseDivType
+    menuRef?: any,
+    menuProps: DropdownMenuType
+} & (BaseAnchorType | BaseButtonType | BaseElementType)
 
 export type DropdownToggleType = {
     children: ReactNode,
     className?: string,
+    onClick?: (event: React.MouseEvent) => void,
     navDropdown?: boolean,
     as?: React.ElementType,
     variant?: string,

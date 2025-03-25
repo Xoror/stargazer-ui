@@ -118,6 +118,7 @@ export const HintMessage = forwardRef<HTMLParagraphElement, HintType>(({children
     )
 })
 HintMessage.displayName = "HintMessage"
+
 const Control = forwardRef<HTMLInputElement, FormControlType>( (
         {as = "input", className = "", plaintext = false, id, type = "text", autoFocus=false, error, errorAsOverlay=false, hint, required, "aria-describedby":ariaDescribedby, ...restProps}, ref
 ) => {
@@ -200,7 +201,7 @@ const Check = forwardRef<HTMLInputElement, FormCheckType>( ({ children,
     const { noValidate } = useFormTagContext()
     const { controlId } = useFormContext()
     
-    const typeComputed = !["radio", "checkbox", "color"].includes(type) ? "checkbox" :  type
+    const typeComputed = !["radio", "checkbox", "color", "switch"].includes(type) ? "checkbox" :  type
     const classNameComputed = mergeClassnames(
         "sg-form-check-input",
         className ?? ""

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 
 import Form from "../../src/Form"
-import Select from "../../src/Form/FormSelect.tsx"
 import Button from "../../src/Button"
 import InputGroup from "../../src/InputGroup"
 import FloatingLabel from "../../src/FloatingLabel"

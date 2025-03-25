@@ -1,16 +1,18 @@
-import React, { createContext, forwardRef, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import React, { createContext, forwardRef, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from 'react-dom';
 
 import { DropdownContextType, DropdownItemType, DropdownDividerType, DropdownMenuType, DropdownToggleType, DropdownType } from "./Dropdown.types";
+import mergeRefs from "../utils/MergeRefs";
 //automatic menu placement function
 
 const getDropdownMenuPlacement = (controlId: string, drop: string="down", align: string="start") => {
     const dropPossible = ["down", "up", "right", "left"]
     const alignPossible = ["start", "end", "center"]
-    let placement = (dropPossible.find(item => item === drop) ? drop : "down") + "-" + (alignPossible.find(item => item === align) ? align : "start")
-
-    const button = document.getElementById(controlId)!
-    const {width: buttonWidth, height: buttonHeight} = button.getBoundingClientRect()
-
+    const placement = (dropPossible.find(item => item === drop) ? drop : "down") + "-" + (alignPossible.find(item => item === align) ? align : "start")
+    const button = document.getElementById(controlId)
+    if(!button) return
+    const {width: buttonWidth, height: buttonHeight, x: buttonLeft, y: buttonTop } = button.getBoundingClientRect()
+    //console.log(buttonLeft)
     const menu = document.getElementById(controlId+"-menu")!
     const {width: menuWidth, height: menuHeight} = menu.getBoundingClientRect()
 
@@ -22,47 +24,52 @@ const getDropdownMenuPlacement = (controlId: string, drop: string="down", align:
             }
         }
     }
-    let position:React.CSSProperties = {}
+    const position:React.CSSProperties = {}
     
-    const offset = "4px"
+    const offset = 2//"4px"
     switch(drop) {
         case "down":
-            position.top =  `calc(100% + ${offset})`
+            //position.top =  `calc(100% + ${offset})`
+            position.top = buttonTop + buttonHeight + offset
             break
         case "up":
-            position.bottom =  `calc(100% + ${offset})`
-            break
-        case "left":
-            position.right =  `calc(100% + ${offset})`
+            //position.bottom =  `calc(100% + ${offset})`
+            position.top = buttonTop - menuHeight - offset
             break
         case "right":
-            position.left =  `calc(100% + ${offset})`
+            //position.left =  `calc(100% + ${offset})`
+            position.left = buttonLeft + buttonWidth + offset
+            break
+        case "left":
+            //position.right =  `calc(100% + ${offset})`
+            position.left = buttonLeft - menuWidth - offset
             break
     }
     switch (placement) {
         case "down-start":
         case "up-start":
-            position.left = -2
+            //position.left = -2
+            position.left = buttonLeft
             break
         case "down-center":
         case "up-center":
-            position.left = -1 * (menuWidth - buttonWidth)/2
+            position.left = buttonLeft + -1 * (menuWidth - buttonWidth)/2
             break
         case "down-end":
         case "up-end":
-            position.right = -2
+            position.left = buttonLeft + -1 * (menuWidth - buttonWidth)
             break
         case "right-start":
         case "left-start":
-            position.top = -2
+            position.top = buttonTop
             break
         case "right-center":
         case "left-center":
-            position.top = -1 * buttonHeight/2 - menuHeight/2
+            position.top = buttonTop + -1 * (menuHeight - buttonHeight)/2
             break
         case "right-end":
         case "left-end":
-            position.bottom = -2
+            position.top = buttonTop + -1 * (menuHeight - buttonHeight)
     }
     
 
@@ -94,11 +101,11 @@ export const useDropdownContext = () => {
 }
 
 
-const Dropdown = forwardRef<HTMLDivElement, DropdownType>((
+const Dropdown = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownType>((
         {
             children, className, onSelect, onToggle, controlId, navDropdown=false,
             drop="down", align="start", autoClose=true, show="default", 
-            label, as="button", variant="primary",
+            label, as="button", variant="primary", menuRef, menuProps,
              ...restProps
         }, ref) => {
     
@@ -110,6 +117,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownType>((
 
     const internalOnToggle = useCallback((event: MouseEvent) => {
         event.stopPropagation()
+        //console.log("toggle")
         setShowInternal(prev => !prev)
     }, [])
     
@@ -124,25 +132,27 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownType>((
         navDropdown:navDropdown
     }), [align, drop, show, showInternal, onToggle, controlId, activeDescendant, setActiveDescendant, navDropdown])
 
-    let computedClassName = `sg-dropdown`
+    let computedClassName = className? className+" sg-dropdown" :"sg-dropdown"
     computedClassName += navDropdown ? " sg-nav-item" : ""
     
     return (
-        <div id={controlId+"-wrapper"} ref={ref} className={computedClassName}  data-nav={navDropdown ? "true":null} {...restProps} >
-            <DropdownContextProvider value={contextValue}>
-                <Toggle className={className} label={label}>
+        <DropdownContextProvider value={contextValue}>
+            <Toggle ref={ref} className={computedClassName} label={label} data-nav={navDropdown ? "true":null} {...restProps}>
+                <Menu ref={menuRef} {...menuProps}>
                     {children}
-                </Toggle>
-            </DropdownContextProvider>
-        </div>
+                </Menu>
+            </Toggle>
+        </DropdownContextProvider>
     )
 })
 Dropdown.displayName = "Dropdown"
 
 
 export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownToggleType>( ({
-        children, className, as="button", variant="primary", label="add label", ...restProps}, ref
+        children, className, as="button", variant="primary", label="add label",
+        onClick, onBlur, ...restProps}, ref
     ) => {
+    const internalRef = useRef(null)
     const { controlId, handleToggle, setActiveDescendant, showInternal, navDropdown, drop } = useDropdownContext()
     const Component = as
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -209,7 +219,8 @@ export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, Dropdown
             event.preventDefault()
         }
     }
-    const handleClick = (event: MouseEvent) => {
+
+    const handleMouseUp = (event: MouseEvent) => {
         if(!showInternal) return
         if((event.target as HTMLElement).id === controlId) return
 
@@ -217,6 +228,7 @@ export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, Dropdown
             handleToggle(event)
         }
         else if(isEventOnMenu(event, controlId)) {
+            event.stopPropagation()
             handleToggle(event)
             const toggleElement: HTMLElement | null = document.getElementById(controlId)
             toggleElement?.focus()
@@ -225,18 +237,23 @@ export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, Dropdown
     useEffect(() => {
         const toggleElement: HTMLElement = document.getElementById(controlId) as HTMLElement
         toggleElement.addEventListener("keydown", handleKeyPress, true)
-        document.addEventListener("mouseup", handleClick, true)
+        document.addEventListener("mouseup", handleMouseUp, true)
         return function cleanup() {
             toggleElement.removeEventListener("keydown", handleKeyPress, true)
-            document.removeEventListener("mouseup", handleClick, true)
+            document.removeEventListener("mouseup", handleMouseUp, true)
         }
     }, [handleKeyPress, controlId])
 
-    const toggleButtonClick = (event: MouseEvent) => {
+    const toggleButtonClick = (event: keyof typeof onClick) => {
         handleToggle(event)
         if(!showInternal) {
             setActiveDescendant(prev => ({...prev, case:"first"}))
         }
+        if(onClick) onClick(event)
+    }
+    const handleBlur = (event: keyof typeof onBlur) => {
+        //handleToggle(event)
+        if(onBlur) onBlur(event)
     }
     
     let classNamesComputed = `sg-button sg-button${variant ? "-"+variant:"-primary"} sg-dropdown-toggle${className ? " "+className:""}`
@@ -245,13 +262,11 @@ export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, Dropdown
     }
     return (
         <Component tabIndex="0" type="button" aria-haspopup="true" aria-controls={controlId+"-menu"} aria-expanded={showInternal} id={controlId}
-            ref={ref} className={classNamesComputed} data-drop={drop}
-            onClick={(event: MouseEvent) => toggleButtonClick(event)} {...restProps}
+            ref={mergeRefs([ref, internalRef])} className={classNamesComputed} data-drop={drop}
+            onClick={toggleButtonClick} onBlur={handleBlur} {...restProps}
         >
             {label}
-            <Menu>
-                {children}
-            </Menu>
+            {children}
         </Component>
     )
 })
@@ -298,13 +313,12 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
             const basePosition = getDropdownMenuPlacement(controlId, drop, align)
             setComputedStyle(basePosition)
         }
-    }, [showInternal])
+    }, [showInternal, drop, align, controlId])
     const handleResize = (event: UIEvent | Event) => {
         const basePosition = getDropdownMenuPlacement(controlId, drop, align)    
         setComputedStyle(basePosition)
     }
     useEffect(() => {
-        
         if(showInternal) {
             const menu = document.getElementById(controlId+"-menu") as HTMLElement
             const menuChildren = document.getElementById(controlId+"-menu")!.children
@@ -356,7 +370,7 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
 
     const handleMouseOver = (event: MouseEvent) => {
         const target = event.target as HTMLElement
-        let active=target.classList.contains("sg-dropdown-item-visual-focus")
+        const active = target.classList.contains("sg-dropdown-item-visual-focus")
         const menuId = controlId+"-menu"
         const menu = document.getElementById(menuId) as HTMLElement
         if(active) {
@@ -380,23 +394,30 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
         }
     }, [])
     return (
-        <ul id={controlId+"-menu"} role="menu" tabIndex={-1} aria-labelledby={controlId} data-navdropdown={navDropdown ? "true":"false"}
-            ref={ref} className={`sg-dropdown-list${className ? " "+className:""}${showInternal ? " show":""}`}
-            style={{...computedStyle, ...style}} {...restProps}
-        >
-            {children}
-        </ul>
+        createPortal(
+            <ul id={controlId+"-menu"} role="menu" tabIndex={-1} aria-labelledby={controlId} data-navdropdown={navDropdown ? "true":"false"}
+                ref={ref} className={`sg-dropdown-list${className ? " "+className:""}${showInternal ? " show":""}`}
+                style={{...computedStyle, ...style}} {...restProps}
+            >
+                {children}
+            </ul>
+        , document.body)
     )
 })
 Menu.displayName = "DropdownMenu"
 
 
-export const Item = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownItemType>( ({children, as="button", className, liProps, ...restProps}, ref) => {
-    const { navDropdown } = useDropdownContext()
+export const Item = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownItemType>( ({children, as="button", className, liProps, onClick, ...restProps}, ref) => {
+    const { navDropdown, activeDescendant } = useDropdownContext()
     const Component = navDropdown ? "a" : as
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement> & React.MouseEvent<HTMLAnchorElement>) => {
+        event.stopPropagation()
+        event.preventDefault()
+        if(onClick) onClick(event)
+    }
     return (
         <li role="none" {...liProps}>
-            <Component ref={ref} role="menuitem" tabIndex="-1" className={`sg-dropdown-item${className ? " "+className:""}`} {...restProps}>
+            <Component ref={ref} role="menuitem" tabIndex="-1" onClick={handleClick} className={`sg-dropdown-item${className ? " "+className:""}`} {...restProps}>
                 {children}
             </Component >
         </li>
@@ -411,7 +432,7 @@ export const Divider = forwardRef<HTMLHRElement, DropdownDividerType>( ({classNa
 })
 Divider.displayName = "DropdownDivider"
 
-export default  Object.assign(Dropdown, {
+export default Object.assign(Dropdown, {
     Toggle: Toggle,
     Menu: Menu,
     Item: Item,

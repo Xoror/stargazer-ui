@@ -92,7 +92,7 @@ export const useDropdownContext = () => {
 }
 
 
-const Dropdown = forwardRef<HTMLDivElement, DropdownType>((
+const DropdownOld = forwardRef<HTMLDivElement, DropdownType>((
         {
             children, className, onSelect, onToggle, controlId, navDropdown=false,
             drop="down", align="start", autoClose=true, show="default", ...restProps
@@ -131,7 +131,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownType>((
         </div>
     )
 })
-Dropdown.displayName = "Dropdown"
+DropdownOld.displayName = "Dropdown"
 
 
 export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownToggleType>( ({
@@ -400,7 +400,7 @@ export const Divider = forwardRef<HTMLHRElement, DropdownDividerType>( ({classNa
 })
 Divider.displayName = "DropdownDivider"
 
-export default  Object.assign(Dropdown, {
+export default  Object.assign(DropdownOld, {
     Toggle: Toggle,
     Menu: Menu,
     Item: Item,

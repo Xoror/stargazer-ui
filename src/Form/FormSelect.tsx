@@ -1,3 +1,4 @@
+"use client"
 import { forwardRef, useState, useEffect, useLayoutEffect, useRef, useMemo, createContext, useContext } from "react"
 import { FormSelectType, FormSelectControlType, FormSelectInputType, FormSelectListType, FormSelectOptionType, SelectContextType } from "./Form.types"
 
@@ -76,7 +77,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
         "sg-form-select", className, error ? "invalid":"", disabled ? "disabled":""
     )
 
-    let elementId = controlId ?? id
+    const elementId = controlId ?? id
     if(elementId === undefined) {
         throw new Error(
             "Form.Select needs to have an id, either provided directly through the 'id' property or wrapped in a Form.Group with a 'controlId' !"
@@ -421,30 +422,7 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({ch
     )
 })
 SelectControl.displayName = "FormSelectControl"
-/*
-const SelectControlAlternate = forwardRef<HTMLDivElement, FormSelectControlType>( ({children, className, placeholder="Placeholder...", searchable=false, inputRef, inputOptions, ...restProps}, ref) => {
-    const { setShowList, internalId } = useSelectContext()
-    const selectControlRef = useRef<HTMLDivElement>(null)    
 
-    const handlePointerUp = (event: React.MouseEvent) => {
-        setShowList(prev => !prev);
-        const selectControl = selectControlRef.current
-        if(selectControl) {
-            selectControl.classList.add("focus")
-            const eventTargetChildren = selectControl.children[0] as HTMLElement
-            if(eventTargetChildren) { eventTargetChildren.focus() }
-        }
-    }
-    const inputParams = {...inputOptions, disabled:searchable, placeholder:placeholder, ref:inputRef}
-    
-    return (
-        <div ref={mergeRefs([ref, selectControlRef])} onPointerUp={handlePointerUp} className={mergeClassnames("sg-select-control", className)} {...restProps}>
-            <SelectInput {...inputParams}/>
-        </div>
-    )
-})
-SelectControl.displayName = "FormSelectControl"
-*/ 
 const listPositionSetter = (listRef: any) => {
     const listElement = listRef.current
     if(!listElement) return

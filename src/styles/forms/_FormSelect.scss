@@ -88,7 +88,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
+    
     &:focus-within {
         //@include sg-focus-visible()
         border-color: var(--input-border-color-focus);

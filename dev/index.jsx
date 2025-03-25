@@ -26,14 +26,11 @@ const App = () => {
         <Navbar.Brand className={"navigation-link"}>
             Testing
         </Navbar.Brand >
-        <Dropdown navDropdown={true} controlId='test-navdropdown' style={{marginLeft:"auto"}}>
-            <Dropdown.Toggle>Open</Dropdown.Toggle>
-            <Dropdown.Menu>
-                <Dropdown.Item id="test-1">Test 1</Dropdown.Item>
-                <Dropdown.Item id="test-2">Test 2</Dropdown.Item>
-                <Dropdown.Item id="test-3">Test 3</Dropdown.Item>
-                <Dropdown.Item id="test-4">Test 4</Dropdown.Item>
-            </Dropdown.Menu>
+        <Dropdown navDropdown={true} align='end' controlId='test-navdropdown' style={{marginLeft:"auto"}}>
+            <Dropdown.Item id="test-1">Test 1</Dropdown.Item>
+            <Dropdown.Item id="test-2">Test 2</Dropdown.Item>
+            <Dropdown.Item id="test-3">Test 3</Dropdown.Item>
+            <Dropdown.Item id="test-4">Test 4</Dropdown.Item>
         </Dropdown>
       </Navbar>
       <Component />
