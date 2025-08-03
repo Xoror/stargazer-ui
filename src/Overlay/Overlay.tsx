@@ -20,13 +20,14 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
     const overlayHeight = overlayCurrent.getBoundingClientRect().height
     const overlayWidth = overlayCurrent.getBoundingClientRect().width
 
-    const arrowHeight = arrowCurrent.getBoundingClientRect().height
-    const arrowWidth = arrowCurrent.getBoundingClientRect().width
+    const arrowRect = arrowCurrent.getBoundingClientRect()
+    const arrowHeight = arrowRect.height//position === "top" || position === "bottom" ? arrowRect.height : arrowRect.width
+    const arrowWidth = arrowRect.width//position === "top" || position === "bottom" ? arrowRect.width : arrowRect.height
     //console.log(refTop, arrowHeight, arrowWidth)
 
     const overlayBorderWidth = parseFloat(getComputedStyle(overlayCurrent).borderWidth.split("px")[0])
-    const arrowOffsetHeight = isArrow ? arrowHeight/2 : arrowHeight - overlayBorderWidth
-    const arrowOffsetWidth = isArrow ? arrowWidth/2 : arrowWidth - overlayBorderWidth
+    const arrowOffsetHeight = (isArrow ? (position === "bottom" ? -1 : 1)*arrowHeight/2 : arrowHeight - overlayBorderWidth) + 2
+    const arrowOffsetWidth = (isArrow ? 0 : arrowWidth - overlayBorderWidth) + 2
 
     const correctPosition = (position:string, offset:number, boundary:number) => {
         const positionKey = position as keyof typeof tempPos
@@ -40,14 +41,6 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
 
     let tempPos: PositionObject
     switch(position) {
-        case "top": 
-            tempPos = { 
-                top: refTop - overlayHeight - arrowOffsetHeight, 
-                left: refLeft + refWidth/2 - (isArrow ? arrowOffsetWidth/2 : overlayWidth/2) 
-            }
-            //tempPos.right = correctPosition("right", 12, 0)
-            //tempPos.left = correctPosition("left", 0, 0)
-            return tempPos
         case "right":
             tempPos = { 
                 top: refTop + refHeight/2 - overlayHeight/2, 
@@ -59,7 +52,7 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
         case "bottom":
             tempPos = { 
                 top: refTop + refHeight  + arrowOffsetHeight, 
-                left: refLeft + refWidth/2 - overlayWidth/2 
+                left: refLeft + refWidth/2 - overlayWidth/2
             }
             //tempPos.right = correctPosition("right", 12, 0)
             //tempPos.left = correctPosition("left", 0, 0)
@@ -72,9 +65,15 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
             //tempPos.bottom = correctPosition("bottom", window.scrollY + window.innerHeight, 0)
             //tempPos.top = correctPosition("top", window.scrollY, 48)
             return tempPos
+        case "top": 
         default:
-            //this is just top
-            return { top: refTop - overlayHeight - arrowHeight, left: refLeft + refWidth/2 - overlayWidth/2 }
+            tempPos = { 
+                top: refTop - overlayHeight - arrowOffsetHeight, 
+                left: refLeft + refWidth/2 - overlayWidth/2
+            }
+            //tempPos.right = correctPosition("right", 12, 0)
+            //tempPos.left = correctPosition("left", 0, 0)
+            return tempPos
     }
 }
 
@@ -100,7 +99,7 @@ const updateAutoPosition = (autoPositionRef:any, positionRef:any, overlayRef:any
 }
 
 const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
-        children, overlay, tooltip, show=false, onToggle, 
+        children, overlay, tooltip, show, onToggle, 
         position="auto", trigger="click", defaultShow=false,
         tooltipClassname, tooltipStyle, arrowClassname, arrowStyle}, ref
     ) => {
@@ -118,14 +117,13 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
     const [internalShow, setInternalShow] = useState(defaultShow)
     const internalShowRef = useRef(internalShow)
     const setInternalShowRef = (updatedValue: boolean) => {
+        if(!overlay && !tooltip) return
         internalShowRef.current = updatedValue
         setInternalShow(updatedValue)
     }
-    if(show && show != internalShow) {
-        console.log("show")
+    if(show != undefined && show != internalShow) {
         setInternalShowRef(show)
     }
-
     //const positionsList = ["top", "right", "bottom", "left"]
     const [autoPosition, setAutoPosition] = useState(position === "auto" ? "top" : position)
     const autoPositionRef = useRef(autoPosition)
@@ -144,10 +142,10 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
         setArrowPosition( setPosition(positionRef, arrowRef, autoPositionRef.current, arrowRef, true) )
     }
     const handleScroll = () => {
-        if(internalShowRef.current) {
-            positionSetter(positionRef, overlayRef, arrowRef)
-        }
-        if(internalShowRef.current && position === "auto") {
+        if(!internalShowRef.current) return
+
+        positionSetter(positionRef, overlayRef, arrowRef)
+        if(position === "auto") {
             let updatedPosition = updateAutoPosition(autoPositionRef, positionRef, overlayRef, arrowRef)
             setAutoPositionRef(updatedPosition)
         }
@@ -202,10 +200,11 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
         }
     }
     const handleBlur = (event: MouseEvent) => {
-        //console.log("blur")
+        console.log("blur", isFocused)
         if(isHovering) {
             setIsHovering(false)
-        } else if(isFocused) {
+        }
+        if(isFocused) {
             setIsFocused(false)
             setFirstClick(true)
         }
@@ -218,30 +217,26 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
         }
     }
     useLayoutEffect(() => {
-        if(overlayRef.current && arrowRef.current) {
+        if(overlayRef.current && arrowRef.current && positionRef.current) {
             positionSetter(positionRef, overlayRef, arrowRef)
         }
-    }, [])
+    }, [internalShow, overlayRef, positionRef, autoPosition])
 
     useEffect(() => {
-        if(overlayRef.current && arrowRef.current) {
-            positionSetter(positionRef, overlayRef, arrowRef)
-        }
-        //setInternalShowRef(show)
-    },[internalShow, overlayRef, positionRef, autoPosition])
-
-
-    useEffect(() => {
-        window.addEventListener("scroll", handleScroll, true)
-        window.addEventListener("resize", resizeHandler, true)
+        const controller = new AbortController()
+        const signal = controller.signal
+        window.addEventListener("scroll", handleScroll, {signal, capture: true})
+        window.addEventListener("resize", resizeHandler, {signal, capture: true})
         return function cleanup() {
-            window.removeEventListener("scroll", handleScroll, true)
-            window.removeEventListener("resize", resizeHandler, true)
+            controller.abort()
+            setInternalShowRef(false)
         }
     }, [])
 
     const checkRefPositionStyle = (positionRef: any) => {
-        let elementComputedPositionStyle = getComputedStyle(positionRef.current)["position"]
+        const posistionElement =  positionRef.current
+        if(!posistionElement) return
+        let elementComputedPositionStyle = getComputedStyle(posistionElement)["position"]
         if(elementComputedPositionStyle === "fixed") {
             return "fixed"
         } else if(elementComputedPositionStyle === "sticky") {

@@ -147,7 +147,7 @@ const Control = forwardRef<HTMLInputElement, FormControlType>( (
     const describedby = mergeClassnames(ariaDescribedby, errorMessageId, hintMessageId)
     return (
         <>
-            <Overlay trigger={"focus"} position="top" tooltip={tooltipMessage}>
+            <Overlay trigger={"focus"} position="auto" tooltip={tooltipMessage}>
                 <Component 
                     required={(required && !noValidate) ?? undefined} 
                     aria-required={required ?? undefined} aria-invalid={error ? "true":"false"} aria-describedby={describedby != "" ? describedby : null}

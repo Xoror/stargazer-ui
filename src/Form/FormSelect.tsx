@@ -56,7 +56,7 @@ const inputKeys: InputKeyType[] = [
 
 
 const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
-        children, className, id, required=false, disabled=false, value, label,
+        children, className, id, required=false, disabled=false, value, defaultValue, label,
         errorAsOverlay, error, hint, "aria-describedby":ariaDescribedby, loading=false,
         onClick, onBlur, onKeyUp, onKeyDown, onChange,
         ...restProps
@@ -119,15 +119,23 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
     const internalSelectControlRef = useRef<HTMLButtonElement>(null)
     const [ showList, setShowList ] = useState<boolean>(false)
 
+    const valueChild = children.find(child => child.props.value === value)
+    const defaultValueChild = children.find(child => child.props.value === defaultValue)
     const initialValue = value ? 
         {
             value: value,
-            label: children.find(child => child.props.value === value) ? children.find(child => child.props.value === value).props.children : "no label found"
+            label: valueChild ? valueChild.props.children : "no label found"
         }:
-        {
-            value: children[0].props.value ?? "",
-            label: children[0].props.children ?? "no label found"
-        }
+        defaultValue ? 
+            {
+                value: defaultValueChild ? defaultValueChild.props.value : "",
+                label: defaultValueChild ? defaultValueChild.props.children : "no label found"
+            }
+            :
+            {
+                value: children[0].props.value ?? "",
+                label: children[0].props.children ?? "no label found"
+            }
     const handleChange = (newValue: any) => {
         if(!internalSelectControlRef.current) return
         
@@ -141,27 +149,14 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
     const [ activeDescendant, setActiveDescendant ] = useState<any>(initialValue.value)
     const [ selectedDescendant, setSelectedDescendant ] = useCustomState(initialValue, handleChange)
     const [ inputValue, setInputValue ] = useState<string>("")
-    
-    if(!loading) {
-        const isChild = children.find(child => child.props.value === value)
-        const isDefaultChild = children.find(child => child.props.value === "")
-        const computedLabel = isChild ? isChild.props.children : (isDefaultChild ? isDefaultChild.props.children : "no label found")    
-        if(selectedDescendant.label != computedLabel) {
-            setSelectedDescendant((prev: any) => ({
-                ...prev,
-                label: computedLabel
-            }), {middleware: false})
-        }
-    }
 
     if(value != undefined && value != null && value !== selectedDescendant.value && !loading) {
         const isChild = children.find(child => child.props.value === value)
-        const isDefaultChild = children.find(child => child.props.value === "")
+        const isDefaultChild = children.find(child => child.props.value === defaultValue)
         const computedLabel = isChild ? isChild.props.children : (isDefaultChild ? isDefaultChild.props.children : "no label found")
-        const computedValue = isChild ? value : ""
-        console.log(value, computedLabel)
+        const computedValue = isChild ? value : (isDefaultChild ? defaultValue : "")
         setSelectedDescendant({
-            value: value,
+            value: computedValue,
             label: computedLabel
         }, {middleware: false})
     }
@@ -178,13 +173,6 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
 
     const handleClick = (event?: React.MouseEvent<HTMLButtonElement>) => {
         handleSetShowList(prev => !prev)
-        /*
-        if(!showList) {
-            const firstChildValue = children[0].props.value ?? ""
-            console.log(firstChildValue)
-            setActiveDescendant(firstChildValue)
-        }
-        */
         if(onClick && event) onClick(event)
     }
     const handleBlur = (event: React.FocusEvent<HTMLButtonElement>, hasOnBlur=true) => {
@@ -192,16 +180,15 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
         if(onBlur && hasOnBlur) onBlur(event)
     }
     useEffect(() => {
+        const controller = new AbortController()
+        const signal = controller.signal
         const select = internalSelectControlRef.current
         window.addEventListener("pointerdown", event => {
             if(!select?.contains(event.target as HTMLElement)) handleSetShowList(false)
-        }, true)
-        window.addEventListener("resize", event => handleSetShowList(false), true)
+        }, {signal, capture: true})
+        window.addEventListener("resize", event => handleSetShowList(false), {signal, capture: true})
         return function cleanup () {
-            window.removeEventListener("pointerdown", event => {
-                if(select?.contains(event.target as HTMLElement)) handleSetShowList(false)
-            }, true)
-            window.removeEventListener("resize", event => handleSetShowList(false), true)
+            controller.abort()
         }
     }, [])
 
@@ -312,7 +299,6 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
                 isStopPropagation = false
                 break
         }
-        if(event.key === "Tab") console.log(isPreventDefault)
         if(isPreventDefault) event.preventDefault()
         if(isStopPropagation) event.stopPropagation()
     }
@@ -330,7 +316,6 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
         children,
         handleBlur
     }), [elementId, showList, activeDescendant, inputValue ])
-    
     return (
         <SelectContextProvider value={context}>
             <Overlay trigger={"focus"} position="bottom" tooltip={tooltipMessage}>
@@ -374,7 +359,6 @@ const SelectInput = forwardRef<HTMLInputElement, FormSelectInputType>( ({classNa
          }, 300)
     }
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event)
         if(!showList) { setShowList(true) }
         if(onChange) { onChange(event) }
         //debouncedInput(event.target.value)
@@ -470,7 +454,7 @@ const SelectList = forwardRef<HTMLUListElement, FormSelectListType>( ({children,
         }
         const newPosition = listPositionSetter(listRef)
         setComputedStyle(newPosition!)
-    }, [showList, listRef.current])
+    }, [showList])
     
     return (
         <ul 

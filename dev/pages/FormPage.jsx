@@ -26,8 +26,11 @@ const FormPage = () => {
         <div style={{display:"grid", placeContent:"center"}}>
             <div style={{height:"fit-content", width:"fit-content", border:"1px solid white", padding:"1rem", resize:"both", overflow:"hidden"}}>
                 <Form onSubmit={handleSubmit}>
-                    <Form.Select errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}} ref={testRef} value={selectValue} onChange={handleChange} id="custom-select-test">
+                    <Form.Select errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}} ref={testRef} defaultValue={"2"} id="custom-select-test">
                         <Form.Select.Option value="">Select option...</Form.Select.Option>
+                        <Form.Select.Option value="1">1</Form.Select.Option>
+                        <Form.Select.Option value="2">2</Form.Select.Option>
+                        <Form.Select.Option value="3">3</Form.Select.Option>
                         {null}
                     </Form.Select>
                     <Button type="submit">Test</Button>

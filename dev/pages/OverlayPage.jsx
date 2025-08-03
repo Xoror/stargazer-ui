@@ -28,7 +28,7 @@ const OverlayPage = () => {
             </section>
             <h4>Tooltip</h4>
             <section className="overlay-container">
-                <Overlay tooltip={"Testing a tooltip with a long message. This messsage is so long it hsould in theory trigger a wrap."} trigger={"hover"}>
+                <Overlay position='bottom' tooltip={"Testing a tooltip with a long message. This messsage is so long it hsould in theory trigger a wrap."} trigger={"hover"}>
                     <span style={{display:"block",border:"2px solid white"}}>Click</span>
                 </Overlay>
             </section>
