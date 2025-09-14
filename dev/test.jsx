@@ -62,7 +62,7 @@ export const Component = () => {
                     <Popout.Body><p>test</p></Popout.Body>
                 </Popout>
             : null}
-            <Tabs controlId="tabs-test" defaultActive={url.searchParams.get("tabid") ?? tabs[0].id}>
+            <Tabs controlId="tabs-test" defaultActive={url.searchParams.get("tabid") ?? tabs[5].id}>
                 <Tabs.Controls>
                     {
                         tabs.map(tab => 

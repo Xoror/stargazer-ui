@@ -10,7 +10,7 @@ const getDropdownMenuPlacement = (controlId: string, drop: string="down", align:
     const alignPossible = ["start", "end", "center"]
     const placement = (dropPossible.find(item => item === drop) ? drop : "down") + "-" + (alignPossible.find(item => item === align) ? align : "start")
     const button = document.getElementById(controlId)
-    if(!button) return
+    if(!button) return {}
     const {width: buttonWidth, height: buttonHeight, x: buttonLeft, y: buttonTop } = button.getBoundingClientRect()
     //console.log(buttonLeft)
     const menu = document.getElementById(controlId+"-menu")!
@@ -101,7 +101,7 @@ export const useDropdownContext = () => {
 }
 
 
-const Dropdown = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownType>((
+const Dropdown = forwardRef<HTMLButtonElement, DropdownType>((
         {
             children, className, onSelect, onToggle, controlId, navDropdown=false,
             drop="down", align="start", autoClose=true, show="default", 
@@ -110,7 +110,6 @@ const Dropdown = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownType>
         }, ref) => {
     
     const [showInternal, setShowInternal] = useState<boolean>(show === "default" ? false : show as boolean)
-
     // this is an object like {index: string} because we need it to rerender even if the case is the same
     // aka we use a "next/previous" case to navigate through the dropdown menu so need to rerender consecutive "next" cases
     const [activeDescendant, setActiveDescendant] = useState<{case:string}>({case:""})
@@ -137,7 +136,7 @@ const Dropdown = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownType>
     
     return (
         <DropdownContextProvider value={contextValue}>
-            <Toggle ref={ref} className={computedClassName} label={label} data-nav={navDropdown ? "true":null} {...restProps}>
+            <Toggle {...restProps} ref={ref} className={computedClassName} label={label} data-nav={navDropdown ? "true":null}>
                 <Menu ref={menuRef} {...menuProps}>
                     {children}
                 </Menu>
@@ -148,7 +147,7 @@ const Dropdown = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownType>
 Dropdown.displayName = "Dropdown"
 
 
-export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, DropdownToggleType>( ({
+export const Toggle = forwardRef<HTMLButtonElement, DropdownToggleType>( ({
         children, className, as="button", variant="primary", label="add label",
         onClick, onBlur, ...restProps}, ref
     ) => {
@@ -261,13 +260,13 @@ export const Toggle = forwardRef<HTMLAnchorElement | HTMLButtonElement, Dropdown
         classNamesComputed = `sg-nav-dropdown-toggle sg-dropdown-toggle${className ? " "+className:""}`
     }
     return (
-        <Component tabIndex="0" type="button" aria-haspopup="true" aria-controls={controlId+"-menu"} aria-expanded={showInternal} id={controlId}
-            ref={mergeRefs([ref, internalRef])} className={classNamesComputed} data-drop={drop}
+        <button ref={mergeRefs([ref, internalRef])} tabIndex={0} type="button" aria-haspopup="true" aria-controls={controlId+"-menu"} aria-expanded={showInternal} id={controlId}
+            className={classNamesComputed} data-drop={drop}
             onClick={toggleButtonClick} onBlur={handleBlur} {...restProps}
         >
             {label}
             {children}
-        </Component>
+        </button>
     )
 })
 Toggle.displayName = "DropdownToggle"
@@ -307,7 +306,7 @@ const isValidListElement = (elementList: HTMLCollection, startIndex: number, dir
 
 export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, className, style = {}, ...restProps}, ref) => {
     const { controlId, showInternal, activeDescendant, navDropdown, align, drop } = useDropdownContext()
-    const [ computedStyle, setComputedStyle ] = useState({})
+    const [ computedStyle, setComputedStyle ] = useState<React.CSSProperties>({})
     useLayoutEffect(() => {
         if(showInternal) {
             const basePosition = getDropdownMenuPlacement(controlId, drop, align)
@@ -319,6 +318,8 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
         setComputedStyle(basePosition)
     }
     useEffect(() => {
+        const controller = new AbortController()
+        const signal = controller.signal
         if(showInternal) {
             const menu = document.getElementById(controlId+"-menu") as HTMLElement
             const menuChildren = document.getElementById(controlId+"-menu")!.children
@@ -356,15 +357,14 @@ export const Menu = forwardRef<HTMLUListElement, DropdownMenuType>( ({children, 
             menuChildren[currentIndex].children[0].classList.add("sg-dropdown-item-visual-focus")
 
             //makes it so that the menu stays with the button
-            window.addEventListener("resize", event => handleResize(event), true)
-            window.addEventListener("scroll", event => handleResize(event), true)
+            window.addEventListener("resize", event => handleResize(event), {capture: true, signal})
+            window.addEventListener("scroll", event => handleResize(event), {capture: true, signal})
         } else {
             const menu = document.getElementById(controlId+"-menu") as HTMLElement
             menu.setAttribute("aria-activedescendant", "")
         }
         return function cleanup() {
-            window.removeEventListener("resize", handleResize, true)
-            window.removeEventListener("scroll", event => handleResize(event), true)
+            controller.abort()
         }
     }, [controlId, showInternal, activeDescendant])
 

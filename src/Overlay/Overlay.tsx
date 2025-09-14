@@ -13,9 +13,9 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
     const arrowCurrent = arrowElement.current as HTMLElement 
 
     const refTop = refCurrent.getBoundingClientRect().top
-    const refHeight = refCurrent.offsetHeight
+    const refHeight = refCurrent.getBoundingClientRect().height
     const refLeft = refCurrent.getBoundingClientRect().left
-    const refWidth = refCurrent.offsetWidth
+    const refWidth = refCurrent.getBoundingClientRect().width
 
     const overlayHeight = overlayCurrent.getBoundingClientRect().height
     const overlayWidth = overlayCurrent.getBoundingClientRect().width
@@ -23,7 +23,7 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
     const arrowRect = arrowCurrent.getBoundingClientRect()
     const arrowHeight = arrowRect.height//position === "top" || position === "bottom" ? arrowRect.height : arrowRect.width
     const arrowWidth = arrowRect.width//position === "top" || position === "bottom" ? arrowRect.width : arrowRect.height
-    //console.log(refTop, arrowHeight, arrowWidth)
+    console.log(isArrow,overlayWidth)
 
     const overlayBorderWidth = parseFloat(getComputedStyle(overlayCurrent).borderWidth.split("px")[0])
     const arrowOffsetHeight = (isArrow ? (position === "bottom" ? -1 : 1)*arrowHeight/2 : arrowHeight - overlayBorderWidth) + 2
@@ -52,7 +52,7 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
         case "bottom":
             tempPos = { 
                 top: refTop + refHeight  + arrowOffsetHeight, 
-                left: refLeft + refWidth/2 - overlayWidth/2
+                left: refLeft + refWidth/2 - (isArrow ? overlayWidth/2 : overlayWidth)/2
             }
             //tempPos.right = correctPosition("right", 12, 0)
             //tempPos.left = correctPosition("left", 0, 0)
@@ -69,7 +69,7 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
         default:
             tempPos = { 
                 top: refTop - overlayHeight - arrowOffsetHeight, 
-                left: refLeft + refWidth/2 - overlayWidth/2
+                left: refLeft + refWidth/2 - (isArrow ? overlayWidth/2 : overlayWidth)/2
             }
             //tempPos.right = correctPosition("right", 12, 0)
             //tempPos.left = correctPosition("left", 0, 0)
@@ -276,7 +276,8 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
                             <div
                                 ref={arrowRef} aria-hidden
                                 className={arrowClassnames} 
-                                style={{...arrowStyle, position:checkRefPositionStyle(positionRef), top:arrowPosition!.top, left:arrowPosition!.left,}}>
+                                style={{...arrowStyle, position:checkRefPositionStyle(positionRef), top:arrowPosition!.top, left:arrowPosition!.left,}}
+                            >
                             </div>
                         </>
                     : null}

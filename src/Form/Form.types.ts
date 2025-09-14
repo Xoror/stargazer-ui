@@ -1,7 +1,7 @@
 import { ReactNode, Dispatch, Children, ReactElement } from "react";
 
 import { BaseElementType, BaseElementType2, BaseParagraphType, BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSpanType, BaseSliderType, BaseSmallType, BaseUListType, BaseSVGType, BaseButtonType } from "../utils/BaseTypes";
-
+import { CustomSetState } from "./FormSelect";
 export type FormTagContextType = {
     noValidate: boolean
 }
@@ -42,17 +42,14 @@ export type FormControlType = {
 } & BaseInputType
 
 // Form Select types
-export type SelectContextType = {
-    internalId?:string,
+export type SelectContextType<T> = {
+    internalId:string,
     showList: boolean,
-    setShowList: Dispatch<React.SetStateAction<boolean>>,
     activeDescendant: any,
-    setActiveDescendant: Dispatch<React.SetStateAction<any>>,
     inputValue: string, 
-    setInputValue: Dispatch<React.SetStateAction<string>>,
-    selectedDescendant: any
-    setSelectedDescendant: Dispatch<React.SetStateAction<any>>,
-    children: ReactNode
+    selectedDescendant: T
+    setSelectedDescendant: Function,
+    items: ReactNode
 }
 export type FormSelectTagType = {
     children: ReactNode,
@@ -74,7 +71,8 @@ export type FormSelectType =  {
     error?: ErrorMessageType,
     errorAsOverlay?: boolean
     hint?: HintMessageType,
-    loading?: boolean
+    loading?: boolean,
+    listProps?: FormSelectListType
 } & FormSelectControlType
 export type FormSelectControlType = {
     children?: ReactNode,
@@ -82,8 +80,9 @@ export type FormSelectControlType = {
     className?: string,
     placeholder?: string,
     searchable?: boolean,
-    value: any,
-    label: ReactNode
+    value?: any,
+    label?: ReactNode,
+    handleSelectedDescendant?: Function
 } & BaseButtonType
 
 export type FormSelectInputType = {

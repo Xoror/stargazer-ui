@@ -1,12 +1,12 @@
 {
   "name": "stargazer-ui",
-  "version": "1.5.15",
+  "version": "1.5.19",
   "description": "React component library made by Stargazer Works",
   "module": "./index.js",
   "types": "./index.d.ts",
   "scripts": {
     "test": "\"echo \\\"Error: no test specified\\\" && exit 1\"",
-    "dev": "vite --config vite.config.js --port 5000",
+    "dev": "vite --config vite.config.js --port 3001",
     "build": "tsc --p ./tsconfig-build.json && vite build --config vite.config.js",
     "rollup": "rimraf dist && rollup -c",
     "postrollup": "node scripts/writePackageJsons.js && sass src/styles/_components.scss dist/styles/stargazerui.css",

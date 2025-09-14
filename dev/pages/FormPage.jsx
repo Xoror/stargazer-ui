@@ -7,9 +7,12 @@ import FloatingLabel from "../../src/FloatingLabel"
 import FileUploadButton from "../../src/FileUploadButton/FileUploadButton"
 
 const FormPage = () => {
-    const [selectValue, setSelectValue] = useState("")
+    const [selectValue, setSelectValue] = useState("6")
+    const [count, setCount] = useState(3)
+    const [options, setOptions] = useState(["1","2","3","4","5","6","7"])
     const handleChange = (event) => {
-        console.log(event.target.value)
+        //console.log(event.target.value)
+        console.log(count)
         setSelectValue(event.target.value)
     }
     const testRef = useRef(null)
@@ -20,20 +23,22 @@ const FormPage = () => {
     const handleSubmit = (event) => {
         event.preventDefault()
         console.log(event.target[0].value)
+        setCount(prev => prev += 1)
+        setOptions(prev => [...prev, (count+1).toString()])
     }
 
     return (
         <div style={{display:"grid", placeContent:"center"}}>
             <div style={{height:"fit-content", width:"fit-content", border:"1px solid white", padding:"1rem", resize:"both", overflow:"hidden"}}>
                 <Form onSubmit={handleSubmit}>
-                    <Form.Select errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}} ref={testRef} defaultValue={"2"} id="custom-select-test">
+                    <Form.Select value={selectValue} onChange={handleChange} /*errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}}*/ ref={testRef} id="custom-select-test">
                         <Form.Select.Option value="">Select option...</Form.Select.Option>
-                        <Form.Select.Option value="1">1</Form.Select.Option>
-                        <Form.Select.Option value="2">2</Form.Select.Option>
-                        <Form.Select.Option value="3">3</Form.Select.Option>
+                        {options.map(entry => 
+                            <Form.Select.Option value={entry}>{entry}</Form.Select.Option>
+                        )}
                         {null}
                     </Form.Select>
-                    <Button type="submit">Test</Button>
+                    <Button type="submit">{count}</Button>
                 </Form>
                 <Form onSubmit={event => event.preventDefault()}>
                     <FileUploadButton />
@@ -64,7 +69,7 @@ const FormPage = () => {
 
                     <Form.Check >Form Checkbox</Form.Check>
                     <Form.Check type="radio">Form Radio</Form.Check>
-                    <Form.Check required type="switch">Form Switch</Form.Check>
+                    <Form.Check type="switch">Form Switch</Form.Check>
                     <Form.Check type="color">Form Color</Form.Check>
 
                     <Form.Group controlId="form-control-date">

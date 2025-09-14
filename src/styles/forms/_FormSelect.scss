@@ -55,6 +55,7 @@
     --input-border-color: #{$input-border-color};
     --input-border-color-focus: #{$input-border-color-focus};
     --input-border-color-invalid: #{$input-border-color-invalid};
+    --input-border-width: #{$input-border-width};
     --input-disabled-color: #{$input-disabled-color};
 
     position: relative;
@@ -157,7 +158,7 @@
     color: inherit;
 
     position: absolute;
-    top: calc(100% + 3px);
+    top: calc(100% + var(--input-border-width)*1px);
     left: 0;
     width: 100%;
     padding: 0;
@@ -172,7 +173,9 @@
 }
 
 .sg-select-list-item {
+    position: relative;
     padding: 0.25rem 0.5rem;
+    padding-right: 1.25rem;
     font-size: 0.85rem;    
     user-select: none;
 
@@ -192,5 +195,18 @@
     &:last-child {
         border-bottom-left-radius: inherit;
         border-bottom-right-radius: inherit;
+    }
+    .sg-form-select-check-icon-wrapper {
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        position: absolute;
+        right: 0;
+        top: 0;
+        display: grid;
+        place-items: center;
+    }
+    .sg-form-select-check-icon {
+        
+        margin-block: auto;
     }
 }

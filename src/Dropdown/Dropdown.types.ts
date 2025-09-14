@@ -30,17 +30,17 @@ export type DropdownType = {
     variant?: string,
     menuRef?: any,
     menuProps: DropdownMenuType
-} & (BaseAnchorType | BaseButtonType | BaseElementType)
+} & BaseButtonType
 
 export type DropdownToggleType = {
     children: ReactNode,
     className?: string,
-    onClick?: (event: React.MouseEvent) => void,
+    onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
     navDropdown?: boolean,
     as?: React.ElementType,
     variant?: string,
     label: string
-} & (BaseAnchorType | BaseButtonType | BaseElementType)
+} & BaseButtonType
 
 export type DropdownMenuType = {
     children: ReactNode,

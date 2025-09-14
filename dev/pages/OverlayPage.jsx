@@ -22,7 +22,7 @@ const OverlayPage = () => {
         <>
             <h4>Overlay</h4>
             <section className="overlay-container">
-                <Overlay overlay={<OverlayElement/>}  trigger={"click"}>
+                <Overlay position='top' overlay={<OverlayElement/>}  trigger={"click"}>
                     <Button ref={buttonRef} onClick={(event) => console.log(buttonRef.current)}>Click</Button>
                 </Overlay>
             </section>
