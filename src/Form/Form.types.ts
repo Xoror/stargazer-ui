@@ -1,4 +1,4 @@
-import { ReactNode, Dispatch, Children, ReactElement } from "react";
+import { ReactNode, Dispatch, Children, ReactElement, RefObject } from "react";
 
 import { BaseElementType, BaseElementType2, BaseParagraphType, BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSpanType, BaseSliderType, BaseSmallType, BaseUListType, BaseSVGType, BaseButtonType } from "../utils/BaseTypes";
 import { CustomSetState } from "./FormSelect";
@@ -43,6 +43,7 @@ export type FormControlType = {
 
 // Form Select types
 export type SelectContextType<T> = {
+    internalButtonRef: RefObject<HTMLButtonElement>,
     internalId:string,
     showList: boolean,
     activeDescendant: any,

@@ -28,7 +28,7 @@
   --tab-controls-height: 2.5rem;
   --column-header-height: 2rem;
 
-	font-size: 18px;
+	//font-size: 18px;
 	line-height: 1.4;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
 		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -151,50 +151,39 @@ h1, .h1 {
     --unit: 1rem;
     font-size: calc(1.375*var(--unit) + 1.5vw);
 }
-@media (min-width: 1200px) {
-h1, .h1 {
-    font-size: calc(2.5*var(--unit));
-}
-}
-
 h2, .h2 {
     --unit: 1rem;
     font-size: calc(1.325*var(--unit) + 0.9vw);
 }
-@media (min-width: 1200px) {
-    h2, .h2 {
-        font-size: calc(2*var(--unit));
-    }
-}
-
 h3, .h3 {
     --unit: 1rem;
     font-size: calc(1.3*var(--unit) + 0.6vw);
 }
-@media (min-width: 1200px) {
-    h3, .h3 {
-        font-size: calc(1.75*var(--unit));
-    }
-}
-
 h4, .h4 {
     --unit: 1rem;
     font-size: calc(1.275*var(--unit) + 0.3vw);
 }
-@media (min-width: 1200px) {
-    h4, .h4 {
-        font-size: calc(1.5*var(--unit));
-    }
-}
-
 h5, .h5 {
     --unit: 1rem;
     font-size: calc(1.25*var(--unit));
 }
-
 h6, .h6 {
     --unit: 1rem;
     font-size: calc(1*var(--unit));
+}
+@media (min-width: 1200px) {
+    h1, .h1 {
+        font-size: calc(2.5*var(--unit));
+    }
+    h2, .h2 {
+        font-size: calc(2*var(--unit));
+    }
+    h3, .h3 {
+        font-size: calc(1.75*var(--unit));
+    }
+    h4, .h4 {
+        font-size: calc(1.5*var(--unit));
+    }
 }
 
 p {
@@ -234,4 +223,17 @@ img, svg {
 
 label {
   display: inline-block;
+}
+
+fieldset {
+    min-width: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+legend {
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
