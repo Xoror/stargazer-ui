@@ -185,7 +185,7 @@
     --padding-right: 3ex;
     position: relative;
     padding: 0.25rem 0.5rem;
-    padding-right: var(--padding-right);
+    padding-right: calc( var(--padding-right) );
     font-size: 0.85rem;    
     user-select: none;
 
