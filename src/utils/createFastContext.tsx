@@ -76,7 +76,7 @@ const createFastContext = <Store,>() => {
                 if(isEqual(oldState, newState)) return memoSelected
                 const oldSelected = memoSelected
                 const newSelected = selectorInternal(newState)
-                if(id) console.log(id, oldSelected == newSelected)
+                //if(id) console.log(id, oldSelected == newSelected)
                 if(equalityFunction && equalityFunction(oldSelected, newSelected)) {
                     //console.log(oldSelected, newSelected, equalityFunction(oldSelected, newSelected))
                     return memoSelected
