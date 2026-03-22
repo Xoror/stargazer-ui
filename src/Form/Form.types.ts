@@ -22,7 +22,7 @@ type ErrorMessageType = {
     style?: React.CSSProperties,
 } & BaseParagraphType
 type HintMessageType = {
-    message: string,
+    message?: string,
     custom?: boolean,
     className?: string,
     style?: React.CSSProperties,
