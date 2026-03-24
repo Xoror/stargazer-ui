@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect} from "react"
-import { debounce } from "lodash"
+import debounce from "lodash/debounce"
 
 const useScreenSize = (debounceTime=25) => {
     const [size, setSize]= useState({height: window.innerHeight, width: window.innerWidth})

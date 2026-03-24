@@ -15,14 +15,15 @@ $sg-modal-transition: transform .3s ease-out;
     animation-duration: 0.3s;
     animation-timing-function: ease-in-out;
     animation-fill-mode: forwards;
-    &.close {
-      background: transparent;
-      opacity: 0;
-      animation-name: fade-out-backdrop;
-      animation-duration: 0.3s;
-      animation-timing-function: ease-in-out;
-      animation-fill-mode: backwards;
-    }
+}
+.sg-modal-tag.close::backdrop {
+    z-index: calc($zindex-modal);
+    background: transparent;
+    opacity: 0;
+    animation-name: fade-out-backdrop;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: backwards;
 }
 @keyframes fade-in-backdrop {
   from {

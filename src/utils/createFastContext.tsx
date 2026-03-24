@@ -1,9 +1,10 @@
 import { type ReactNode, useRef, useMemo, useCallback, createContext, useContext, useSyncExternalStore } from "react";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 //type Store = {first:string, last:string, isAllowed?: boolean, number?: number}
+type SelectorReturnTypeOld<Store> = (Store[keyof Store] | Store | Array<Store[keyof Store]> | Partial<Store>)
 
-const createFastContext = <Store,>() => {
-    type SelectorType = (store: Store) => (Store[keyof Store] | Store | Array<Store[keyof Store]>)
+const createFastContext = <Store, Selected = unknown>() => {
+    type SelectorType = (store: Store) => Selected
     type IsEqualFunction = (oldValue: ReturnType<SelectorType>, newValue: ReturnType<SelectorType>) => boolean
     type SetStore = Partial<Store> | ( (store: Store) => Store )
     type GetStoreReturn<T> = T extends SelectorType ? ReturnType<T>:  T extends undefined ? Store : never
@@ -55,8 +56,8 @@ const createFastContext = <Store,>() => {
         if(!store) {
             throw new Error("You have to use useStore within the proper provider!")
         }
-        const storeGet:SelectorType = (store) => {
-            return store
+        const storeGet = (store: Store) => {
+            return store as unknown as Selected
         }
         
         let getSnapshot = useMemo(() => {
