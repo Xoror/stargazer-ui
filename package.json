@@ -12,7 +12,7 @@
     "postrollup": "node scripts/writePackageJsons.js && sass src/styles/_components.scss dist/styles/stargazerui.css",
     "packageJsons": "node scripts/writePackageJsons.js",
     "makecss": "sass src/styles/_components.scss dist/styles/stargazerui.css",
-    "publish": "cd dist && npm publish"
+    "publish": "cd dist && npm publish  --provenance --access public"
   },
   "type": "module",
   "engines": {
