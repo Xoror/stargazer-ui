@@ -1,6 +1,6 @@
 {
   "name": "stargazer-ui",
-  "version": "1.5.28",
+  "version": "1.5.29",
   "description": "React component library made by Stargazer Works",
   "module": "./index.js",
   "types": "./index.d.ts",
@@ -12,7 +12,7 @@
     "postrollup": "node scripts/writePackageJsons.js && sass src/styles/_components.scss dist/styles/stargazerui.css",
     "packageJsons": "node scripts/writePackageJsons.js",
     "makecss": "sass src/styles/_components.scss dist/styles/stargazerui.css",
-    "publish": "cd dist && npm publish  --provenance --access public"
+    "publish": "cd dist && npm publish"
   },
   "type": "module",
   "engines": {
