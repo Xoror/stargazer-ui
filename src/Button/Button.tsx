@@ -10,7 +10,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonType>( ({children, variant="p
     const computedClassnames = mergeClassnames("sg-button", `sg-button-${variantTest}`, className)
     return(
         <button ref={ref} type="button" className={computedClassnames} {...rest}>
-            {children}
+            <span className="sg-button-span">{children}</span>
         </button>
     )
 } )

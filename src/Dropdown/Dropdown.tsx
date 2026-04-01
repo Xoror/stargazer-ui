@@ -264,7 +264,7 @@ export const Toggle = forwardRef<HTMLButtonElement, DropdownToggleType>( ({
             className={classNamesComputed} data-drop={drop}
             onClick={toggleButtonClick} onBlur={handleBlur} {...restProps}
         >
-            {label}
+            <span className="sg-dropdown-toggle-span">{label}</span>
             {children}
         </button>
     )

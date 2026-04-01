@@ -72,7 +72,7 @@ const ScrollButton = forwardRef<HTMLButtonElement, TabsScrollButtonType>( ({clas
 
     const handleScrollBy = () => {
         if(!controlsRef || !controlsRef.current) return
-
+        console.log(controlsRef.current)
         const tabControls = controlsRef.current
         const toScroll = (left ? -1 : 1) * 32
         tabControls.scrollBy(toScroll, 0)
@@ -107,7 +107,11 @@ const ScrollButton = forwardRef<HTMLButtonElement, TabsScrollButtonType>( ({clas
             className={mergeClassnames("sg-tabs-button", "sg-tabs-scroll-button", className)}
             {...restProps} >
             <span className="visually-hidden">Scroll tab controls {left ? "left":"right"}</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" aria-hidden>
+                <rect 
+                    x="24" y="24" width="208" height="208"
+                    fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="8"
+                 />
                 <polyline 
                     points={left ? "144 88 104 128 144 168" : "112 88 152 128 112 168" } //168 64 104 128 168 192
                     fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32"
@@ -196,7 +200,7 @@ const Button = forwardRef<HTMLButtonElement, TabsButtonType>( ({children, classN
             role="tab" type="button" id={tabId+"-button"} ref={ref} onClick={event => handleClick(event)} className={classNameComputed} {...restProps}
             tabIndex={isActiveTab ? 0:-1} aria-selected={isActiveTab ? "true":"false"} aria-controls={tabId+"-page"}
         >
-            {children}
+            <span className="sg-tabs-button-span">{children}</span>
         </button>
     )
 })

@@ -21,7 +21,7 @@
         height: var(--border-width);
         background-color: var(--border-bottom-color);
     }
-
+    height: 2rem;
     overflow-x: auto;
     scrollbar-width: none;
     @media (prefers-reduce-motion: no-preference) {
@@ -38,7 +38,6 @@
     --background-color: #{$sg-tab-controls-bg};
     --hover-background-color: #{$sg-tab-button-hover};
     --active-background-color: #{$sg-tab-button-active};
-
     position: relative;
     display: block;
     color: var(--text-color);
@@ -71,7 +70,12 @@
         
         background-color: var(--active-background-color);
     }
-
+    &:focus-visible {
+        box-shadow: none;
+        outline: none;
+        --focus-visible-outline-button: 1px solid currentColor;
+        --focus-visible-outline-scroll-button: currentColor;
+    }
     &.sg-active {
         border: 2px solid var(--border-bottom-color);
         border-bottom: 2px solid var(--sg-body-bg);
@@ -82,15 +86,19 @@
         position: sticky;
         left: 0;
         height: 100%;
-        aspect-ratio: 1;
-        padding: 0;
+        aspect-ratio: 1 / 1;
+        padding: 0 var(--border-width) var(--border-width) 0;
         z-index: 2;
         svg {
             position: relative;
             top: 0;
             left: 0;
+            rect {
+                stroke: var(--focus-visible-outline-scroll-button, none);
+            }
         }
         &[data-position="right"] {
+            padding: 0 0 var(--border-width) var(--border-width);
             position: sticky;
             left: unset;
             right: 0;
@@ -110,6 +118,10 @@
                 top: calc(-1 * var(--border-width));
             }
         }
+    }
+    .sg-tabs-button-span {
+        padding: 0.125em 0.25em;
+        outline: var(--focus-visible-outline-button, none);
     }
 }
 

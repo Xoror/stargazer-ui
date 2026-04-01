@@ -36,14 +36,16 @@
         border-color: var(--border-active-color);
         border-style: inset;
     }
-    /*
+    
     &:focus-visible {
-        box-shadow: 0 0 0 3px var(--focus-visible-boxshadow-color);
-        border: 1px solid var(--focus-visible-border-color);
-        outline: 2px solid var(--focus-visible-outline-color);
-        z-index: 5;
+        box-shadow: none;
+        outline: none;
+        --focus-visible-outline: 1px solid currentColor;
     }
-    */
+    .sg-button-span {
+        padding: 0.125em 0.25em;
+        outline: var(--focus-visible-outline, none);
+    }
 }
 
 @each $name, $color in $colors {
