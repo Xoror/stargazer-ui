@@ -1,7 +1,8 @@
-import { ReactNode, Dispatch, Children, ReactElement, RefObject } from "react";
+import { ReactNode, Dispatch, Children, ReactElement, RefObject, ElementType } from "react";
 
-import { BaseElementType, BaseElementType2, BaseParagraphType, BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSpanType, BaseSliderType, BaseSmallType, BaseUListType, BaseSVGType, BaseButtonType } from "../utils/BaseTypes";
+import { BaseElementType, BaseElementType2, BaseParagraphType, BaseDivType, BaseFormType, BaseInputType, BaseLabelType, BaseLItemType, BaseSelectType, BaseSpanType, BaseSliderType, BaseSmallType, BaseUListType, BaseSVGType, BaseButtonType, BaseTextareaType } from "../utils/BaseTypes";
 import { CustomSetState } from "./FormSelect";
+import AsPropType from "../utils/AsPropType";
 export type FormTagContextType = {
     noValidate: boolean
 }
@@ -29,8 +30,7 @@ type HintMessageType = {
 } & BaseParagraphType
 export type ErrorType = {children?:  ReactNode} & ErrorMessageType
 export type HintType = {children?: ReactNode} & HintMessageType
-export type FormControlType = {
-    as?: React.ElementType,
+export type FormControlType<T extends ElementType> = AsPropType<T> & {
     className?: string,
     plaintext?: boolean,
     id?: string,
@@ -39,7 +39,7 @@ export type FormControlType = {
     error?: ErrorMessageType,
     errorAsOverlay?: boolean
     hint?: HintMessageType
-} & BaseInputType
+}
 
 // Form Select types
 export type SelectContextType<T> = {
@@ -73,7 +73,8 @@ export type FormSelectType =  {
     errorAsOverlay?: boolean
     hint?: HintMessageType,
     loading?: boolean,
-    listProps?: FormSelectListType
+    listProps?: FormSelectListType,
+    onChange?: ( event: React.ChangeEvent<HTMLButtonElement> & {target: {value?: any}}) => void
 } & FormSelectControlType
 export type FormSelectControlType = {
     children?: ReactNode,

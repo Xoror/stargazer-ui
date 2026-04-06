@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext, createContext, useMemo, useState, useRef, useEffect, InvalidEvent } from "react";
+import React, { forwardRef, useContext, createContext, useMemo, useState, useRef, useEffect, InvalidEvent, ElementType, ComponentType, ForwardedRef } from "react";
 
 import { HintType, ErrorType, FormTagContextType, FormCheckType, FormContextType, FormControlType, FormGroupType, FormLabelType, FormSliderType, FormTextType, FormType, FormSelectTagType, SliderContextType, WarningIconType } from "./Form.types";
 import useClassname from "../hooks/useClassname";
@@ -8,8 +8,6 @@ import contrastingColor from "../utils/ContrastingColor";
 
 import Overlay from "../Overlay";
 import Select from "./FormSelect"
-import OverlayTrigger from "react-bootstrap/OverlayTrigger"
-import Tooltip from "react-bootstrap/Tooltip"
 
 const WarningIcon = forwardRef<SVGSVGElement, WarningIconType>( ({className, alt, color, size, ...restProps}, ref) => {
     const sizeComputed = {width: size ?? "1rem", height: size ?? "1rem"}
@@ -118,11 +116,13 @@ export const HintMessage = forwardRef<HTMLParagraphElement, HintType>(({children
     )
 })
 HintMessage.displayName = "HintMessage"
+//forwardRef<HTMLInputElement | HTMLTextAreaElement, FormControlType<"input" | "textarea">>(
 
-const Control = forwardRef<HTMLInputElement, FormControlType>( (
-        {as = "input", className = "", plaintext = false, id, type = "text", autoFocus=false, error, errorAsOverlay=false, hint, required, "aria-describedby":ariaDescribedby, ...restProps}, ref
+const ControlWithoutFWR =  <T extends "input"|"textarea">(
+        {as, className = "", plaintext = false, id, type = "text", autoFocus=false, error, errorAsOverlay=false, hint, required, "aria-describedby":ariaDescribedby, ...restProps}: FormControlType<T>, ref: ForwardedRef<T extends "input" ? HTMLInputElement:HTMLTextAreaElement>
 ) => {
-    let Component = as
+    let Component = as as ElementType
+    const internalRef = ref
 
     const { noValidate } = useFormTagContext()
     const { controlId, isInputGroup, isFLoatingLabel } = useFormContext()
@@ -151,7 +151,7 @@ const Control = forwardRef<HTMLInputElement, FormControlType>( (
                 <Component 
                     required={(required && !noValidate) ?? undefined} 
                     aria-required={required ?? undefined} aria-invalid={error ? "true":"false"} aria-describedby={describedby != "" ? describedby : null}
-                    autoFocus={autoFocus} ref={ref} 
+                    autoFocus={autoFocus} ref={internalRef} 
                     id={elementId} type={type} className={computedClassName} {...restProps} />
             </Overlay>
             <div className="sg-form-control-description">
@@ -164,8 +164,63 @@ const Control = forwardRef<HTMLInputElement, FormControlType>( (
             </div>
         </>
     )
-})
-Control.displayName = "FormControl"
+}
+const Control = forwardRef(ControlWithoutFWR) as <T extends "input" |"textarea">(
+  props: FormControlType<T> & { ref?: ForwardedRef<T extends "input" ? HTMLInputElement:HTMLTextAreaElement> },
+) => ReturnType<typeof ControlWithoutFWR>;
+//Control.displayName = "FormControl"
+/*
+const ControlWithoutFWR =  <T extends "input"|"textarea">(
+        {as, className = "", plaintext = false, id, type = "text", autoFocus=false, error, errorAsOverlay=false, hint, required, "aria-describedby":ariaDescribedby, ...restProps}: FormControlType<T>, ref: ForwardedRef<T extends "input" ? HTMLInputElement:HTMLTextAreaElement>
+) => {
+    let Component = as as ElementType
+    const internalRef = ref
+
+    const { noValidate } = useFormTagContext()
+    const { controlId, isInputGroup, isFLoatingLabel } = useFormContext()
+    const isOverlay = isInputGroup || isFLoatingLabel || errorAsOverlay
+
+    let elementId = id ?? controlId
+
+    let computedClassName = mergeClassnames(
+        plaintext ? "sg-form-control-plaintext" : "sg-form-control",
+        className != "" ? className : "",
+        type == "color" ? "sg-form-control-color" : "",
+        error ? "invalid":""
+    )
+    const errorMessageId = error ? elementId+"-error-message":undefined
+    const hintMessageId = hint ? elementId+"-hint-message":undefined
+    const tooltipMessage = isOverlay && (error || hint) ? 
+        <div className="sg-form-control-description tooltip">
+            {error? <ErrorMessage id={errorMessageId} message={error.message} /> : null}
+            {hint? <HintMessage id={hintMessageId} message={hint.message} /> : null}
+        </div> : undefined// "Testing a tooltip with a long message. This messsage is so long it hsould in theory trigger a wrap."
+
+    const describedby = mergeClassnames(ariaDescribedby, errorMessageId, hintMessageId)
+    return (
+        <>
+            <Overlay trigger={"focus"} position="auto" tooltip={tooltipMessage}>
+                <Component 
+                    required={(required && !noValidate) ?? undefined} 
+                    aria-required={required ?? undefined} aria-invalid={error ? "true":"false"} aria-describedby={describedby != "" ? describedby : null}
+                    autoFocus={autoFocus} ref={internalRef} 
+                    id={elementId} type={type} className={computedClassName} {...restProps} />
+            </Overlay>
+            <div className="sg-form-control-description">
+                {error && !isOverlay ? 
+                    <ErrorMessage id={elementId} message={error.message} style={error.style} className={error.className}/>
+                    : null }
+                {hint && !isOverlay ?
+                    <HintMessage id={elementId} message={hint.message} style={hint.style} className={hint.className}/>
+                    : null }
+            </div>
+        </>
+    )
+}
+const Control = forwardRef(ControlWithoutFWR) as <T extends "input" |"textarea">(
+  props: FormControlType<T> & { ref?: ForwardedRef<T extends "input" ? HTMLInputElement:HTMLTextAreaElement> },
+) => ReturnType<typeof ControlWithoutFWR>;
+*/
 
 const Group = forwardRef<HTMLDivElement, FormGroupType>( ({children, className, controlId, vertical, ...restProps}, ref) => {
     const context = useMemo(() => {

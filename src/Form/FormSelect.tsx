@@ -150,7 +150,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
         target.value = newValue.value;
         const event = new Event('change', { bubbles: true });
         Object.defineProperty(event, 'target', { writable: false, value: target })
-        const syntheticEvent = createSyntheticEvent(event) as React.ChangeEvent<typeof target>;
+        const syntheticEvent = createSyntheticEvent(event) as React.ChangeEvent<typeof target> & {target: {value?: "string"}};
         if(onChange) onChange(syntheticEvent);
     }
     const [ selectedDescendant, setSelectedDescendant ] = useState<{value:any, label:any}>(initialValue)// useCustomState<{value:any, label:any}>(initialValue, handleChange)

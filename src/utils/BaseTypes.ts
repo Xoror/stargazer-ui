@@ -20,6 +20,7 @@ type BaseSmallType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, 
 type BaseSpanType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>;
 type BaseSVGType = React.SVGProps<SVGSVGElement>
 type BaseTableType = React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>;
+type BaseTextareaType = React.DetailedHTMLProps<React.TableHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>;
 type BaseUListType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement>;
 
 type BaseElementType = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
@@ -28,5 +29,5 @@ type BaseElementType2 = React.DetailedHTMLProps<React.HTMLAttributes<Element>, E
 export { 
     BaseAnchorType, BaseButtonType, BaseDialogType, BaseDivType, BaseElementType, BaseElementType2, BaseFormType, BaseHeadingType, BaseHrType,
     BaseInputType, BaseLItemType, BaseLabelType, BaseSliderType, BaseMeterType, BaseNavType, BaseParagraphType, BaseProgressBarType, BaseSelectType, BaseSmallType, BaseSpanType,
-    BaseSVGType, BaseTableType, BaseUListType
+    BaseSVGType, BaseTableType, BaseTextareaType, BaseUListType
 }

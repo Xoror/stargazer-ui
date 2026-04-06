@@ -5,7 +5,7 @@ type SelectorReturnTypeOld<Store> = (Store[keyof Store] | Store | Array<Store[ke
 
 const createFastContext = <Store, Selected = unknown>() => {
     type SelectorType = (store: Store) => Selected
-    type IsEqualFunction = (oldValue: ReturnType<SelectorType>, newValue: ReturnType<SelectorType>) => boolean
+    type IsEqualFunction<T extends SelectorType | undefined> = (oldValue: ReturnType<T extends undefined ? SelectorType : T>, newValue: ReturnType<T extends undefined ? SelectorType : T>) => boolean
     type SetStore = Partial<Store> | ( (store: Store) => Store )
     type GetStoreReturn<T> = T extends SelectorType ? ReturnType<T>:  T extends undefined ? Store : never
     type SetStoreReturn = (setProp: SetStore) => void
@@ -49,23 +49,22 @@ const createFastContext = <Store, Selected = unknown>() => {
         )
     }
 
-    function getStore<T extends SelectorType, >(selector: T, equalityFunction?:IsEqualFunction, id?: string): GetStoreReturn<T>
-    function getStore<T extends undefined, >(selector?: T, equalityFunction?:IsEqualFunction, id?: string): GetStoreReturn<T>
-    function getStore<T extends SelectorType, >(selector: T, equalityFunction?:IsEqualFunction, id?: string): GetStoreReturn<T> {
+    function getStore<T extends SelectorType, >(selector: T, equalityFunction?:IsEqualFunction<T>, id?: string): GetStoreReturn<T>
+    function getStore<T extends undefined, >(selector?: T, equalityFunction?:IsEqualFunction<T>, id?: string): GetStoreReturn<T>
+    function getStore<T extends SelectorType, >(selector: T, equalityFunction?:IsEqualFunction<T>, id?: string): GetStoreReturn<T> {
         const store = useContext(StoreContext)
         if(!store) {
             throw new Error("You have to use useStore within the proper provider!")
         }
         const storeGet = (store: Store) => {
-            return store as unknown as Selected
+            return store as unknown as ReturnType<T>
         }
-        
         let getSnapshot = useMemo(() => {
             const selectorInternal = selector !== undefined ? selector : storeGet
             //memoization through closures
             let hasMemo = false
             let memoState: Store | undefined
-            let memoSelected: ReturnType<SelectorType>
+            let memoSelected: Selected
             const memoSelector = (newState: Store) => {
                 if(!hasMemo) {
                     hasMemo = true
@@ -75,8 +74,8 @@ const createFastContext = <Store, Selected = unknown>() => {
                 }
                 const oldState = memoState
                 if(isEqual(oldState, newState)) return memoSelected
-                const oldSelected = memoSelected
-                const newSelected = selectorInternal(newState)
+                const oldSelected = memoSelected as Parameters<IsEqualFunction<T>>[0]
+                const newSelected = selectorInternal(newState) as Parameters<IsEqualFunction<T>>[1]
                 //if(id) console.log(id, oldSelected == newSelected)
                 if(equalityFunction && equalityFunction(oldSelected, newSelected)) {
                     //console.log(oldSelected, newSelected, equalityFunction(oldSelected, newSelected))
