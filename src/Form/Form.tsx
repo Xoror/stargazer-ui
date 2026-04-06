@@ -121,7 +121,7 @@ HintMessage.displayName = "HintMessage"
 const ControlWithoutFWR =  <T extends "input"|"textarea">(
         {as, className = "", plaintext = false, id, type = "text", autoFocus=false, error, errorAsOverlay=false, hint, required, "aria-describedby":ariaDescribedby, ...restProps}: FormControlType<T>, ref: ForwardedRef<T extends "input" ? HTMLInputElement:HTMLTextAreaElement>
 ) => {
-    let Component = as as ElementType
+    let Component = (as ?? "input") as ElementType
     const internalRef = ref
 
     const { noValidate } = useFormTagContext()

@@ -1,6 +1,6 @@
 {
   "name": "stargazer-ui",
-  "version": "1.5.33",
+  "version": "1.5.34",
   "description": "React component library made by Stargazer Works",
   "module": "./index.js",
   "types": "./index.d.ts",
