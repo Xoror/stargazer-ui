@@ -1,5 +1,5 @@
 .sg-table {
-    --sg-table-padding: $sg-table-padding;
+    --sg-table-padding: 0.5rem;
     width: 100%;
     margin-bottom: 1rem;
     color: black;
@@ -7,7 +7,7 @@
     border-color: black;
 
     > :not(caption) > * > * {
-        padding: $sg-table-padding $sg-table-padding;
+        padding: var(--sg-table-padding);
         background-color: transparent;
         border-bottom-width: 1px;
         box-shadow: inset 0 0 0 9999px transparent;
@@ -27,8 +27,5 @@
 }
 
 .sg-table-sm {
-    // stylelint-disable-next-line selector-max-universal
-    > :not(caption) > * > * {
-      padding: $sg-table-padding-sm $sg-table-padding-sm;
-    }
+    --sg-table-padding: 0.25rem;
 }

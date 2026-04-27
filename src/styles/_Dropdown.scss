@@ -10,27 +10,28 @@
 }
 
 .sg-dropdown {
-  --sg-dropdown-list-bg: ${$sg-dropdown-list-bg};
+  --dropdown-list-bg: var(--sg-dropdown-list-bg);
+  --dropdown-interaction-contrast: white;
 }
 
 .sg-dropdown-list {
-    --sg-dropdown-list-bg: #{$sg-dropdown-list-bg};
+    --dropdown-list-bg: var(--sg-dropdown-list-bg);
     position: absolute;
-    z-index: $zindex-dropdown;
+    z-index: var(--sg-zindex-dropdown);
     display: none; // none by default, but block on "open" of the menu
     min-width: 10rem;
     padding: 0;
-    margin: 0; // Override default margin of ul
-    text-align: left; // Ensures proper alignment if parent has it changed (e.g., modal footer)
+    margin: 0; 
+    text-align: left; 
     list-style: none;
-    background-color: $sg-body-bg; //$sg-dropdown-list-bg;
+    background-color: var(--sg-body-bg); //$sg-dropdown-list-bg;
     color: white;
     background-clip: padding-box;
-    border: 2px outset color-mix(in oklab, $sg-body-bg, white 60%);// white;
+    border: 2px outset color-mix(in oklab, var(--sg-body-bg), currentColor 60%);// white;
   //border-radius: 0.375rem;
 }
 .sg-dropdown-list.show {
-  display: block;
+    display: block;
 }
 
 .sg-dropdown-toggle {
@@ -84,52 +85,44 @@
   margin: 0.5rem 0;
   overflow: hidden;
   border-top: 1px solid var(--line-color);
-  opacity: 1; // Revisit in v6 to de-dupe styles that conflict with <hr> element
+  opacity: 1;
 }
   
-  // Links, buttons, and more within the dropdown menu
-  //
-  // `<button>`-specific styles are denoted with `// For <button>s`
 .sg-dropdown-item {
-  display: block;
-  width: 100%; // For `<button>`s
-  padding: 0.25rem 0.5rem;
-  clear: both;
-  text-align: inherit; // For `<button>`s
-  white-space: nowrap; // prevent links from randomly breaking onto new lines
-  background-color: transparent; // For `<button>`s
-  color: inherit;
-  border: 2px solid transparent; // For `<button>`s
+    display: block;
+    width: 100%; // For `<button>`s
+    padding: 0.25rem 0.5rem;
+    clear: both;
+    text-align: inherit; // For `<button>`s
+    white-space: nowrap; // prevent links from randomly breaking onto new lines
+    background-color: transparent; // For `<button>`s
+    color: inherit;
+    border: 2px solid transparent; // For `<button>`s
 
-  &.active,
-  &:active {
-      background-color: $sg-dropdown-item-action-bg;
-  }
-
-  &.disabled,
-  &:disabled {
-      background-color: $sg-dropdown-item-disabled-bg;
-      opacity: 0.5;
-  }
-  &.sg-dropdown-item-visual-focus {
-    /*
-    background-color: $sg-dropdown-item-hover-bg;
-    border-top: 1px solid white;
-    border-bottom: 1px solid white;
-    */
-    background-color: color-mix(in oklab, $input-background-color, white 20%);
-    &:active {
-        background-color: color-mix(in oklab, $input-background-color, white 25%);
+    &.disabled,
+    &:disabled {
+        background-color: color-mix(in oklab, var(--sg-dropdown-list-bg), currentColor 20%);
+        opacity: 0.5;
     }
-    //background-color: color-mix(in oklab, $danger, transparent 50%);
-    //border: 2px outset color-mix(in oklab, $danger, currentColor 20%)
-    //@include sg-focus-visible();
-  }
+    &.sg-dropdown-item-visual-focus {
+        /*
+        background-color: $sg-dropdown-item-hover-bg;
+        border-top: 1px solid white;
+        border-bottom: 1px solid white;
+        */
+        background-color: color-mix(in oklab, var(--sg-dropdown-list-bg), white 20%);
+        &:active {
+            background-color: color-mix(in oklab, var(--sg-dropdown-list-bg), white 25%);
+        }
+        //background-color: color-mix(in oklab, $danger, transparent 50%);
+        //border: 2px outset color-mix(in oklab, $danger, currentColor 20%)
+        //@include sg-focus-visible();
+    }
 }
 a.sg-dropdown-item {
-  cursor: pointer;
-  text-decoration: none;
+    cursor: pointer;
+    text-decoration: none;
 }
 [data-nav="true"] .sg-dropdown-item {
-  font-size: 0.85rem;
+     font-size: 0.85rem;
 }

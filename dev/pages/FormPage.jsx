@@ -8,6 +8,7 @@ import FileUploadButton from "../../src/FileUploadButton/FileUploadButton"
 
 const FormPage = () => {
     const [selectValue, setSelectValue] = useState("6")
+    const checkboxRef = useRef()
     const [count, setCount] = useState(3)
     const [options, setOptions] = useState(["1","2","3","4","5","6","7"])
     const handleChange = (event) => {
@@ -67,7 +68,7 @@ const FormPage = () => {
                         <Form.Control as="textarea"/>
                     </Form.Group>
 
-                    <Form.Check >Form Checkbox</Form.Check>
+                    <Form.Check ref={checkboxRef}>Form Checkbox</Form.Check>
                     <Form.Check type="radio">Form Radio</Form.Check>
                     <Form.Check type="switch">Form Switch</Form.Check>
                     <Form.Check type="color">Form Color</Form.Check>
@@ -79,13 +80,8 @@ const FormPage = () => {
 
                     <Form.Group controlId="form-select-tag">
                         <Form.Label>Form Select Tag</Form.Label>
-                        <Form.SelectTag onChange={event => console.log(event)}>
-                            <option value="">Select option...</option>
-                            <option value="test-1">Test 1</option>
-                            <option value="test-2">Test 2</option>
-                            <option value="test-3">Test 3</option>
-                        </Form.SelectTag>
-                        <Form.Select errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}} ref={testRef} value={selectValue} onChange={handleChange} id="custom-select-test">
+                        
+                        <Form.Select errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}} ref={testRef} value={selectValue} onChange={handleChange}>
                             <Form.Select.Option value="">Select option...</Form.Select.Option>
                             <Form.Select.Option value="1">1</Form.Select.Option>
                             <Form.Select.Option value="2">2</Form.Select.Option>
@@ -123,7 +119,7 @@ const FormPage = () => {
                     <h6>Input Group</h6>
                     <InputGroup.Grid>
                         <InputGroup controlId="input-group-test">
-                            <InputGroup.Text>Form.Control</InputGroup.Text>
+                            <InputGroup.Text>Form.Control again for it to be longer</InputGroup.Text>
                             <Form.Control />
                         </InputGroup>
                         <InputGroup controlId="input-group-test-select">
@@ -134,7 +130,7 @@ const FormPage = () => {
                             </Form.SelectTag>
                             <InputGroup.Text>Form.Select</InputGroup.Text>
                         </InputGroup>
-                        <Form.Check label="test"/>
+                        <Form.Check label="testing a longer label asdf ehapoiff ohse afie foiwafsoih feofih eofias dife "/>
                     </InputGroup.Grid>
 
                     <h6>Floating Label (in Input Group Grid)</h6>

@@ -41,19 +41,19 @@
     text-align: center;
     font-size: 0.85rem;
 
-    padding: $input-padding-x $input-padding-y;
+    padding: var(--sg-input-padding-x) var(--sg-input-padding-y);
 
     white-space: nowrap;
 
-    background-color: $input-border-color;
-    color: $input-text-color;
-    border: $input-border-width outset $input-border-color;
+    background-color: var(--sg-input-border-color);
+    color: var(--sg-input-text-color);
+    border: var(--sg-input-border-width) outset var(--sg-input-border-color);
     border-right-width: 0;
-    border-radius: $input-border-radius;
+    border-radius: var(--sg-input-border-radius);
 }
 .sg-form-control + .sg-input-group-text {
     border-left-width: 0;
-    border-right-width: $input-border-width;
+    border-right-width: var(--sg-input-border-width);
 }
 
 .sg-input-group-grid {

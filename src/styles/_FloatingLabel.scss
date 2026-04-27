@@ -1,7 +1,7 @@
 .sg-form-floating {
     position: relative;
     --height: calc(3rem + 2px);
-    --text-color: #{$input-text-color};
+    --text-color: var(--sg-input-text-color);
 
     > .sg-form-control, > .sg-form-control-plaintext, > .sg-form-select, > .sg-form-select-tag {
         height: var(--height);

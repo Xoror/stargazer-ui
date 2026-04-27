@@ -5,6 +5,7 @@ import { FormSelectType, FormSelectControlType, FormSelectInputType, FormSelectL
 import Overlay from "../Overlay"
 
 import { useFormContext, useFormTagContext, ErrorMessage, HintMessage } from "./Form"
+import isEqual from "../utils/IsEqual"
 import mergeRefs from "../utils/MergeRefs"
 import mergeClassnames from "../utils/MergeClassnames"
 import createSyntheticEvent from "../utils/CreateSyntheticEvent"
@@ -184,7 +185,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
     
     return (
         <SelectContextProvider initialState={context} refreshKeys={["items", "internalId", "setSelectedDescendant"]}>
-            <Overlay trigger={"focus"} position="bottom" tooltip={tooltipMessage}>
+            <Overlay trigger={"focus"} position="top" tooltip={tooltipMessage}>
                 <SelectControl 
                     value={selectedDescendant.value} label={selectedDescendant.label} handleSelectedDescendant={handleSelectedDescendant}
                     className={computedClassName} id={elementId} required={(required && !noValidate) ?? undefined}  disabled={disabled}
@@ -254,7 +255,7 @@ SelectInput.displayName = "FormSelectInput"
 */
 const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
         children, className, value, label, searchable=false, required=false,
-        onClick, onBlur, onKeyUp, onKeyDown, handleSelectedDescendant,
+        onClick, onKeyUp, onKeyDown, handleSelectedDescendant,
         ...restProps
     }, ref) => {
     const setSelectContext = setStore()
@@ -264,6 +265,7 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
     const [rootMargin, setRootMargin] = useState("0px 0px 0px 0px")
     useEffect(() => {
         if(selectedDescendant.value != value) {
+            console.log("set selected descendant")
             setSelectContext({selectedDescendant:{value, label}})
         }
     }, [value])
@@ -298,7 +300,8 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
         const controller = new AbortController()
         const signal = controller.signal
         const select = internalButtonRef.current
-        if(!select) return
+        const list = document.getElementById(internalId+"-list")
+        if(!select || !list) return
         const { top, bottom, left, right, width, height } = select.getBoundingClientRect()
         //console.log(select.getBoundingClientRect(), top, left, bottom, right)
         
@@ -323,14 +326,22 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
         }, {threshold:1})
         intersectionObserver.observe(select)
         window.addEventListener("pointerdown", event => {
-            if(!select.contains(event.target as HTMLElement)) {handleSetShowList(false)}
+            console.log(event.target, internalId) //TODO being able to click scroll bar and scroll
+            const target = event.target as HTMLElement
+            const isTargetDescendentOfSelect = select.contains(target)
+            const isTargetDescendentOfList = list.contains(target)
+            const isTargetList = target.id === internalId+"-list"
+            console.log(isTargetDescendentOfSelect, isTargetDescendentOfList)
+            if(!isTargetDescendentOfSelect && !isTargetDescendentOfList) {
+                handleSetShowList(false)
+            }
         }, {signal, capture: true})
         window.addEventListener("resize", event => handleSetShowList(false), {signal, capture: true})
         return function cleanup () {
             controller.abort()
             intersectionObserver.unobserve(select)
         }
-    }, [rootMargin])
+    }, [rootMargin, handleSetShowList])
 
     const changeActiveDescendant = (number: number, type: string) => {
         const maxIndex = (items as any).length - 1
@@ -460,14 +471,14 @@ SelectControl.displayName = "FormSelectControl"
 
 const listPositionSetter = (listRef: any, internalId: string) => {
     const listElement = listRef.current
-    if(!listElement) return
+    if(!listElement) return {}
     const parent = document.getElementById(internalId)//listElement.parentElement
-    if(!parent) return
+    if(!parent) return {}
     let position: React.CSSProperties = {}
     const { height: listHeight } = listElement.getBoundingClientRect()
     const { top, bottom, left, width: parentWidth, height: parentHeight } = parent.getBoundingClientRect()
     const { innerHeight } = window
-    if(!listElement.children) return
+    if(!listElement.children) return {}
     const listChildren = listElement.children
     const numberChildren = listChildren.length
     const numberOfRenderedChildren = numberChildren > 5 ? 5 : numberChildren
@@ -477,8 +488,8 @@ const listPositionSetter = (listRef: any, internalId: string) => {
     }
     renderedListHeight += 4
 
-    const isTop = top > renderedListHeight
-    const isBottom = innerHeight - bottom > renderedListHeight
+    const isTop = false//top > renderedListHeight
+    const isBottom = true// innerHeight - bottom > renderedListHeight
     
     const borderWidth = parseFloat(getComputedStyle(parent).borderBottomWidth)
     const coordinate = (isBottom ? top + parentHeight + borderWidth : top - borderWidth) //`calc(100% + ${borderWidth})`
@@ -488,7 +499,7 @@ const listPositionSetter = (listRef: any, internalId: string) => {
         position = {bottom: coordinate, top: "unset"}
     } else {
         const height = innerHeight - bottom - 2
-        position = {top: coordinate, maxHeight: height}
+        position = {top: coordinate}
     }
     
     position.height = renderedListHeight ?? "auto"
@@ -499,8 +510,17 @@ const listPositionSetter = (listRef: any, internalId: string) => {
 
 const SelectList = forwardRef<HTMLUListElement, FormSelectListType>( ({children, className, id, ...restProps}, ref) => {
     //const { showList, internalId } = getSelectContext()
-    const [showList, internalId, selectedDescendant, internalButtonRef] = getSelectContext(state => [state.showList, state.internalId, state.selectedDescendant, state.internalButtonRef])
+    const [showList, internalId] = getSelectContext(state => [state.showList, state.internalId])
     const [computedStyle, setComputedStyle] = useState<React.CSSProperties>({})
+    const computedStyleRef = useRef<React.CSSProperties>({})
+    if(!isEqual(computedStyleRef.current, computedStyle)) {
+        computedStyleRef.current = computedStyle
+    }
+    const updatePosition = (newPosition: React.CSSProperties) => {
+        const isPositionsEqual = isEqual(newPosition, computedStyleRef.current)
+        if(isPositionsEqual) return
+        setComputedStyle(newPosition)
+    }
 
     const listRef = useRef<HTMLUListElement>(null)
     useLayoutEffect(() => {
@@ -508,7 +528,7 @@ const SelectList = forwardRef<HTMLUListElement, FormSelectListType>( ({children,
             return
         }
         const newPosition = listPositionSetter(listRef, internalId as string)
-        setComputedStyle(newPosition!)
+        updatePosition(newPosition)
         
     }, [showList])
     useEffect(() => {
@@ -519,12 +539,12 @@ const SelectList = forwardRef<HTMLUListElement, FormSelectListType>( ({children,
                 return
             }
             const newPosition = listPositionSetter(listRef, internalId as string)
-            setComputedStyle(newPosition!)
+            updatePosition(newPosition)
         }, {signal, capture:true})
         return function cleanup() {
             controller.abort()
         }
-    }, [showList])
+    }, [showList, computedStyle])
     useEffect(() => {
         if(!showList || !listRef.current) {
             return
@@ -566,18 +586,41 @@ const SelectOption = forwardRef<HTMLLIElement, FormSelectOptionType>(({
         children, className, id, value, disabled, label, selected,
         onPointerDown, onPointerOver, onClick, ...restProps
     }, ref) => {
+    const internalRef = useRef<HTMLLIElement>(null)
+    const isVisible = useRef(false)
     const setSelectContext = setStore()
     const isActiveDescendant = getSelectContext(state => state.activeDescendant === value)
     //if(isActiveDescendant) console.log(value)
     const isSelectedDescendant = getSelectContext(state => state.selectedDescendant.value === value)
     const { internalId, setSelectedDescendant } = getSelectContext(state => state, (oldValue, newValue) => {return oldValue.selectedDescendant.value === newValue.selectedDescendant.value})
-    
+    useEffect(() => {
+        const option = internalRef.current
+        if(!isActiveDescendant || !option || isVisible.current) return
+        internalRef.current.scrollIntoView()
+    }, [isActiveDescendant])
+    useEffect(() => {
+        // there is no widely available way to tell if something is visible, so we start assuming it's not visible, and then using 
+        // an intersection observer to set it to visible when it becomes visible and back agai
+        const option = internalRef.current
+        if(!option) return
+
+        const intersectionObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                isVisible.current = entry.isIntersecting
+            })
+        }, {threshold:1})
+        intersectionObserver.observe(option)
+        return function cleanup() {
+            intersectionObserver.unobserve(option)
+        }
+    }, [])
     const handlePointerEnter = (event: React.PointerEvent<HTMLLIElement>) => {
         if(!event.target) return
         setSelectContext!({activeDescendant: value})
         if(onPointerOver) onPointerOver(event)
     }
     const handleCLick = (event: React.MouseEvent<HTMLLIElement>) => {
+        console.log("option click")
         event.stopPropagation()
         if(disabled) return
         
@@ -593,7 +636,7 @@ const SelectOption = forwardRef<HTMLLIElement, FormSelectOptionType>(({
     const computedClassName = mergeClassnames("sg-select-list-item", className, isSelectedDescendant ? "selected":"", isActiveDescendant ? "focus":"")
     return (
         <li role="option" aria-selected={isSelectedDescendant}
-            ref={ref} id={internalId+"-list-item-"+value} className={computedClassName}
+            ref={mergeRefs([ref, internalRef])} id={internalId+"-list-item-"+value} className={computedClassName}
             onPointerOver={handlePointerEnter} onMouseDown={handleCLick}
             {...restProps}
         >

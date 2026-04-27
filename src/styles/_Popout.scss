@@ -1,5 +1,6 @@
 .sg-moveable-popout {
-    --popout-index: #{$zindex-popover};
+    --popout-index: var(--sg-zindex-popover);
+    --header-bg-color: color-mix(in oklab, currentColor 3%, var(--sg-body-bg));
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -24,8 +25,8 @@
         margin-bottom: 0;
         padding: 0.25em 0.5em;
 
-        background-color: $card-header-bg-color;
-        border-bottom: 1px solid $card-border-color;
+        background-color: var(--header-bg-color);
+        border-bottom: 1px solid currentColor;
         > *{
             margin:0;
         }
@@ -44,14 +45,14 @@
         flex: 1 1 auto;
         padding: 0.5em;
         user-select: inherit;
-        background-color: color-mix(in srgb, white 4%, $card-header-bg-color);
+        background-color: color-mix(in oklab, black 3%, var(--header-bg-color));
     }
     & .sg-popout-footer {
         user-select: inherit;
         padding: 0.25em 0.5em;
 
-        background-color: $card-header-bg-color;
-        border-top: 1px solid $card-border-color;
+        background-color: var(--header-bg-color);
+        border-top: 1px solid currentColor;
         &:last-child {
             border-radius: 0 0 0.375em 0.375em;
         }

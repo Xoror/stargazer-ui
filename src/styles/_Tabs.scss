@@ -1,7 +1,7 @@
 .sg-tabs {
     width: 100%;
     display: grid;
-    grid-template-rows: [control-start] auto [control-end page-start] 100% [page-end];
+    grid-template-rows: [control-start] max-content [control-end page-start] 100% [page-end];
 }
 
 .sg-tabs-controls {
@@ -11,7 +11,7 @@
     position: relative;
     display: flex;
     flex-direction: row;
-    background-color: $sg-tab-controls-bg;
+    background-color: var(--sg-tab-controls-bg);
     
     &::before {
         content: "";
@@ -21,7 +21,7 @@
         height: var(--border-width);
         background-color: var(--border-bottom-color);
     }
-    height: 2rem;
+    //height: 2rem;
     overflow-x: auto;
     scrollbar-width: none;
     @media (prefers-reduce-motion: no-preference) {
@@ -33,11 +33,11 @@
 }
 
 .sg-tabs-button {
-    --border-color: #{$sg-tab-controls-bg};
-    --text-color: #{$sg-tab-button-color};
-    --background-color: #{$sg-tab-controls-bg};
-    --hover-background-color: #{$sg-tab-button-hover};
-    --active-background-color: #{$sg-tab-button-active};
+    --border-color: var(--sg-tab-controls-bg);
+    --text-color: var(--sg-tab-button-color);
+    --background-color: var(--sg-tab-controls-bg);
+    --hover-background-color: color-mix(in oklab, black 15%, var(--background-color));
+    --active-background-color: color-mix(in oklab, black 15%, var(--background-color));
     position: relative;
     display: block;
     color: var(--text-color);

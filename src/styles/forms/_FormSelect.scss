@@ -1,27 +1,32 @@
 
 .sg-form-select-tag {
-    --input-text-color: #{$input-text-color};
-    --input-background-color: #{$input-background-color};
-    --input-border-color: #{$input-border-color};
-    --input-border-color-focus: #{$input-border-color-focus};
-    --input-border-color-invalid: #{$input-border-color-invalid};
-    --input-disabled-color: #{$input-disabled-color};
+    --input-text-color: var(--sg-input-text-color);
+    --input-background-color: var(--sg-input-background-color);
+    --input-border-color: var(--sg-input-border-color);
+    --input-border-color-focus: var(--sg-input-border-color-focus);
+    --input-border-color-invalid: var(--sg-input-border-color-invalid);
+    --input-border-width: var(--sg-input-border-width);
+    --input-border-style: var(--sg-input-border-style);
+    --input-border-radius: var(--sg-input-border-radius);
+    --input-disabled-color: var(--sg-input-disabled-color);
+    --input-padding-x: var(--sg-input-padding-x);
+    --input-padding-y: var(--sg-input-padding-y);
 
     position: relative;
     display: block;
     width: 100%;
-    padding-block: $input-padding-x;
-    padding-inline: $input-padding-y calc(3 * $input-padding-y);
+    padding-block: var(--input-padding-x);
+    padding-inline: var(--input-padding-y) calc(3 * var(--input-padding-y));
     color: var(--input-text-color);
 
     background-color: var(--input-background-color);
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right $input-padding-x center;
+    background-position: right var(--input-padding-x) center;
     background-size: 1em 0.75em;
 
-    border: $input-border-width $input-border-style var(--input-border-color);
-    border-radius: $input-border-radius;
+    border: var(--input-border-width) var(--input-border-style) var(--input-border-color);
+    border-radius: var(--input-border-radius);
 
     appearance: none;
 
@@ -32,13 +37,13 @@
         box-shadow: 0;
     }
     &[multiple], &[size]:not([size="1"]) {
-        padding-right: $input-padding-x;
+        padding-right: var(--input-padding-x);
         background-image: none;
     }
     &:disabled, .disabled {
         --input-background-color: rgba(255, 255, 255, 0.04);
-        --input-placeholder-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
-        --input-text-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
+        --input-placeholder-color: color-mix(in oklab, var(--input-placeholder-color), white 40%);
+        --input-text-color: color-mix(in oklab, var(--input-placeholder-color), white 40%);
         cursor:not-allowed;
         opacity: 1;
     }
@@ -50,45 +55,65 @@
 
 
 .sg-form-select {
-    --input-text-color: #{$input-text-color};
-    --input-background-color: #{$input-background-color};
-    --input-border-color: #{$input-border-color};
-    --input-border-color-focus: #{$input-border-color-focus};
-    --input-border-color-invalid: #{$input-border-color-invalid};
-    --input-border-width: #{$input-border-width};
-    --input-disabled-color: #{$input-disabled-color};
+    --input-text-color: var(--sg-input-text-color);
+    --input-background-color: var(--sg-input-background-color);
+    --input-border-color: var(--sg-input-border-color);
+    --input-border-color-focus: var(--sg-input-border-color-focus);
+    --input-border-color-invalid: var(--sg-input-border-color-invalid);
+    --input-border-width: var(--sg-input-border-width);
+    --input-border-style: var(--sg-input-border-style);
+    --input-border-radius: var(--sg-input-border-radius);
+    --input-disabled-color: var(--sg-input-disabled-color);
+    --input-placeholder-color: var(--sg-input-placeholder-color);
+    --input-padding-x: var(--sg-input-padding-x);
+    --input-padding-y: var(--sg-input-padding-y);
 
     position: relative;
-    display: block;
     
-    height: calc(1.4rem + $input-padding-x + $input-padding-x);
-    min-width: min(12rem, 100%);
-    max-width: 15rem;
+    line-height: 1.4em;
+    //height: calc(var(--sg-input-line-height) + var(--input-padding-y) + var(--input-padding-y));
+    min-width: min(12em, 100%);
+    max-width: 15em;
     
-    padding-block: $input-padding-x;
-    padding-inline: $input-padding-y calc(3 * $input-padding-y);
+    padding-block: var(--input-padding-x);
+    padding-inline: var(--input-padding-y) calc(3 * var(--input-padding-y));
     color: var(--input-text-color);
 
     background-color: var(--input-background-color);
+    /*
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="none" stroke="%236e7b80ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m2 5 6 6 6-6"/></svg>');
     //background-image: ("./down_caret.svg");
     background-repeat: no-repeat;
     background-position: right $input-padding-x center;
     background-size: 1em 0.75em;
-    border: $input-border-width outset var(--input-border-color);
-    border-radius: $input-border-radius;
+    */
+    border: var(--input-border-width) var(--input-border-style) var(--input-border-color);
+    border-radius: var(--input-border-radius);
 
     font-size: 0.85rem;
-    line-height: 1.4;
 
     span {
         pointer-events:visible;
-        display: inline-block;
+        display: grid;
         width: 100%;
         max-width: 100%;
         white-space: nowrap;
-        overflow: hidden;
+        overflow: hidden;   
         text-overflow: ellipsis;
+        font-size: inherit;
+        line-height: inherit;
+        &::after {
+            content: "";
+            opacity: 0.75;
+            position: absolute;
+            right: var(--input-padding-x);
+            align-self: center;
+            display: block;
+            height: 1.25em;
+            width: 1.25em;
+            background-color: currentColor;
+            clip-path: shape(from 3.226% 43.032%, line to 51.613% 70.968%, line to 96.774% 43.032%, line to 88.71% 29.065%, line to 51.613% 52.903%, line to 11.29% 29.065%);
+        }
     }
     
     &:focus-within {
@@ -97,11 +122,6 @@
         outline: 0;
         box-shadow: 0;
     }
-    .disabled {
-        --input-background-color: rgba(255, 255, 255, 0.04);
-        --input-placeholder-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
-        --input-text-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
-    }
 }
 
 .sg-select-control {
@@ -109,10 +129,10 @@
 
     cursor: default;
 
-    &:disabled {
+    &:disabled, .disabled {
         --input-background-color: rgba(255, 255, 255, 0.04);
-        --input-placeholder-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
-        --input-text-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
+        --input-placeholder-color: color-mix(in oklab, var(--input-placeholder-color), white 40%);
+        --input-text-color: color-mix(in oklab, var(--input-placeholder-color), white 40%);
         cursor: not-allowed;
         opacity: 1;
     }
@@ -130,7 +150,7 @@
     color: inherit;
 
     &[multiple], &[size]:not([size="1"]) {
-        padding-right: $input-padding-x;
+        padding-right: var(--input-padding-x);
         background-image: none;
     }
     &:disabled {
@@ -143,37 +163,38 @@
         outline: none;
     }
     &::placeholder {
-        color: $input-placeholder-color;
+        color: var(--input-placeholder-color);
         opacity: 1;
       }
     
 }
 
 .sg-select-list {
-    --input-text-color: #{$input-text-color};
-    --input-background-color: #{$input-background-color};
-    --input-border-color: #{$input-border-color};
-    --input-border-color-focus: #{$input-border-color-focus};
-    --input-border-color-invalid: #{$input-border-color-invalid};
-    --input-border-width: #{$input-border-width};
-    --input-disabled-color: #{$input-disabled-color};
-    --bg-color: #{$input-background-color};
-    --txt-color: black;
-    --z-index: #{$zindex-dropdown};
+    --input-text-color: var(--sg-input-text-color);
+    --input-background-color: var(--sg-input-background-color);
+    --input-border-color: var(--sg-input-border-color);
+    --input-border-color-focus: var(--sg-input-border-color-focus);
+    --input-border-color-invalid: var(--sg-input-border-color-invalid);
+    --input-border-width: var(--sg-input-border-width);
+    --input-border-style: var(--sg-input-border-style);
+    --input-border-radius: var(--sg-input-border-radius);
+    --input-disabled-color: var(--sg-input-disabled-color);
+    --input-placeholder-color: var(--sg-input-placeholder-color);
+    --input-padding-x: var(--sg-input-padding-x);
+    --input-padding-y: var(--sg-input-padding-y);
+
+    --z-index: var(--sg-zindex-dropdown);
     overflow-y: auto;
 
-    background-color: var(--bg-color);
-    color: inherit;
+    background-color: var(--input-background-color);
+    color: var(--input-text-color);
 
     position: absolute;
-    top: calc(100% + var(--input-border-width)*1px);
-    left: 0;
-    width: 100%;
     padding: 0;
 
-    border-radius: 0;// 0.375rem;
+    border-radius: var(--input-border-radius);// 0.375rem;
     //border: 1px solid color-mix(in srgb, currentColor, white);
-    border: 2px outset color-mix(in oklab, $sg-body-bg, white 60%);
+    border: var(--input-border-width) var(--input-border-style) color-mix(in oklab, var(--input-border-color), white 40%);
 
     list-style-type: none;
 
@@ -181,7 +202,7 @@
 }
 
 .sg-select-list-item {
-    --z-index: #{$zindex-dropdown};
+    --z-index: var(--sg-zindex-dropdown);
     --padding-right: 3ex;
     position: relative;
     padding: 0.25rem 0.5rem;

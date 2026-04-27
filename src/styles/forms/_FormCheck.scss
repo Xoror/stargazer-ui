@@ -2,138 +2,157 @@ $form-switch-width: 2em;
 $form-switch-color: rgba(black, .25);
 
 .sg-form-check {
-  --input-background-color: #{$input-background-color};
-  --input-border-color: #{$input-border-color};
-  --input-border-color-focus: #{$input-border-color-focus};
-  --input-border-color-invalid: #{$input-border-color-invalid};
+    --input-background-color: var(--sg-input-background-color);
+    --input-border-color: color-mix(in oklab, var(--input-background-color), currentColor 25%);
+    --input-border-color-focus: var(--sg-input-border-color-focus);
+    --input-border-color-invalid: var(--sg-input-border-color-invalid);
 
-  display: block;
-  min-height: $input-line-height;
-  padding-bottom: 0.5rem;
+    display: block;
+    min-height: var(--sg-input-line-height);
+    padding-bottom: 0.5rem;
 
-  .sg-form-check-input {
-      float: left;
-  }
+    .sg-form-check-input {
+        float: left;
+    }
 }
 .sg-form-check-reverse {
-  display: block;
-  min-height: $input-line-height;
-  padding-right: $input-line-height;
-  padding-bottom: 0.5rem;
-  text-align: right;
+    display: block;
+    min-height: var(--sg-input-line-height);
+    padding-right: var(--sg-input-line-height);
+    padding-bottom: 0.5rem;
+    text-align: right;
 
-  .sg-form-check-input {
-    float: right;
-    margin-right: $input-line-height * -1;
-    margin-left: 0;
-  }
+    .sg-form-check-input {
+        float: right;
+        margin-right: calc(var(--sg-input-line-height) * -1);
+        margin-left: 0;
+    }
 }
-/*
-@media (prefers-color-scheme: dark) {
-  .sg-form-check {
-    --input-background-color: #{$input-background-color-dark};
-    --input-border-color: #{$input-border-color-dark};
-    --input-border-color-focus: #{$input-border-color-focus-dark};
-    --input-border-color-invalid: #{$input-border-color-invalid-dark};
-  }
-
-}
-  */
 
 .sg-form-check-input {
-  margin-right: 1ch;
-  width: calc($input-line-height - 2px);
-  height: calc($input-line-height - 2px);
+    --size: calc(var(--sg-input-line-height) - 2px);
+    position: relative;
+    margin-right: 1ch;
+    width: calc(var(--sg-input-line-height) - 2px);
+    height: calc(var(--sg-input-line-height) - 2px);
+    display: grid;
 
-  background-color: var(--input-background-color);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  appearance: none;
-  print-color-adjust: exact; // Keep themed appearance for print
-  border: $input-border-width $input-border-style var(--input-border-color);
-
-  &[type="checkbox"] {
-    border-radius: $input-border-radius;
-    background-clip: padding-box;
-    
-
-    &:indeterminate {
-      background-color: var(--input-border-color-focus);
-      border-color: var(--input-border-color-focus);
-  
-      background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{$input-background-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/></svg>");
-    }
-  }
-
-  &[type="radio"] {
-    // stylelint-disable-next-line property-disallowed-list
-    border-radius: 50%;
-  }
-  &[type="color"] {
-    width: 3em;
-    height: $input-height;
-    padding: $input-padding-x;
-
-    &:not(:disabled):not([readonly]) {
-      cursor: pointer;
-    }
-
-    &::-moz-color-swatch {
-      border: 0 !important; // stylelint-disable-line declaration-no-important
-      border-radius: $input-border-radius;
-    }
-
-    &::-webkit-color-swatch {
-      border-radius: $input-border-radius;
-    }
-  }
-
-  &:active {
-    filter: brightness(90%);
-  }
-
-  &:focus-visible {
-    border-color: var(--input-border-color-focus);
-    outline: 0;
-    box-shadow: 0;
-  }
-
-  &:checked {
-    $currentColor: $input-border-color-focus;
+    background-color: var(--input-background-color);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    appearance: none;
+    print-color-adjust: exact; // Keep themed appearance for print
+    border: var(--sg-input-border-width) var(--sg-input-border-style) var(--input-border-color);
 
     &[type="checkbox"] {
-      background-image: url("data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon style='fill:#{$currentColor};' points='11.941,28.877 0,16.935 5.695,11.24 11.941,17.486 26.305,3.123 32,8.818'/></svg>");
+        border-radius: var(--input-border-radius);
+        background-clip: padding-box;
+        
+        &:indeterminate {
+            --indicator: "";
+            --indicator-bg-color: var(--input-border-color-focus);
+            --indicator-height: 100%;
+            --clip-path: rect(34.375% 84.375% 65.625% 15.625%);
+        }
     }
 
     &[type="radio"] {
-      background-image: url("data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='-4 -4 8 8'><circle r='2' fill='#{$currentColor}' /></svg>");
+        border-radius: 50%;
     }
-    
-  }
+    &[type="color"] {
+        color: inherit; // color picker apparently doesn't inherit text color TIL
+        width: 3em;
+        height: var(--sg-input-height);
+        padding: var(--sg-input-padding-x);
 
-  &:disabled, .disabled {
-    --input-background-color: rgba(255, 255, 255, 0.04);
-    --input-text-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
-    cursor:not-allowed;
-    filter: none;
-    opacity: 0.5;
-  }
+        &:not(:disabled):not([readonly]) {
+            cursor: pointer;
+        }
 
-  // Use disabled attribute in addition of :disabled pseudo-class
-  // See: https://github.com/twbs/bootstrap/issues/28247
-  &[disabled],
-  &:disabled {
-    ~ .form-check-label {
-      cursor: default;
-      opacity: 0.5;
+        &::-moz-color-swatch {
+            border: 0;
+            border-radius: var(--sg-input-border-radius);
+        }
+
+        &::-webkit-color-swatch {
+            border-radius: var(--sg-input-border-radius);
+        }
     }
-  }
 
-  &:user-invalid, &.invalid, &[aria-invalid="true"] {
-    box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
-    z-index: 2;
-  }
+    &:active {
+        filter: brightness(90%);
+    }
+
+    &:focus-visible {
+        border-color: var(--input-border-color-focus);
+        outline: 0;
+        box-shadow: 0;
+    }
+
+    --indicator: none;
+    --indicator-bg-color: var(--input-border-color-focus);
+    --indicator-height: 100%;
+    &::after {
+        content: var(--indicator);
+        box-sizing: border-box;
+        border-radius: inherit;
+        display: block;
+        position: absolute;
+        align-self: center;
+        justify-self: center;
+        height: var(--indicator-height);
+        aspect-ratio: 1;
+        background-color: var(--indicator-bg-color);
+        clip-path: var(--clip-path, circle(25% at 50% 50%));
+        transform-origin: center;
+    }
+    &:checked {
+        --indicator: "";
+        
+        &[type="checkbox"] {
+            --clip-path: shape(
+                from 3.125% 64.453%, 
+                line to 40.625% 93.75%, 
+                line to 96.875% 21.753%, 
+                line to 79.638% 8.285%, 
+                line to 36.856% 63.044%, 
+                line to 16.594% 47.216%, 
+            close); //38deg, 52deg
+            //background-image: url("data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon style='fill:currentColor;' points='11.941,28.877 0,16.935 5.695,11.24 11.941,17.486 26.305,3.123 32,8.818'/></svg>");
+            //<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><polygon style='fill:white;' points='1,19.625 13,29 31,5.961 27.06,2.883 12.138,21.981 4.078,15.685'/></svg>
+        }
+
+        &[type="radio"] {
+            --clip-path: none;//circle(30% at 50% 50%);
+            --indicator-height: 70%;
+            //background-image: url("data:image/svg+xml, <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='-4 -4 8 8'><circle r='2' fill='#{$currentColor}' /></svg>");
+        }
+        
+    }
+
+    &:disabled, .disabled {
+        --input-background-color: rgba(255, 255, 255, 0.04);
+        --input-text-color: color-mix(in oklab, var(--sg-input-placeholder-color), white 40%);
+        cursor:not-allowed;
+        filter: none;
+        opacity: 1;
+    }
+
+    // Use disabled attribute in addition of :disabled pseudo-class
+    // See: https://github.com/twbs/bootstrap/issues/28247
+    &[disabled],
+    &:disabled {
+        ~ .form-check-label {
+        cursor: default;
+        opacity: 0.5;
+        }
+    }
+
+    &:user-invalid, &.invalid, &[aria-invalid="true"] {
+        box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
+        z-index: 2;
+    }
 }
 
 .sg-form-check-label {
@@ -146,22 +165,32 @@ $form-switch-color: rgba(black, .25);
 
 .sg-form-switch {
   .sg-form-check-input {
-    width: $form-switch-width;
+    width: var(--sg-form-switch-width);
     margin-right: 1ch;
-    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$input-border-color}'/></svg>");
+    //background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$input-border-color}'/></svg>");
     background-position: left center;
-    border-radius: $form-switch-width;
-    transition: background-position .15s ease-in-out;
+    border-radius: var(--sg-form-switch-width);
 
     &:focus-visible {
       border-color: var(--input-border-color-focus);
       outline: 0;
       box-shadow: 0;
     }
+    --indicator: "";
+    &::after {
+        transition: left .15s ease-in-out, right .15s ease-in-out;
 
+        left: 10%;
+        --clip-path: none; //circle(38% at 50% 50%);
+        --indicator-bg-color: var(--input-border-color);
+        --indicator-height: 70%;
+    }
     &:checked {
-        background-position: right center;
-        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='3' fill='#{$input-border-color-focus}'/></svg>");
+        &::after {
+            left: 50%;
+            --indicator-bg-color: var(--input-border-color-focus);
+            
+        }
     }
   }
 }
@@ -236,9 +265,15 @@ $form-switch-color: rgba(black, .25);
 .sg-input-group-grid {
   > .sg-form-check {
     position: relative;
+    flex: 0 0 auto;
+    padding-bottom: 0;
+    width: 1%;
+    min-width: fit-content;
     padding-bottom: 0;
     > .sg-form-check-label {
-      display: block;
+      //display: block;
+      height: 100%;
+      grid-template-rows: 1fr;
     }
     .sg-form-check-input {
       margin: 0;
@@ -247,24 +282,26 @@ $form-switch-color: rgba(black, .25);
       aspect-ratio: 1;
     }
     span {
-      display: flex;
-      flex: 0 1 auto;
-      overflow: auto;
-      width: fit-content;
-      max-width: 8rem;
-      align-items: center;
-      text-align: center;
-      font-size: 0.85rem;
+        //height: var(--sg-input-height);
+        scrollbar-gutter: stable;
+        display: flex;
+        flex: 0 1 auto;
+        overflow: auto;
+        width: 100%;
+        min-width: 5em;
+        max-width: 9em;
+        align-items: center;
+        text-align: center;
+        font-size: 0.85rem;
+        padding: var(--sg-input-padding-x) var(--sg-input-padding-y);
 
-      padding: $input-padding-x $input-padding-y;
+        white-space: nowrap;
 
-      white-space: nowrap;
-
-      background-color: $input-border-color;
-      color: $input-text-color;
-      border: $input-border-width outset $input-border-color;
-      border-right-width: 0;
-      border-radius: $input-border-radius;
+        background-color: var(--sg-input-border-color);
+        color: var(--sg-input-text-color);
+        border: var(--sg-input-border-width) var(--sg-input-border-style) var(--input-border-color);
+        border-right-width: 0;
+        border-radius: var(--sg-input-border-radius);
     }
   }
 }

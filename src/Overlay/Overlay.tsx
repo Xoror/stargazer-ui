@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, cloneElement, forwardRef, ReactNode
 import { createPortal } from "react-dom";
 import { OverlayType, PositionObject } from "./Overlay.types";
 
+import isEqual from "../utils/IsEqual";
 import mergeRefs from "../utils/MergeRefs";
 import mergeClassnames from "../utils/MergeClassnames";
 
@@ -23,7 +24,6 @@ const setPosition = (referenceElement:any, overlayElement:any, position:string, 
     const arrowRect = arrowCurrent.getBoundingClientRect()
     const arrowHeight = arrowRect.height//position === "top" || position === "bottom" ? arrowRect.height : arrowRect.width
     const arrowWidth = arrowRect.width//position === "top" || position === "bottom" ? arrowRect.width : arrowRect.height
-    console.log(isArrow,overlayWidth)
 
     const overlayBorderWidth = parseFloat(getComputedStyle(overlayCurrent).borderWidth.split("px")[0])
     const arrowOffsetHeight = (isArrow ? (position === "bottom" ? -1 : 1)*arrowHeight/2 : arrowHeight - overlayBorderWidth) + 2
@@ -129,7 +129,8 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
     const autoPositionRef = useRef(autoPosition)
     const setAutoPositionRef = (updatedValue: any) => {
         autoPositionRef.current = updatedValue
-        setAutoPosition(updatedValue)
+        const isValuesEqual = isEqual(autoPositionRef.current, updatedValue)
+        if(!isValuesEqual) setAutoPosition(updatedValue)
     }
 
     const [isHovering, setIsHovering] = useState(false)
@@ -138,12 +139,16 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
     const triggerArray = Array.isArray(trigger) ? trigger : [trigger]
 
     const positionSetter = (positionRef:any , overlayRef: any, arrowRef: any) => {
-        setOverlayPosition( setPosition(positionRef, overlayRef, autoPositionRef.current, arrowRef) )
-        setArrowPosition( setPosition(positionRef, arrowRef, autoPositionRef.current, arrowRef, true) )
+        const newOverlayPosition = setPosition(positionRef, overlayRef, autoPositionRef.current, arrowRef)
+        const newArrowPosition = setPosition(positionRef, arrowRef, autoPositionRef.current, arrowRef, true)
+        const isOverlayPositionsEqual = isEqual(newOverlayPosition, overlayPosition)
+        const isArrowPositionsEqual = isEqual(newArrowPosition, arrowPosition)
+        //console.log(newOverlayPosition, overlayPosition)
+        if(!isOverlayPositionsEqual) setOverlayPosition(newOverlayPosition)
+        if(!isArrowPositionsEqual) setArrowPosition(newArrowPosition)
     }
     const handleScroll = () => {
         if(!internalShowRef.current) return
-
         positionSetter(positionRef, overlayRef, arrowRef)
         if(position === "auto") {
             let updatedPosition = updateAutoPosition(autoPositionRef, positionRef, overlayRef, arrowRef)
@@ -200,7 +205,7 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
         }
     }
     const handleBlur = (event: MouseEvent) => {
-        console.log("blur", isFocused)
+        //console.log("blur", isFocused)
         if(isHovering) {
             setIsHovering(false)
         }
@@ -229,9 +234,9 @@ const Overlay = forwardRef<HTMLDivElement, OverlayType>( ({
         window.addEventListener("resize", resizeHandler, {signal, capture: true})
         return function cleanup() {
             controller.abort()
-            setInternalShowRef(false)
+            //setInternalShowRef(false)
         }
-    }, [])
+    }, [handleScroll])
 
     const checkRefPositionStyle = (positionRef: any) => {
         const posistionElement =  positionRef.current

@@ -1,15 +1,15 @@
 .sg-overlay-wrapper {
     max-width: 100%; 
     max-height: 100%;
-    z-index: $zindex-popover;
+    z-index: var(--sg-zindex-popover);
 }
 
 .sg-overlay-arrow {
     --width: 10px;
     --height: 20px;
-    --_arrow-border: #{$sg-arrow-border};
+    --_arrow-border: currentColor;
     --_arrow-border-stroke: 2;
-    --_arrow-fill: #{$sg-arrow-fill};
+    --_arrow-fill: currentColor;
     //points="1,6 1,16, 13,15.5, 13,20, 29,10, 13,1 13,6" 
     //background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 15 20"> <polygon points="1,1 1,19, 14,10" fill="#{$sg-arrow-fill}" stroke-width="1.5" stroke="#{$sg-arrow-border}" /> </svg>');
     overflow: hidden;
@@ -19,7 +19,7 @@
 
     height: var(--height);
     width: var(--width);
-    z-index: calc( $zindex-popover);
+    z-index: var(--sg-zindex-popover);
     &.overlay-position-right {
         transform: rotate(180deg);
     }
@@ -43,8 +43,8 @@
     }
 }
 .sg-tooltip-arrow {
-    --_text-color: #{$tooltip-text-color};
-    --_brightness-filter: #{$tooltip-arrow-filter};
+    --_text-color: currentColor;
+    --_brightness-filter: brightness(66.666666%);
     --width: 10px;
     --height: 20px;
     //background-image: url('data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 10 20"> <polygon points="1,1 1,19, 9,10" fill="#{$sg-arrow-fill}" stroke-width="2" stroke="#{$sg-arrow-fill}" /><polyline points="0,0 9,10 0,20" fill="none" stroke-width="2" stroke="#{$sg-arrow-border}" /> </svg>');
@@ -52,16 +52,16 @@
 }
 
 .sg-tooltip-wrapper {
-    --_text-color: #{$tooltip-text-color};
-    --_background-color: #{$tooltip-background-color};
-    --_font-size: #{$tooltip-font-size};
-    --_max-width: #{$tooltip-max-width};
-    --_padding-x: #{$tooltip-padding-x};
-    --_padding-y: #{$tooltip-padding-y};
-    --_border-radius: calc #{$tooltip-border-radius};
-    --_border-width: #{$tooltip-border-width};
-    --_border-style: #{$tooltip-border-style};
-    --_border-color: #{$tooltip-border-color};
+    --_text-color: currentColor;
+    --_background-color: var(--sg-nav-color);
+    --_font-size: 0.75rem;
+    --_max-width: 12rem;
+    --_padding-x: 0.375em;
+    --_padding-y: 0.5em;
+    --_border-radius: 0;
+    --_border-width: 2px;
+    --_border-style: inset;
+    --_border-color: var(--_text-color);
 
     font-size: var(--_font-size);
 
@@ -73,7 +73,7 @@
     background-color: var(--_background-color);
     border: var(--_border-width) var(--_border-style) var(--_border-color);
     //appearance: none;
-    border-radius: #{--_border-radius};
+    border-radius: var(--_border-radius);
 }
 
 //<svg width="40" height="24" xmlns="http://www.w3.org/2000/svg"> <defs> <marker id="arrowhead" markerWidth="2" markerHeight="4" refX="0" refY="2" orient="auto"><polygon points="0 1, 1.8 2, 0 3" /></marker></defs> <line x1="0" y1="12" x2="25" y2="12" style="fill:rgb(0,0,255);stroke-width:8;stroke:rgb(0,0,0)" marker-end="url(#arrowhead)"/> </svg>

@@ -1,14 +1,18 @@
 .sg-card {
+    --card-color: var(--sg-body-color);
+    --card-border-color: var(--sg-body-color);
     --card-border-radius: 0rem;
-    --border-width: -2px;
+    --border-width: -2px; // negative value so that positioning of the gradient border works (see ::after)
 
-    --border-gradient-color: color-mix(in srgb, #{$card-header-bg-color}, white 3%);
-    --border-gradient-mix-color: color-mix(in srgb, #{$card-header-bg-color}, white 3%);
+    --header-bg-color: color-mix(in oklab, var(--card-color) 3%, var(--sg-body-bg));
 
-    --background-gradient-color: #{$sg-nav-color};
-    --background-gradient-mix-color: color-mix(in srgb, #{$card-header-bg-color}, white 3%);
+    --border-gradient-color: color-mix(in srgb, var(--header-bg-color), var(--card-color) 3%);
+    --border-gradient-mix-color: color-mix(in srgb, var(--header-bg-color), var(--card-color) 3%);
 
-    --divider-color: #{$card-border-color};
+    --background-gradient-color: var(--sg-nav-color);
+    --background-gradient-mix-color: color-mix(in srgb, var(--header-bg-color), var(--card-color) 3%);
+
+    --divider-color: var(--sg-body-color);
 
     display: flex;
     flex-direction: column;
@@ -23,8 +27,8 @@
         );
     background-clip: padding-box;
     &.sg-card-overlay {
-        color: $card-text-color;
-        border: 1px solid $card-border-color;
+        color: var(--card-color);
+        border: 1px solid var(--card-border-color);
     }
 
     .sg-card-body {
@@ -93,74 +97,12 @@
     }
     */
 }
-
-.primary {
-    --border-gradient-mix-color: #{$danger};
-    grid-column:  2 / 3;
-    grid-row: 1;
-    &.inverted {
-        @include invertedColor($danger);
-        color: black;
-    }
-}
-.secondary {
-    --border-gradient-mix-color: #{$secondary};
-    grid-column:  4 / 5;
-    grid-row: 1;
-    &.inverted {
-        @include invertedColor($secondary);
-    }
-}
-.success {
-    --border-gradient-mix-color: #{$success};
-    grid-column:  6 / 7;
-    grid-row: 1;
-    &.inverted {
-        @include invertedColor($success);
-        color: black;
-    }
-}
-.info {
-    --border-gradient-mix-color: #{$info};
-    grid-column:  8 / 9;
-    grid-row: 1;
-    &.inverted {
-        @include invertedColor($info);
-        color: black;
-    }
-}
-.warning {
-    --border-gradient-mix-color: #{$warning};
-    grid-column:  2 / 3;
-    grid-row: 2;
-    &.inverted {
-        @include invertedColor($warning);
-        color: black;
-    }
-}
-.danger {
-    --border-gradient-mix-color: #{$primary};
-    grid-column:  4 / 5;
-    grid-row: 2;
-    &.inverted {
-        @include invertedColor($primary);
-        color: black;
-    }
-}
-.light {
-    --border-gradient-mix-color: #{$light};
-    grid-column:  6 / 7;
-    grid-row: 2;
-    &.inverted {
-        @include invertedColor($light);
-        color: black;
-    }
-}
-.dark {
-    --border-gradient-mix-color: #{$dark};
-    grid-column: 8 / 9;
-    grid-row: 2;
-    &.inverted {
-        @include invertedColor($dark);
+@each $name, $color in $colors {
+    .#{$name} {
+        --border-gradient-mix-color: var(--sg-#{$name});
+        &.inverted {
+            @include invertedColor(var(--sg-#{$name}));
+            color: var(--sg-#{$name}-text);
+        }
     }
 }

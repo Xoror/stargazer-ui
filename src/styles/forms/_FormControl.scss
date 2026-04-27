@@ -1,104 +1,104 @@
 @use "sass:color";
 
 .sg-form-control {
-  --input-text-color: #{$input-text-color};
-  --input-background-color: #{$input-background-color};
-  --input-border-color: #{$input-border-color};
-  --input-border-color-focus: #{$input-border-color-focus};
-  --input-border-color-invalid: #{$input-border-color-invalid};
-  --input-disabled-color: #{$input-disabled-color};
-  --input-placeholder-color: #{$input-placeholder-color};
+  --input-text-color: currentColor;
 
-  position: relative;
-  display: block;
-  width: 100%;
-  min-width: min(5rem, 100%);
-  padding: $input-padding-x $input-padding-y;
-  color: var(--input-text-color);
-  background-color: var(--input-background-color);
-  border: $input-border-width $input-border-style var(--input-border-color);
-  //appearance: none;
-  border-radius: $input-border-radius;
+  --input-background-color: var(--sg-input-background-color);
+  --input-border-color: var(--sg-input-border-color);
+  --input-border-color-focus: var(--sg-input-border-color-focus);
+  --input-border-color-invalid: var(--sg-input-border-color-invalid);
+  --input-disabled-color: var(--sg-input-disabled-color);
+  --input-placeholder-color: var(--sg-input-placeholder-color);
+    line-height: var(--sg-input-line-height);
+    position: relative;
+    display: block;
+    width: 100%;
+    min-width: min(5rem, 100%);
+    padding: var(--sg-input-padding-x) var(--sg-input-padding-y);
+    color: var(--input-text-color);
+    background-color: var(--input-background-color);
+    border: var(--sg-input-border-width) var(--sg-input-border-style) var(--input-border-color);
+    //appearance: none;
+    border-radius: 0;
 
-  caret-color: white;
+    caret-color: currentColor;
 
-  transition: border-color .15s ease-in-out;
+    transition: border-color .15s ease-in-out;
 
-  &[type="file"] {
-    overflow: hidden; // prevent pseudo element button overlap
+    &[type="file"] {
+        overflow: hidden; // prevent pseudo element button overlap
 
-    &:not(:disabled):not([readonly]) {
-      cursor: pointer;
+        &:not(:disabled):not([readonly]) {
+        cursor: pointer;
+        }
     }
-  }
 
-  &:focus-visible {
-    //@include sg-focus-visible()
-    border-color: var(--input-border-color-focus);
-    outline: 0;
-    box-shadow: 0;
-  }
+    &:focus-visible {
+        //@include sg-focus-visible()
+        border-color: var(--input-border-color-focus);
+        outline: 0;
+        box-shadow: 0;
+    }
 
-  &::-webkit-date-and-time-value {
-    height: $input-line-height;
-  }
+    &::-webkit-date-and-time-value {
+        height: var(--sg-input-line-height);
+    }
 
-  &::placeholder {
-    color: var(--input-placeholder-color);
-    opacity: 1;
-  }
+    &::placeholder {
+        color: var(--input-placeholder-color);
+        opacity: 1;
+    }
 
-  &:disabled, .disabled {
-    --input-background-color: rgba(255, 255, 255, 0.04);
-    --input-placeholder-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
-    --input-text-color: color-mix(in oklab, #{$input-placeholder-color}, white 40%);
-    cursor: not-allowed;
-    opacity: 1;
-  }
+    &:disabled, .disabled {
+        --input-background-color: rgba(255, 255, 255, 0.04);
+        --input-placeholder-color: color-mix(in oklab, var(--sg-input-placeholder-color), white 40%);
+        --input-text-color: color-mix(in oklab, var(--sg-input-placeholder-color), white 40%);
+        cursor: not-allowed;
+        opacity: 1;
+    }
 
-  // File input buttons theming
-  &::file-selector-button {
-    padding: $input-padding-x $input-padding-y;
-    margin: (-$input-padding-x) (-$input-padding-y);
-    margin-inline-end:$input-padding-x;
-    pointer-events: none;
-    border-color: inherit;
-    border-style: solid;
-    border-width: 0;
-    border-inline-end-width: $input-border-width;
-    border-radius: 0; // stylelint-disable-line property-disallowed-list
-    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
-  }
+    // File input buttons theming
+    &::file-selector-button {
+        padding: var(--sg-input-padding-x) var(--sg-input-padding-y);
+        margin: calc(-1*var(--sg-input-padding-x)) calc(-1*var(--sg-input-padding-y));
+        margin-inline-end: var(--sg-input-padding-x);
+        pointer-events: none;
+        border-color: inherit;
+        border-style: solid;
+        border-width: 0;
+        border-inline-end-width: var(--sg-input-border-width);
+        border-radius: 0;
+        transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
+    }
 
-  &:hover:not(:disabled):not([readonly])::file-selector-button {
-    background-color: color-mix(in oklab, var(--input-text-color) , black 5%);
-  }
+    &:hover:not(:disabled):not([readonly])::file-selector-button {
+        background-color: color-mix(in oklab, var(--input-text-color) , black 5%);
+    }
 
-  &:user-invalid, &.invalid, &[aria-invalid="true"] {
-    //outline: 2px solid $input-border-color-invalid;
-    box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
-    z-index: 2;
-  }
+    &:user-invalid, &.invalid, &[aria-invalid="true"] {
+        //outline: 2px solid $input-border-color-invalid;
+        box-shadow: 0 0 4px 2px var(--input-border-color-invalid);
+        z-index: 2;
+    }
 }
 
 .sg-form-control-plaintext {
-  display: block;
-  width: 100%;
-  padding: $input-padding-x 0;
-  margin-bottom: 0; // match inputs if this class comes on inputs with default margins
-  color: var(--input-text-color);
-  background-color: transparent;
-  border: solid transparent;
-  border-width: $input-border-width 0;
+    display: block;
+    width: 100%;
+    padding: var(--sg-input-padding-x) 0;
+    margin-bottom: 0; // match inputs if this class comes on inputs with default margins
+    color: var(--input-text-color);
+    background-color: transparent;
+    border: solid transparent;
+    border-width: var(--sg-input-border-width) 0;
 }
 
 textarea {
-  &.sg-form-control {
-    min-height: $input-height;
-    margin: 0;
-  }
+    &.sg-form-control {
+        min-height: var(--sg-input-height);
+        margin: 0;
+    }
 }
-  // stylelint-enable selector-no-qualifying-type
 
 .sg-form-control-error, .sg-form-control-hint {
     max-width: 100%;
@@ -114,10 +114,10 @@ textarea {
     }
 }
 .sg-form-control-error {
-    --text-color: #{$input-border-color-invalid};
+    --text-color: var(--sg-input-border-color-invalid);
 }
 .sg-form-control-hint {
-    --text-color: #{$input-text-color};
+    --text-color: var(--sg-input-text-color);
 }
 
 .sg-form-control-description {

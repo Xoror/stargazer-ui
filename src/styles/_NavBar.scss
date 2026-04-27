@@ -1,57 +1,57 @@
 .sg-navbar {
-  // scss-docs-start sg-navbar-css-vars
-  --sg-navbar-bg: #{$sg-nav-color};
-  --sg-navbar-text-color: #{$sg-link-hover-color};
-  --sg-navbar-link-color: #{$sg-link-color};
-  --sg-navbar-hover-color: #{$sg-link-hover-color};
-  --sg-navbar-disabled-color: #{$sg-link-disable-color};
-  --sg-navbar-active-color: #{$sg-link-hover-color};
+    // scss-docs-start sg-navbar-css-vars
+    --sg-navbar-bg: var(--sg-nav-color);
+    --sg-navbar-text-color: var(--sg-link-hover-color);
+    --sg-navbar-link-color: var(--sg-link-color);
+    --sg-navbar-hover-color: var(--sg-link-hover-color);
+    --sg-navbar-disabled-color: var(--sg-link-disable-color);
+    --sg-navbar-active-color: var(--sg-link-hover-color);
 
-  --sg-navbar-zindex: $zindex-navbar;
-  // scss-docs-end sg-navbar-css-vars
-  background-color: var(--sg-navbar-bg);
-  background: linear-gradient(71deg, 
-            var(--sg-navbar-bg), 
-            color-mix(in srgb, var(--sg-navbar-bg), var(--sg-navbar-hover-color) 5%),
-            var(--sg-navbar-bg),
-            color-mix(in srgb, var(--sg-navbar-bg), var(--sg-navbar-hover-color) 5%),
-            var(--sg-navbar-bg)
-        );
+    --sg-navbar-zindex: var(--sg-zindex-navbar);
+    // scss-docs-end sg-navbar-css-vars
+    background-color: var(--sg-navbar-bg);
+    background: linear-gradient(71deg, 
+        var(--sg-navbar-bg), 
+        color-mix(in srgb, var(--sg-navbar-bg), var(--sg-navbar-hover-color) 5%),
+        var(--sg-navbar-bg),
+        color-mix(in srgb, var(--sg-navbar-bg), var(--sg-navbar-hover-color) 5%),
+        var(--sg-navbar-bg)
+    );
 
-  width: 100%;
-  min-height: fit-content;
-  z-index: $zindex-navbar;
-  box-sizing: border-box;
-  border: 2px outset color-mix(in srgb, white 5%, var(--sg-navbar-bg));
-  border-bottom: 2px solid var(--sg-navbar-link-color);
+    width: 100%;
+    min-height: fit-content;
+    z-index: var(--sg-zindex-navbar);
+    box-sizing: border-box;
+    border: 2px outset color-mix(in srgb, white 5%, var(--sg-navbar-bg));
+    border-bottom: 2px solid var(--sg-navbar-link-color);
 
-  display: flex;
-  flex-wrap: wrap; // allow us to do the line break for collapsing content
-  align-items: center;
-  padding: 0.5rem 0rem;
-
-  position: sticky;
-  top: 0;
-  left: 0;
-
-  // Because flex properties aren't inherited
-  %container-flex-properties {
     display: flex;
-    flex-wrap: inherit;
+    flex-wrap: wrap; // allow us to do the line break for collapsing content
     align-items: center;
-    justify-content: space-between;
-  }
+    padding: 0.5rem 0rem;
 
-  > .sg-container,
-  > .sg-container-fluid {
-    @extend %container-flex-properties;
-  }
+    position: sticky;
+    top: 0;
+    left: 0;
 
-  @each $breakpoint, $container-max-width in $container-max-widths {
-    > .container-#{$breakpoint} {
-      @extend %container-flex-properties;
+    // Because flex properties aren't inherited
+    %container-flex-properties {
+        display: flex;
+        flex-wrap: inherit;
+        align-items: center;
+        justify-content: space-between;
     }
-  }
+
+    > .sg-container,
+    > .sg-container-fluid {
+        @extend %container-flex-properties;
+    }
+
+    @each $breakpoint, $container-max-width in $container-max-widths {
+        > .container-#{$breakpoint} {
+        @extend %container-flex-properties;
+        }
+    }
 }
 
 .sg-navbar-brand {
@@ -71,46 +71,46 @@
 }
 
 .sg-navbar-nav {
-  // scss-docs-start sg-navbar-nav-css-vars
-  --nav-link-padding-x: 0;
-  --nav-link-padding-y: 0.5rem;
-  --nav-link-color: $sg-link-color;
-  --nav-link-hover-color: $sg-link-hover-color;
-  --nav-link-disabled-color: $sg-link-disable-color;
-  // scss-docs-end sg-navbar-nav-css-vars
-  margin: 0;
-  display: flex;
-  flex-direction: row; // cannot use `inherit` to get the `.sg-navbar`s value
-  flex-wrap: wrap;
-  padding-left: 0;
-  margin-bottom: 0;
-  list-style: none;
+    // scss-docs-start sg-navbar-nav-css-vars
+    --nav-link-padding-x: 0;
+    --nav-link-padding-y: 0.5rem;
+    --nav-link-color: var(--sg-link-color);
+    --nav-link-hover-color: var(--sg-link-hover-color);
+    --nav-link-disabled-color: var(--sg-link-disable-color);
+    // scss-docs-end sg-navbar-nav-css-vars
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
 
-  .show > .nav-link,
-  .nav-link.active {
-    color: var(--sg-navbar-active-color);
-  }
+    .show > .nav-link,
+    .nav-link.active {
+        color: var(--sg-navbar-active-color);
+    }
 
-  .dropdown-menu {
-    position: static;
-  }
+    .dropdown-menu {
+        position: static;
+    }
 }
   
 .sg-navbar-text {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  color: var(--sg-navbar-active-color);
-
-  a,
-  a:hover,
-  a:focus  {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     color: var(--sg-navbar-active-color);
-  }
+
+    a,
+    a:hover,
+    a:focus  {
+        color: var(--sg-navbar-active-color);
+    }
 }
 
 .nav-item {
-  a {
-    color: white;
-    text-decoration: none;
-  }
+    a {
+        color: white;
+        text-decoration: none;
+    }
 }

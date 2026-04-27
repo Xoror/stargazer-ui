@@ -1,8 +1,108 @@
 @use "sass:color";
 
 :root {
+    --sg-nav-color: #1a1b1d;
 	--sg-body-bg: #212529;
   	--sg-body-color: white;
+    --sg-line-height: 1.4em;
+
+    /* colors */
+    --sg-primary: #fc5f5f;
+    --sg-primary-text: black;
+    --sg-primary-contrast: white;
+    --sg-secondary: #6c757d;
+    --sg-secondary-text: white;
+    --sg-secondary-contrast: black;
+    --sg-success: #1fad61; //hsl(148, 50%, 46%) //#2ae293
+    --sg-success-text: black;
+    --sg-success-contrast: white;
+    --sg-info: #9184bd;
+    --sg-info-text: black;
+    --sg-info-contrast: white;
+    --sg-warning: #e0bc29;
+    --sg-warning-text: black;
+    --sg-warning-contrast: white;
+    --sg-danger: #4995d5;
+    --sg-danger-text: black;
+    --sg-danger-contrast: white;
+    --sg-light: #f8f9fa;
+    --sg-light-text: black;
+    --sg-light-contrast: black;
+    --sg-dark: #212529;
+    --sg-dark-text: white;
+    --sg-dark-contrast: black;
+
+    /* z-indexes */
+    --sg-zindex-sticky: 1010;
+    --sg-zindex-navbar: 1010;
+    --sg-zindex-fixed: 1010;
+    --sg-zindex-dropdown: 1020;
+    --sg-zindex-popover: 1020;
+    --sg-zindex-offcanvas-backdrop: 1030;
+    --sg-zindex-offcanvas: 1040;
+    --sg-zindex-modal-backdrop: 1050;
+    --sg-zindex-modal: 1060;
+    --sg-zindex-tooltip: 1080;
+    --sg-zindex-toast: 1090;
+
+    /* dropdown */
+    --sg-dropdown-list-bg: var(--sg-nav-color);
+
+    /* form */
+    --sg-input-text-color: var(--sg-body-color);// #212529;
+    --sg-input-background-color: var(--sg-nav-color);
+    --sg-input-background-color-dark: rgb(175, 174, 174);// white;
+    --sg-input-border-color: color-mix(in oklab, var(--sg-input-background-color), white 25%);
+    --sg-input-border-width: 2px;
+    --sg-input-border-radius: 0;
+    --sg-input-padding-x: 0.375em;
+    --sg-input-padding-y: 0.5em;
+
+    /* nav */
+    --sg-link-color: var(--sg-primary);// #4D9DE0;// #0d6efd;
+    --sg-link-hover-color: white;//color.mix(black, #E15554, 15%);// #62a4da;// #0a58ca;
+    --sg-link-disable-color: rgb(180, 180, 180);
+
+    /* offcanvas */
+    -sg-offCanvas-background-color: #2e3236;
+
+    /* tabs */
+    --sg-tab-controls-bg: var(--sg-body-bg);
+    --sg-tab-button-color: var(--sg-primary);
+
+    /* form */
+
+    --sg-input-line-height: var(--sg-line-height);
+
+    --sg-input-padding-x: 0.375em;
+    --sg-input-padding-y: 0.5em;
+    --sg-input-border-width: 2px;
+    --sg-input-border-style: outset;
+    --sg-input-border-radius: 0;
+
+    --sg-input-background-color: var(--sg-nav-color);
+    --sg-input-disabled-color: #e9ecef;
+    --sg-input-placeholder-color: rgba(255, 255, 255, 0.336);// #6c757d;
+
+    --sg-input-border-color: color-mix(in oklab, var(--sg-input-background-color), currentColor 25%);// #ced4da;
+    --sg-input-border-color-focus: var(--sg-primary);
+    --sg-input-border-color-invalid: var(--sg-warning);
+
+    --sg-input-group-text-background-color: #e9ecef;
+
+    --sg-input-height: calc(var(--sg-input-line-height) + var(--sg-input-padding-x) * 2 + 2*var(--sg-input-border-width));
+
+    --sg-form-switch-width: 2em;
+
+    --sg-slider-filled-color: var(--sg-primary);
+    --sg-slider-filled-border-color: color-mix(in oklab, var(--sg-slider-filled-color), black 20%);
+    --sg-slider-empty-color: var(--sg-input-background-color);
+    --sg-slider-empty-border-color: var(--sg-input-border-color);
+
+    --sg-slider-height: 1.75rem;
+    --sg-slider-thumb-width: 1.5rem;
+    --sg-slider-thumb-height: 0.5rem;
+    --sg-slider-border-width: 1px;
 }
 
 $body-line-height: 1.4em !default;
@@ -13,18 +113,18 @@ $sg-body-color: white;
 $sg-font-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 $sg-highlight-bg: #fff3cd;
 
-$primary: #4995d5;
+$primary: #fc5f5f;
 $secondary: #6c757d;
 $success: #1fad61; //hsl(148, 50%, 46%) //#2ae293
 $info: #9184bd;
-$warning: hsl(48, 75%, 52%);
-$danger: rgb(252, 95, 95);
+$warning: #e0bc29;
+$danger: #4995d5;
 $light: #f8f9fa;
 $dark: #212529;
 
 
 
-$sg-nav-color: rgb(26, 27, 29);
+$sg-nav-color: #1a1b1d;
 
 /* Grid variables */
 $grid-breakpoints: (xs: 0, sm: 576px, md: 768px, lg: 992px, xl: 1200px, xxl: 1400px ) !default;
@@ -69,8 +169,8 @@ $card-border-color: white !default;
     overflow: auto;
 }
 
-
-/* Dropdown */
+/*
+/// Dropdown
 $sg-dropdown-list-bg: #343a40;
 
 $sg-dropdown-item-hover-bg: color.mix(black, $sg-dropdown-list-bg, 15%);
@@ -78,7 +178,7 @@ $sg-dropdown-item-action-bg: color.mix(black, $sg-dropdown-list-bg, 20%);
 $sg-dropdown-item-disabled-bg: color.mix(white, $sg-dropdown-list-bg, 15%);
 
 
-/* Form */
+/// Form 
 $input-text-color: white;// #212529;
 $input-text-color-dark: black;
 
@@ -124,13 +224,13 @@ $slider-empty-border-color: color-mix(in oklab, $input-border-color, black 15%);
 $slider-empty-border-hover-color: color-mix(in oklab, $input-border-color, black 25%);
 
 
-/* Nav */
+/// Nav 
 $sg-link-color: $danger;// #4D9DE0;// #0d6efd;
 $sg-link-hover-color: white;//color.mix(black, #E15554, 15%);// #62a4da;// #0a58ca;
 $sg-link-disable-color: rgb(180, 180, 180);
 
 
-/* Overlay */
+/// Overlay
 $sg-arrow-border: white;
 $sg-arrow-fill: rgb(26, 27, 29);
 $tooltip-arrow-filter: brightness(66.666666%);
@@ -152,13 +252,14 @@ $tooltip-border-style: inset;
 $tooltip-border-color: $tooltip-text-color;
 
 
-/* Table */
+// Table
 $sg-table-padding: 0.5rem;
 $sg-table-padding-sm: 0.25rem;
 
-/* Tabs */
+/// Tabs
 $sg-tab-controls-bg: #212529;
 
 $sg-tab-button-color: $danger;
 $sg-tab-button-hover: color-mix(in srgb, black 15%, $sg-tab-controls-bg);
 $sg-tab-button-active: color-mix(in srgb, black 25%, $sg-tab-controls-bg);
+*/

@@ -1,5 +1,5 @@
 import { type ReactNode, useRef, useMemo, useCallback, createContext, useContext, useSyncExternalStore } from "react";
-import { isEqual } from "es-toolkit";
+import isEqual from "./IsEqual";
 //type Store = {first:string, last:string, isAllowed?: boolean, number?: number}
 type SelectorReturnTypeOld<Store> = (Store[keyof Store] | Store | Array<Store[keyof Store]> | Partial<Store>)
 
