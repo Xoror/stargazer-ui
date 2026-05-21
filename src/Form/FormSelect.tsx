@@ -265,7 +265,7 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
     const [rootMargin, setRootMargin] = useState("0px 0px 0px 0px")
     useEffect(() => {
         if(selectedDescendant.value != value) {
-            console.log("set selected descendant")
+            //console.log("set selected descendant")
             setSelectContext({selectedDescendant:{value, label}})
         }
     }, [value])
@@ -326,12 +326,13 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
         }, {threshold:1})
         intersectionObserver.observe(select)
         window.addEventListener("pointerdown", event => {
-            console.log(event.target, internalId) //TODO being able to click scroll bar and scroll
+            if(!showList) return
+            //console.log(event.target, internalId) //TODO being able to click scroll bar and scroll
             const target = event.target as HTMLElement
             const isTargetDescendentOfSelect = select.contains(target)
             const isTargetDescendentOfList = list.contains(target)
             const isTargetList = target.id === internalId+"-list"
-            console.log(isTargetDescendentOfSelect, isTargetDescendentOfList)
+            //console.log(isTargetDescendentOfSelect, isTargetDescendentOfList)
             if(!isTargetDescendentOfSelect && !isTargetDescendentOfList) {
                 handleSetShowList(false)
             }
@@ -341,7 +342,7 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
             controller.abort()
             intersectionObserver.unobserve(select)
         }
-    }, [rootMargin, handleSetShowList])
+    }, [rootMargin, showList, handleSetShowList])
 
     const changeActiveDescendant = (number: number, type: string) => {
         const maxIndex = (items as any).length - 1
@@ -620,7 +621,7 @@ const SelectOption = forwardRef<HTMLLIElement, FormSelectOptionType>(({
         if(onPointerOver) onPointerOver(event)
     }
     const handleCLick = (event: React.MouseEvent<HTMLLIElement>) => {
-        console.log("option click")
+        //console.log("option click")
         event.stopPropagation()
         if(disabled) return
         
