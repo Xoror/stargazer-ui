@@ -32,7 +32,7 @@ const FormPage = () => {
         <div style={{display:"grid", placeContent:"center"}}>
             <div style={{height:"fit-content", width:"fit-content", border:"1px solid white", padding:"1rem", resize:"both", overflow:"hidden"}}>
                 <Form onSubmit={handleSubmit}>
-                    <Form.Select value={selectValue} onChange={handleChange} /*errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}}*/ ref={testRef} id="custom-select-test">
+                    <Form.Select /*errorAsOverlay={true} error={{message:"this is an error test"}} hint={{message: "this is a hint test"}}*/ ref={testRef} id="custom-select-test">
                         <Form.Select.Option value="">Select option...</Form.Select.Option>
                         {options.map(entry => 
                             <Form.Select.Option value={entry}>{entry}</Form.Select.Option>

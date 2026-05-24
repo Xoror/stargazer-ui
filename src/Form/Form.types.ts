@@ -46,9 +46,9 @@ export type SelectContextType<T> = {
     internalButtonRef: RefObject<HTMLButtonElement>,
     internalId:string,
     showList: boolean,
-    activeDescendant: any,
+    activeDescendant: T,
     inputValue: string, 
-    selectedDescendant: T
+    selectedDescendant: T,
     setSelectedDescendant: Function,
     items: ReactNode
 }

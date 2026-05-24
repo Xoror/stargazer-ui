@@ -11,6 +11,7 @@ import mergeClassnames from "../utils/MergeClassnames"
 import createSyntheticEvent from "../utils/CreateSyntheticEvent"
 import { InputKeyType, isValidInputKey } from "../utils/IsInputKey"
 import createFastContext from "../utils/createFastContext"
+import { selectByKeys } from "../utils/selectByKeys"
 
 /*
 export const SelectContext = createContext<SelectContextType | null>(null)
@@ -176,7 +177,7 @@ const Select = forwardRef<HTMLButtonElement, FormSelectType>( ({
         internalButtonRef: internalButtonRef,
         internalId: elementId,
         showList: false,
-        activeDescendant: initialValue.value,
+        activeDescendant: initialValue,
         inputValue: "",
         selectedDescendant,
         setSelectedDescendant: handleSelectedDescendant,
@@ -253,13 +254,21 @@ const SelectInput = forwardRef<HTMLInputElement, FormSelectInputType>( ({classNa
 })
 SelectInput.displayName = "FormSelectInput"
 */
+
 const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
         children, className, value, label, searchable=false, required=false,
         onClick, onKeyUp, onKeyDown, handleSelectedDescendant,
         ...restProps
     }, ref) => {
     const setSelectContext = setStore()
-    const [ activeDescendant, selectedDescendant, showList, internalId, items ] = getSelectContext(state => [ state.activeDescendant, state.selectedDescendant, state.showList, state.internalId, state.items ])
+    const { activeDescendant, selectedDescendant, showList, internalId, items } = getSelectContext(state => 
+        selectByKeys(state, [ "activeDescendant", "selectedDescendant", "showList", "internalId", "items" ])
+        /*
+        {
+            return [ state.activeDescendant, state.selectedDescendant, state.showList, state.internalId, state.items ]
+        }
+        */
+    )
     const internalButtonRef = useRef<HTMLButtonElement>(null)
     const isVisible = useRef(true)
     const [rootMargin, setRootMargin] = useState("0px 0px 0px 0px")
@@ -272,7 +281,7 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
     const computedClassName = mergeClassnames(className, "sg-select-control")
 
     const resetFocus = () => {
-        setSelectContext({activeDescendant: selectedDescendant.value})
+        setSelectContext({activeDescendant: {value: selectedDescendant.value, label: selectedDescendant.label}})
     }
     const handleSetShowList = (show: boolean | ((show:boolean) => boolean)) => {
         const newShow = typeof show === "boolean" ? show : show(showList)
@@ -347,7 +356,7 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
     const changeActiveDescendant = (number: number, type: string) => {
         const maxIndex = (items as any).length - 1
         const minIndex = 0
-        const currentIndex = (items as any).indexOf((items as any).find((child:any) => child.props.value === activeDescendant))
+        const currentIndex = (items as any).indexOf((items as any).find((child:any) => child.props.value === activeDescendant.value))
         let newIndex, temp
         switch (type) {
             case "add":
@@ -365,7 +374,8 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
                 newIndex = 0
                 break
         }
-        setSelectContext({activeDescendant: (items as any)[newIndex].props.value})
+        const newDescendant = (items as any)[newIndex]
+        setSelectContext({activeDescendant: {value: newDescendant.props.value, label: newDescendant.props.label}})
     }
     const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
         const isInputKey = isValidInputKey(event, inputKeys)
@@ -398,6 +408,7 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
 
         let isPreventDefault = true
         let isStopPropagation = true
+        const mouseDownEvent = new Event("mousedown")
         switch(event.key) {
             case "ArrowDown":
                 if(!showList) {
@@ -426,7 +437,8 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
             case " ":
                 handleClick()
                 if(showList) {
-                    const focusElement = document.getElementById(internalId+"-list-item-"+activeDescendant)
+                    const focusElement = document.getElementById(internalId+"-list-item-"+activeDescendant.value)
+                    console.log(focusElement)
                     focusElement?.click()
                 }
                 break
@@ -444,7 +456,8 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
             case "Tab":
                 if(showList) {
                     handleClick()
-                    const focusElement = document.getElementById(internalId+"-list-item-"+activeDescendant)
+                    const focusElement = document.getElementById(internalId+"-list-item-"+activeDescendant.value)
+                    //TODO currently i'm hacking this a bit by having both mousedown and click event on Li
                     focusElement?.click()
                 }
                 isPreventDefault = false
@@ -457,7 +470,7 @@ const SelectControl = forwardRef<HTMLButtonElement, FormSelectControlType>( ({
 
     return (
         <button 
-            role="combobox" aria-controls={internalId+"list"} aria-expanded={showList} aria-activedescendant={activeDescendant === false ? "":internalId+"-list-item-"+activeDescendant}
+            role="combobox" aria-controls={internalId+"list"} aria-expanded={showList} aria-activedescendant={internalId+"-list-item-"+activeDescendant.value}
             ref={mergeRefs([ref, internalButtonRef])} value={value} type="button" 
             className={computedClassName} id={internalId+"-control"} title={typeof label === "string" ? label : undefined}  
             onMouseUp={handleClick} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp}
@@ -585,12 +598,12 @@ SelectList.displayName = "FormSelectList"
 
 const SelectOption = forwardRef<HTMLLIElement, FormSelectOptionType>(({
         children, className, id, value, disabled, label, selected,
-        onPointerDown, onPointerOver, onClick, ...restProps
+        onPointerOver, onClick, ...restProps
     }, ref) => {
     const internalRef = useRef<HTMLLIElement>(null)
     const isVisible = useRef(false)
     const setSelectContext = setStore()
-    const isActiveDescendant = getSelectContext(state => state.activeDescendant === value)
+    const isActiveDescendant = getSelectContext(state => state.activeDescendant.value === value)
     //if(isActiveDescendant) console.log(value)
     const isSelectedDescendant = getSelectContext(state => state.selectedDescendant.value === value)
     const { internalId, setSelectedDescendant } = getSelectContext(state => state, (oldValue, newValue) => {return oldValue.selectedDescendant.value === newValue.selectedDescendant.value})
@@ -617,11 +630,14 @@ const SelectOption = forwardRef<HTMLLIElement, FormSelectOptionType>(({
     }, [])
     const handlePointerEnter = (event: React.PointerEvent<HTMLLIElement>) => {
         if(!event.target) return
-        setSelectContext!({activeDescendant: value})
+        setSelectContext!({activeDescendant: {
+            value: value,
+            label: children
+        }})
         if(onPointerOver) onPointerOver(event)
     }
     const handleCLick = (event: React.MouseEvent<HTMLLIElement>) => {
-        //console.log("option click")
+        console.log("option click")
         event.stopPropagation()
         if(disabled) return
         
@@ -638,7 +654,7 @@ const SelectOption = forwardRef<HTMLLIElement, FormSelectOptionType>(({
     return (
         <li role="option" aria-selected={isSelectedDescendant}
             ref={mergeRefs([ref, internalRef])} id={internalId+"-list-item-"+value} className={computedClassName}
-            onPointerOver={handlePointerEnter} onMouseDown={handleCLick}
+            onPointerOver={handlePointerEnter} onClick={handleCLick}
             {...restProps}
         >
             {children}
