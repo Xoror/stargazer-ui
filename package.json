@@ -8,7 +8,7 @@
 		"test": "\"echo \\\"Error: no test specified\\\" && exit 1\"",
 		"dev": "vite --config vite.config.js --port 3001",
 		"build": "tsc --p ./tsconfig-build.json && vite build --config vite.config.js",
-        "prerollup": "node scripts/adjustVersionNumber.js",
+		"adjustVersionNumber": "node scripts/adjustVersionNumber.js",
 		"rollup": "rimraf dist && rollup -c",
 		"postrollup": "node scripts/writePackageJsons.js && sass src/styles/_components.scss dist/styles/stargazerui.css",
 		"packageJsons": "node scripts/writePackageJsons.js",

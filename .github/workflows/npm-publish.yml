@@ -1,8 +1,16 @@
 name: Publish Package to npmjs
 on:
-  push:
-    branches: ['main']
   workflow_dispatch:
+    inputs:
+        version:
+            description: "Type of SemVer Change"
+            required: true
+            default: 'bugfix'
+            type: choice
+            options:
+            - major
+            - minor
+            - bugfix
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,6 +25,7 @@ jobs:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
+      - run: node ./scripts/adjustVersionNumber.js --version=${{inputs.version}} 
       - run: npm run rollup
       - run: |
           cd dist
