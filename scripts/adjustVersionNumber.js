@@ -2,12 +2,27 @@ import readline from 'node:readline';
 import { readFile, writeFile } from 'fs/promises';
 import { writeFileSync } from 'node:fs';
 
+const fetchLatestVersionNumber = async () => {
+    try {
+        const response = await fetch("https://registry.npmjs.org/-/v1/search?text=stargazer-ui")
+        const data = await response.json()
+        const packageData = data.objects.find(data => data.package.name === "stargazer-ui")
+        return packageData.package.version
+    } catch(err) {
+        console.log(err)
+    }
+}
+const latestVersion = await fetchLatestVersionNumber()
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
 const vars = process.argv.slice(2)
+if(vars.length === 0) {
+    throw new Error("You need to provide a version type as an argument")
+} 
 const versionChangeTyp = vars.find(entry => entry.includes("--version")).split("=")[1]
 const validInputs = ["major", "minor", "bugfix"]
 if(!validInputs.includes(versionChangeTyp.toLowerCase())) {
@@ -18,7 +33,7 @@ const packageJson = JSON.parse(
         new URL('../package.json', import.meta.url)
     )
 )
-const versionArray= packageJson.version.split(".")
+const versionArray= latestVersion.split(".")
 switch(versionChangeTyp) {
     case "major":
         versionArray[0] = parseFloat(versionArray[0]) + 1
